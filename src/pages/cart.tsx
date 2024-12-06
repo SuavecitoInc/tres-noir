@@ -121,7 +121,7 @@ const Page = styled.div`
         }
         .title {
           /* font-weight: bold; */
-          :hover {
+          &:hover {
             text-decoration: underline;
           }
           margin-bottom: 0;
@@ -169,10 +169,10 @@ const Page = styled.div`
     .subtotal {
       text-align: right;
       p {
-        :first-child {
+        &:first-child {
           font-size: 1.75rem;
         }
-        :not(:first-child) {
+        &:not(:first-child) {
           color: var(--color-grey-dark);
           font-family: var(--sub-heading-font);
         }
@@ -215,10 +215,10 @@ const Page = styled.div`
       font-family: var(--heading-font);
       text-transform: uppercase;
     }
-    :nth-child(1) {
+    &:nth-child(1) {
       background: #e0e0e0;
     }
-    :nth-child(2) {
+    &:nth-child(2) {
       background: white;
     }
     hr {
@@ -356,7 +356,8 @@ const Cart = ({
         setCurrentStep(5)
         // navigate to step 5 of customize page
         navigate(
-          `/products/${handle}/customize?variant=${sku}&custom_id=${item.id}`
+          // @ts-ignore
+          `/products/${handle}/customize?variant=${sku}&custom_id=${item.id.toString()}`
         )
       }
     }

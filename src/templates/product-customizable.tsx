@@ -108,13 +108,16 @@ const Page = styled.div`
     }
   }
   .fit {
+    padding-top:10px;
     color: var(--color-grey-dark);
     font-size: 1.5rem;
-    text-transform: capitalize;
     width: 100%;
     span {
       float: right;
     }
+  }
+  .frame-width {
+    text-transform: capitalize;
   }
   .options {
     button {
@@ -1071,18 +1074,31 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
               <div className="heading">
                 <h1>{shopifyProduct.title}</h1>
                 <ProductBottomline reviewListRef={reviewListRef as any} />
-                <p className="fit">
-                  Size: {contentfulProduct && contentfulProduct.fitDimensions}{" "}
-                  <span>
+                <div className="fit">
+                  <p>
+                    Frame Width:{" "}
                     {contentfulProduct &&
-                    contentfulProduct.frameWidth.length > 1
-                      ? `${contentfulProduct.frameWidth[0]} to ${
-                          contentfulProduct.frameWidth[1]
-                        }${" "}`
-                      : `${contentfulProduct.frameWidth[0]}${" "}`}
-                    fit
-                  </span>
-                </p>
+                      contentfulProduct.frameWidthMeasurement}
+                    mm{" "}
+                    <span className="frame-width">
+                      {contentfulProduct &&
+                      contentfulProduct.frameWidth.length > 1
+                        ? `${contentfulProduct.frameWidth[0]} to ${
+                            contentfulProduct.frameWidth[1]
+                          }${" "}`
+                        : `${contentfulProduct.frameWidth[0]}${" "}`}
+                      fit
+                    </span>
+                  </p>
+                  <p>
+                    Dimensions:{" "}
+                    {contentfulProduct &&
+                      contentfulProduct.fitDimensions
+                        .split("-")
+                        .map(num => num + "mm")
+                        .join(" - ")}{" "}
+                  </p>
+                </div>
               </div>
               <form className="options">
                 {selectedVariant.shopify.title !== "Default Title" && (
@@ -1318,6 +1334,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
               className={`col ${lensType !== LensType.GLASSES ? "images" : ""}`}
             >
               <ProductDetails
+                frameWidth={contentfulProduct.frameWidthMeasurement}
                 fitDimensions={contentfulProduct.fitDimensions}
                 lensColor={selectedVariant.contentful.lensColor}
                 lensType={lensType}
@@ -1378,6 +1395,7 @@ export const query = graphql`
         styleDescription
       }
       frameWidth
+      frameWidthMeasurement
       fitDimensions
       casesAvailable
       featuredStyles {

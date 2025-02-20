@@ -108,16 +108,24 @@ const Page = styled.div`
     }
   }
   .fit {
-    padding-top:10px;
+    padding-top: 10px;
     color: var(--color-grey-dark);
     font-size: 1.5rem;
     width: 100%;
-    span {
-      float: right;
-    }
   }
-  .frame-width {
+  .fit-container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    justify-content: space-between;
+    max-width: 425px;
+  }
+  .fit-measurement {
+    flex: 1;
+  }
+  .fit-range {
     text-transform: capitalize;
+    flex: 1;
   }
   .options {
     button {
@@ -1075,21 +1083,26 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                 <h1>{shopifyProduct.title}</h1>
                 <ProductBottomline reviewListRef={reviewListRef as any} />
                 <div className="fit">
-                  <p>
-                    Frame Width:{" "}
-                    {contentfulProduct &&
-                      contentfulProduct.frameWidthMeasurement}
-                    mm{" "}
-                    <span className="frame-width">
-                      {contentfulProduct &&
-                      contentfulProduct.frameWidth.length > 1
-                        ? `${contentfulProduct.frameWidth[0]} to ${
-                            contentfulProduct.frameWidth[1]
-                          }${" "}`
-                        : `${contentfulProduct.frameWidth[0]}${" "}`}
+                  {contentfulProduct.frameWidthMeasurement ? (
+                    <p className="fit-container">
+                      <span className="fit-measurement">
+                        {`Frame Width: ${contentfulProduct.frameWidthMeasurement}mm`}
+                      </span>
+                      <span className="fit-range">
+                        {contentfulProduct.frameWidth.length > 1
+                          ? `${contentfulProduct.frameWidth[0]} to ${contentfulProduct.frameWidth[1]} `
+                          : `${contentfulProduct.frameWidth[0]} `}
+                        fit
+                      </span>
+                    </p>
+                  ) : (
+                    <p className="fit-range">
+                      {contentfulProduct.frameWidth.length > 1
+                        ? `${contentfulProduct.frameWidth[0]} to ${contentfulProduct.frameWidth[1]} `
+                        : `${contentfulProduct.frameWidth[0]} `}
                       fit
-                    </span>
-                  </p>
+                    </p>
+                  )}
                   <p>
                     Dimensions:{" "}
                     {contentfulProduct &&

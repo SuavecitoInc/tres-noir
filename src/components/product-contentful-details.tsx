@@ -50,9 +50,19 @@ const Component = styled.div`
       }
     }
   }
+  .lens-frame-width {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    justify-content: space-between;
+  }
+  .lens-frame-width div {
+    flex:1;
+  }
 `
 
 interface Props {
+  frameWidth: number
   fitDimensions: string
   lensColor: string
   lensType: string
@@ -72,6 +82,7 @@ enum LENSE_COLORS {
 }
 
 const ProductDetails: React.FC<Props> = ({
+  frameWidth,
   fitDimensions,
   lensColor,
   lensType,
@@ -213,16 +224,16 @@ const ProductDetails: React.FC<Props> = ({
         <div className="td">
           <div className="image">
             <StaticImage
-              src="../images/lens-width.png"
-              alt="Lens Width"
-              height={50}
+              src="../images/lens-frame-width.png"
+              alt="Lens & Frame Width"
+              height={80}
             />
           </div>
           <div className="image">
             <StaticImage
               src="../images/bridge-width.png"
               alt="Bridge Width"
-              height={50}
+              height={80}
             />
           </div>
           <div className="image">
@@ -233,9 +244,15 @@ const ProductDetails: React.FC<Props> = ({
             />
           </div>
 
-          <div className="details">
-            <p>LENS WIDTH</p>
-            <p>{frameDimensions[0]} mm</p>
+          <div className="details lens-frame-width">
+            <div>
+              <p>FRAME WIDTH</p>
+              <p>{frameWidth} mm</p>
+            </div>
+            <div>
+              <p>LENS WIDTH</p>
+              <p>{frameDimensions[0]} mm</p>
+            </div>
           </div>
 
           <div className="details">

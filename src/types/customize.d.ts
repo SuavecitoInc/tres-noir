@@ -3,6 +3,7 @@ import { IGatsbyImageData } from "gatsby-plugin-image"
 export interface ContentfulProduct {
   handle: string
   fitDimensions: string
+  frameWidthMeasurement: number;
   variants: ContentfulProductVariant[]
   casesAvailable: string[]
 }

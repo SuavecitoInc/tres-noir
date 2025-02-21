@@ -108,13 +108,24 @@ const Page = styled.div`
     }
   }
   .fit {
+    padding-top: 10px;
     color: var(--color-grey-dark);
     font-size: 1.5rem;
-    text-transform: capitalize;
     width: 100%;
-    span {
-      float: right;
-    }
+  }
+  .fit-container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    justify-content: space-between;
+    max-width: 425px;
+  }
+  .fit-measurement {
+    flex: 1;
+  }
+  .fit-range {
+    text-transform: capitalize;
+    flex: 1;
   }
   .options {
     button {
@@ -1071,18 +1082,36 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
               <div className="heading">
                 <h1>{shopifyProduct.title}</h1>
                 <ProductBottomline reviewListRef={reviewListRef as any} />
-                <p className="fit">
-                  Size: {contentfulProduct && contentfulProduct.fitDimensions}{" "}
-                  <span>
+                <div className="fit">
+                  {contentfulProduct.frameWidthMeasurement ? (
+                    <p className="fit-container">
+                      <span className="fit-measurement">
+                        {`Frame Width: ${contentfulProduct.frameWidthMeasurement}mm`}
+                      </span>
+                      <span className="fit-range">
+                        {contentfulProduct.frameWidth.length > 1
+                          ? `${contentfulProduct.frameWidth[0]} to ${contentfulProduct.frameWidth[1]} `
+                          : `${contentfulProduct.frameWidth[0]} `}
+                        fit
+                      </span>
+                    </p>
+                  ) : (
+                    <p className="fit-range">
+                      {contentfulProduct.frameWidth.length > 1
+                        ? `${contentfulProduct.frameWidth[0]} to ${contentfulProduct.frameWidth[1]} `
+                        : `${contentfulProduct.frameWidth[0]} `}
+                      fit
+                    </p>
+                  )}
+                  <p>
+                    Dimensions:{" "}
                     {contentfulProduct &&
-                    contentfulProduct.frameWidth.length > 1
-                      ? `${contentfulProduct.frameWidth[0]} to ${
-                          contentfulProduct.frameWidth[1]
-                        }${" "}`
-                      : `${contentfulProduct.frameWidth[0]}${" "}`}
-                    fit
-                  </span>
-                </p>
+                      contentfulProduct.fitDimensions
+                        .split("-")
+                        .map(num => num + "mm")
+                        .join(" - ")}{" "}
+                  </p>
+                </div>
               </div>
               <form className="options">
                 {selectedVariant.shopify.title !== "Default Title" && (
@@ -1318,6 +1347,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
               className={`col ${lensType !== LensType.GLASSES ? "images" : ""}`}
             >
               <ProductDetails
+                frameWidth={contentfulProduct.frameWidthMeasurement}
                 fitDimensions={contentfulProduct.fitDimensions}
                 lensColor={selectedVariant.contentful.lensColor}
                 lensType={lensType}
@@ -1378,6 +1408,7 @@ export const query = graphql`
         styleDescription
       }
       frameWidth
+      frameWidthMeasurement
       fitDimensions
       casesAvailable
       featuredStyles {

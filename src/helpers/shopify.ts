@@ -1,8 +1,9 @@
 // determines whether a product is discounted for on sale
 export function isDiscounted(
   price: number | string,
-  compareAtPrice: number | string
+  compareAtPrice: number | string |  null
 ) {
+  if (compareAtPrice === null) return false;
   if (typeof price === "string") price = parseFloat(price)
   if (typeof compareAtPrice === "string")
     compareAtPrice = parseFloat(compareAtPrice)

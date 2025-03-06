@@ -694,7 +694,7 @@ const Form = ({
                           {variant.title}
                           <span className="price">
                             {` + $${variant.price}`}
-                            {variant.compareAtPrice &&
+                            {
                               isDiscounted(
                                 variant.price,
                                 variant.compareAtPrice

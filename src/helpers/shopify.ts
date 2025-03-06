@@ -15,5 +15,6 @@ export function isDiscounted(
 }
 
 export function formatPrice(price: number) {
+  if ( Math.round(price * 100) / 100 === Math.floor(price)) return price.toFixed(0)
   return price.toFixed(2)
 }

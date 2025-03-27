@@ -6,6 +6,7 @@ import { StaticImage } from "gatsby-plugin-image"
 const Component = styled.div`
   text-align: center;
   .top-msg {
+    text-transform: uppercase;
     font-family: var(--heading-font);
     font-weight: normal;
     margin-top: 0.5rem;
@@ -49,7 +50,7 @@ const FreeShipping = () => {
           alt="double diamonds"
           width={38}
         />
-        <p className="top-msg">FREE SHIPPING IN USA</p>
+        <p className="top-msg">Free US Shipping When you Spend $50</p>
         <p className="bottom-msg">{message}</p>
       </div>
     </Component>

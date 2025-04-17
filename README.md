@@ -34,7 +34,7 @@ Prior to starting this process, make sure you have the following:
 
 ### Step 1. Sync SKUs from Cin7 to Shopify 
 
-Log into Cin7  and navigate to Integrations > Shopify 
+Log into Cin7  and navigate to **Integrations > Shopify** 
 
 Click into **tres-noir** and click on **Catalogue** 
 
@@ -106,7 +106,7 @@ The day before the release is meant to go live, prepare the production preview a
 
 ### Pro Tips: 
 - When it comes to uploading assets in Contentful, everything that is uploaded or altered needs to be `Published`. Make sure you verify everything has the green `Published` button next to when altering or uploading anything in Contentful. 
-- I would confirm release dates with Holly/Jill at least two weeks prior to the release date stated on the sheet. 
+- Confirm release dates with Holly/Jill at least two weeks prior to the release date stated on the sheet. 
 - Make sure all the assets / product images are ready prior to starting this process. 
-- It is recommended to get a head start on this new release process at least a week before the releases are due to go live on the site, especially if multiple SKUs are going live in one day. The process of updating assets to Contentful is particularly time-consuming, so start early.
+- Get a head start on this new release process at least a week before the releases are due to go live on the site, especially if multiple SKUs are going live in one day. The process of updating assets to Contentful is particularly time-consuming, so start early.
 - Have the production deployment tested and ready to go the day before the release is meant to go live. 

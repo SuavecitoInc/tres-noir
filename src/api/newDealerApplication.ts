@@ -258,7 +258,9 @@ async function printPDF(data: FormData) {
     // executablePath: process.env.CHROME_PATH,
     args: chromium.args,
     defaultViewport: chromium.defaultViewport,
-    executablePath: await chromium.executablePath(),
+    executablePath:
+      (process.env.CHROME_EXECUTABLE_PATH as string) ||
+      (await chromium.executablePath()),
     headless: chromium.headless,
   })
   const page = await browser.newPage()

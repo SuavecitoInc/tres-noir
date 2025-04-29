@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v.0.12 - 2025-04-29
+
+**Features**
+
+- Initial new Dealer Application
+
 ## v.0.11 - 2025-01-06
 
 **Breaking Changes**

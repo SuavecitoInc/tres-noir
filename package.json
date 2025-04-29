@@ -11,6 +11,7 @@
     "@shopify/storefront-api-client": "^1.0.3",
     "algoliasearch": "^4.13.0",
     "babel-plugin-styled-components": "^2.1.4",
+    "chrome-aws-lambda": "^10.1.0",
     "chromium": "^3.0.3",
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",

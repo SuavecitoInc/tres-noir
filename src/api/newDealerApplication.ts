@@ -1,7 +1,6 @@
 import type { GatsbyFunctionRequest, GatsbyFunctionResponse } from "gatsby"
 import stream from "stream"
 import puppeteer from "puppeteer-core"
-import chromium from "@sparticuz/chromium"
 import { google } from "googleapis"
 import formData from "form-data"
 import Mailgun from "mailgun.js"
@@ -67,7 +66,7 @@ async function sendEmail(
 }
 
 // function to dummy up the html
-async function generateHTML(data: FormData) {
+function generateHTML(data: FormData) {
   const {
     storeName,
     storeTel,
@@ -249,23 +248,16 @@ async function generateHTML(data: FormData) {
 }
 // use puppeteer to create a PDF from the URL
 async function printPDF(data: FormData) {
-  // Optional: If you'd like to disable webgl, true is the default.
-  chromium.setGraphicsMode = false
   // get the html string
+  console.log("Executable path", process.env.CHROME_EXECUTABLE_PATH)
   const htmlString = generateHTML(data)
   const browser = await puppeteer.launch({
-    // headless: true,
-    // executablePath: process.env.CHROME_PATH,
-    args: chromium.args,
-    defaultViewport: chromium.defaultViewport,
-    executablePath:
-      (process.env.CHROME_EXECUTABLE_PATH as string) ||
-      (await chromium.executablePath()),
-    headless: chromium.headless,
+    headless: true,
+    executablePath: process.env.CHROME_PATH,
   })
   const page = await browser.newPage()
   // don't know why I need to convert to string if it is already a string, but this was necessary
-  await page.setContent((await htmlString).toString(), {
+  await page.setContent(htmlString.toString(), {
     waitUntil: ["load", "networkidle0", "domcontentloaded"],
   })
   // const outputPath = path.join(__dirname, "output.pdf")
@@ -283,7 +275,6 @@ async function printPDF(data: FormData) {
   await browser.close()
   return {
     pdf: pdf,
-    // outputPath: outputPath,
   }
 }
 // Downloaded from while creating credentials of service account

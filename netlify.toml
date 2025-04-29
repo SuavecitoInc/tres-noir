@@ -1,2 +1,5 @@
-[functions]
-external_node_modules = ["@sparticuz/chromium"]
+[[plugins]]
+package = "netlify-plugin-chromium"
+  [plugins.inputs]
+  packageManager = "npm"
+  failBuildOnError = true

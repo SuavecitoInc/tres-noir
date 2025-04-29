@@ -1,7 +1,2 @@
-[functions]
-  node_bundler = "esbuild"
 [[plugins]]
 package = "netlify-plugin-chromium"
-  [plugins.inputs]
-  packageManager = "npm"
-  failBuildOnError = true

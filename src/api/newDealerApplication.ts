@@ -4,7 +4,6 @@ import puppeteer from "puppeteer-core"
 import { google } from "googleapis"
 import formData from "form-data"
 import Mailgun from "mailgun.js"
-import chromium from "chrome-aws-lambda"
 
 interface FormData {
   storeName: string
@@ -247,16 +246,13 @@ function generateHTML(data: FormData) {
 
   return html
 }
+// use puppeteer to create a PDF from the URL
 async function printPDF(data: FormData) {
   // get the html string
   const htmlString = generateHTML(data)
-  const browser = await chromium.puppeteer.launch({
-    args: chromium.args,
-    defaultViewport: chromium.defaultViewport,
-    executablePath: await chromium.executablePath,
-    headless: chromium.headless,
-    // @ts-ignore
-    ignoreHTTPSErrors: true,
+  const browser = await puppeteer.launch({
+    headless: true,
+    executablePath: process.env.CHROME_PATH,
   })
   const page = await browser.newPage()
   // don't know why I need to convert to string if it is already a string, but this was necessary
@@ -280,36 +276,6 @@ async function printPDF(data: FormData) {
     pdf: pdf,
   }
 }
-// use puppeteer to create a PDF from the URL
-// async function printPDF(data: FormData) {
-//   // get the html string
-//   const htmlString = generateHTML(data)
-//   const browser = await puppeteer.launch({
-//     headless: true,
-//     executablePath: process.env.CHROME_PATH,
-//   })
-//   const page = await browser.newPage()
-//   // don't know why I need to convert to string if it is already a string, but this was necessary
-//   await page.setContent(htmlString.toString(), {
-//     waitUntil: ["load", "networkidle0", "domcontentloaded"],
-//   })
-//   // const outputPath = path.join(__dirname, "output.pdf")
-//   const pdf = await page.pdf({
-//     // path: outputPath,
-//     format: "A4", // or any other format
-//     margin: {
-//       top: "20px",
-//       right: "20px",
-//       bottom: "20px",
-//       left: "20px",
-//     },
-//   })
-
-//   await browser.close()
-//   return {
-//     pdf: pdf,
-//   }
-// }
 // Downloaded from while creating credentials of service account
 const SCOPES = ["https://www.googleapis.com/auth/drive.file"]
 

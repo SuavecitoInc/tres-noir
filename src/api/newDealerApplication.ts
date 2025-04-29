@@ -1,9 +1,7 @@
 import type { GatsbyFunctionRequest, GatsbyFunctionResponse } from "gatsby"
-// import path from "path"
-// import fsPromises from "fs/promises"
-// import fs from "fs"
 import stream from "stream"
-import puppeteer from "puppeteer"
+import puppeteer from "puppeteer-core"
+import chromium from "@sparticuz/chromium"
 import { google } from "googleapis"
 import formData from "form-data"
 import Mailgun from "mailgun.js"
@@ -251,11 +249,17 @@ async function generateHTML(data: FormData) {
 }
 // use puppeteer to create a PDF from the URL
 async function printPDF(data: FormData) {
+  // Optional: If you'd like to disable webgl, true is the default.
+  chromium.setGraphicsMode = false
   // get the html string
   const htmlString = generateHTML(data)
   const browser = await puppeteer.launch({
-    headless: true,
-    executablePath: process.env.CHROME_PATH,
+    // headless: true,
+    // executablePath: process.env.CHROME_PATH,
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath(),
+    headless: chromium.headless,
   })
   const page = await browser.newPage()
   // don't know why I need to convert to string if it is already a string, but this was necessary

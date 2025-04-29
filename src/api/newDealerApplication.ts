@@ -1,12 +1,12 @@
 import type { GatsbyFunctionRequest, GatsbyFunctionResponse } from "gatsby"
 import stream from "stream"
 import chromium from "@sparticuz/chromium"
-import puppeteer from "puppeteer-core"
+// import puppeteer from "puppeteer-core"
+const puppeteer = require("puppeteer-core")
 import { google } from "googleapis"
 import formData from "form-data"
 import Mailgun from "mailgun.js"
 
-chromium.setHeadlessMode = true
 chromium.setGraphicsMode = false
 
 interface FormData {
@@ -259,8 +259,12 @@ async function printPDF(data: FormData) {
     args: chromium.args,
     defaultViewport: chromium.defaultViewport,
     executablePath:
-      process.env.CHROME_EXECUTABLE_PATH || (await chromium.executablePath()),
+      process.env.CHROME_EXECUTABLE_PATH ||
+      (await chromium.executablePath(
+        "/var/task/node_modules/@sparticuz/chromium/bin"
+      )),
     headless: chromium.headless,
+    ignoreHTTPSErrors: true,
   })
   const page = await browser.newPage()
   // don't know why I need to convert to string if it is already a string, but this was necessary

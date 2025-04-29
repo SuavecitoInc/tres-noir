@@ -1,5 +1,6 @@
-[[plugins]]
-package = "netlify-plugin-chromium"
+[build]
+  external_node_modules = ["@sparticuz/chromium"]
+  functions = "netlify/functions"
 [functions]
   node_bundler = "esbuild"
   external_node_modules = ["@sparticuz/chromium"]

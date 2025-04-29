@@ -2,5 +2,5 @@ plugins:
   - package: netlify-plugin-chromium
     inputs:
       packageManager: npm
-      setChromePathInEnv: false
+      setChromePathInEnv: true
       failBuildOnError: true

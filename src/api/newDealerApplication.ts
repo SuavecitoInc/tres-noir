@@ -1,5 +1,6 @@
 import type { GatsbyFunctionRequest, GatsbyFunctionResponse } from "gatsby"
 import stream from "stream"
+import chromium from "chromium"
 import puppeteer from "puppeteer-core"
 import { google } from "googleapis"
 import formData from "form-data"
@@ -251,8 +252,11 @@ async function printPDF(data: FormData) {
   // get the html string
   const htmlString = generateHTML(data)
   const browser = await puppeteer.launch({
-    headless: true,
-    executablePath: process.env.CHROME_PATH,
+    // headless: true,
+    // executablePath: process.env.CHROME_PATH,
+    args: chromium.args,
+    executablePath: await chromium.executablePath(),
+    headless: chromium.headless,
   })
   const page = await browser.newPage()
   // don't know why I need to convert to string if it is already a string, but this was necessary

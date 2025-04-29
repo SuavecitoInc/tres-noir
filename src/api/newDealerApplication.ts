@@ -253,7 +253,10 @@ async function generateHTML(data: FormData) {
 async function printPDF(data: FormData) {
   // get the html string
   const htmlString = generateHTML(data)
-  const browser = await puppeteer.launch({ headless: true })
+  const browser = await puppeteer.launch({
+    headless: true,
+    executablePath: process.env.CHROME_PATH,
+  })
   const page = await browser.newPage()
   // don't know why I need to convert to string if it is already a string, but this was necessary
   await page.setContent((await htmlString).toString(), {

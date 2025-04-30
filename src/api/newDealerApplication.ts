@@ -1,6 +1,6 @@
 import type { GatsbyFunctionRequest, GatsbyFunctionResponse } from "gatsby"
 import stream from "stream"
-import chromium from "@sparticuz/chromium"
+const chromium = require("@sparticuz/chromium")
 import puppeteer from "puppeteer-core"
 // const puppeteer = require("puppeteer-core")
 import { google } from "googleapis"

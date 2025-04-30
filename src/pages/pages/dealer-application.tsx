@@ -1,4 +1,5 @@
 import React, { useState } from "react"
+import { navigate } from "gatsby"
 import { useForm } from "react-hook-form"
 import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup"
@@ -79,6 +80,21 @@ const Page = styled.div`
   .error-message {
     color: red;
   }
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.75);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .spinner {
+      color: white;
+    }
+  }
 `
 
 const Button = styled.button`
@@ -124,48 +140,48 @@ interface InitialValue {
   question6: string
 }
 
-// const initialValue: InitialValue = {
-//   storeName: "",
-//   storeTel: "",
-//   address: "",
-//   city: "",
-//   stateProvince: "",
-//   postalCode: "",
-//   country: "",
-//   owners: "",
-//   authorizedBuyerContact: "",
-//   businessType: "",
-//   question1: "",
-//   averageRetailPrice: "",
-//   brand1: "",
-//   brand2: "",
-//   brand3: "",
-//   question4: "",
-//   question5: "",
-//   question6: "",
-// }
-
-// delete
 const initialValue: InitialValue = {
-  storeName: "Demo Store",
-  storeTel: "1234567890",
-  address: "123 Test St",
-  city: "Test City",
-  stateProvince: "Test State",
-  postalCode: "12345",
-  country: "Test Country",
-  owners: "Test Owner",
-  authorizedBuyerContact: "Test Contact",
-  businessType: "Proprietorship",
-  question1: "Test Question 1",
-  averageRetailPrice: "Less than $25",
-  brand1: "Test Brand 1",
-  brand2: "Test Brand 2",
-  brand3: "Test Brand 3",
-  question4: "Test Question 4",
-  question5: "Test Question 5",
-  question6: "Test Question 6",
+  storeName: "",
+  storeTel: "",
+  address: "",
+  city: "",
+  stateProvince: "",
+  postalCode: "",
+  country: "",
+  owners: "",
+  authorizedBuyerContact: "",
+  businessType: "",
+  question1: "",
+  averageRetailPrice: "",
+  brand1: "",
+  brand2: "",
+  brand3: "",
+  question4: "",
+  question5: "",
+  question6: "",
 }
+
+// uncomment this to use test data
+// const initialValue: InitialValue = {
+//   storeName: "Demo Store",
+//   storeTel: "1234567890",
+//   address: "123 Test St",
+//   city: "Test City",
+//   stateProvince: "Test State",
+//   postalCode: "12345",
+//   country: "Test Country",
+//   owners: "Test Owner",
+//   authorizedBuyerContact: "Test Contact",
+//   businessType: "Proprietorship",
+//   question1: "Test Question 1",
+//   averageRetailPrice: "Less than $25",
+//   brand1: "Test Brand 1",
+//   brand2: "Test Brand 2",
+//   brand3: "Test Brand 3",
+//   question4: "Test Question 4",
+//   question5: "Test Question 5",
+//   question6: "Test Question 6",
+// }
 
 const todaysDate = new Date()
 const formattedDate = `${(todaysDate.getMonth() + 1)
@@ -243,6 +259,7 @@ const Contact = () => {
       setTimeout(() => {
         resetState()
       }, 3000)
+      navigate("/pages/thank-you")
     } catch (error) {
       setIsSubmitting(false)
       setIsError(true)
@@ -606,6 +623,13 @@ const Contact = () => {
             </p>
           )}
         </div>
+        {isSubmitting && (
+          <div className="overlay">
+            <div className="spinner">
+              SUBMITTING, THIS MIGHT TAKE A MIN... <Spinner />
+            </div>
+          </div>
+        )}
       </Page>
     </Layout>
   )

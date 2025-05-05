@@ -95,6 +95,19 @@ const Page = styled.div`
       color: white;
     }
   }
+  @media only screen and (max-width: 468px) {
+    .form-row.business-information-row,
+    .form-row.address-row-1,
+    .form-row.address-row-2 {
+      flex-direction: column;
+      gap: 5px;
+      justify-content: left;
+      align-items: flex-start;
+      div {
+        width: 100%;
+      }
+    }
+  }
 `
 
 const Button = styled.button`
@@ -284,7 +297,7 @@ const Contact = () => {
             <input type="hidden" name="form-name" value="contact" />
             <section className="information">
               <h3>Information</h3>
-              <div className="form-row">
+              <div className="form-row business-information-row">
                 <div className="form-column">
                   <div className="form-row-item">
                     <label htmlFor="store-name">Store Name</label>
@@ -315,7 +328,7 @@ const Contact = () => {
             </section>
             <section className="store-address">
               <h3>Store Address</h3>
-              <div className="form-row">
+              <div className="form-row address-row-1">
                 <div className="form-column">
                   <div className="form-row-item">
                     <label htmlFor="address">Address</label>
@@ -343,7 +356,7 @@ const Contact = () => {
                   </div>
                 </div>
               </div>
-              <div className="form-row">
+              <div className="form-row address-row-2">
                 <div className="form-column">
                   <div className="form-row-item">
                     <label htmlFor="state-province">State / Province</label>

@@ -1,10 +1,14 @@
 # CHANGELOG
 
-## v.0.12 - 2025-04-29
+## v.0.12 - 2025-05-05
 
 **Features**
 
-- Initial new Dealer Application
+- I have added a New Dealer Application page located at `/pages/dealer-application`.
+- The form posts to the new api route `/api/newDealerApplication`.
+  - This api route generates an hmac digest from the form data and performs a simple post request to an AWS Lambda that serves as the backend.
+  - The header `X-Tres-Noir-Hmac-Sha256` with the digest, is used to verify the request.
+  - The AWS Lambda function is responsible for generating a New Dealer Application PDF, uploading it to Google Drive, and sending an email notification.
 
 ## v.0.11 - 2025-01-06
 

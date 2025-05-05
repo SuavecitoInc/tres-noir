@@ -8,6 +8,7 @@ import styled from "styled-components"
 import Layout from "../../components/layout"
 import SEO from "../../components/seo"
 import Spinner from "../../components/spinner"
+// import { countries } from "../../data/countries"
 
 const Page = styled.div`
   h3 {
@@ -135,6 +136,7 @@ const ClearButton = styled.button`
 interface InitialValue {
   storeName: string
   storeTel: string
+  email: string
   address: string
   city: string
   stateProvince: string
@@ -156,6 +158,7 @@ interface InitialValue {
 const initialValue: InitialValue = {
   storeName: "",
   storeTel: "",
+  email: "",
   address: "",
   city: "",
   stateProvince: "",
@@ -204,20 +207,30 @@ const formattedDate = `${(todaysDate.getMonth() + 1)
   .toString()
   .padStart(2, "0")}-${todaysDate.getFullYear()}`
 
+const phoneRegExp = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/
+
 const Contact = () => {
   const resolver = yup.object({
     storeName: yup.string().required("Store name is required"),
-    storeTel: yup.string().required("Store telephone is required"),
+    // storeTel: yup.string().required("Store telephone is required"),
+    storeTel: yup
+      .string()
+      .required("Store telephone is required")
+      .matches(phoneRegExp, "Phone number is not valid"),
+    email: yup
+      .string()
+      .required("Email is required")
+      .email("Email is not valid"),
     address: yup.string().required("Address is required"),
     city: yup.string().required("City is required"),
     stateProvince: yup.string().required("State / Province is required"),
-    postalCode: yup.string().required("Postal code is required"),
+    postalCode: yup.string().required("Postal Code is required"),
     country: yup.string().required("Country is required"),
     owners: yup.string().required("Owner(s) is required"),
     authorizedBuyerContact: yup
       .string()
-      .required("Authorized buyer / contact is required"),
-    businessType: yup.string().required("Business type is required"),
+      .required("Authorized Buyer / Contact is required"),
+    businessType: yup.string().required("Business Type is required"),
     question1: yup.string().required("Question 1 is required"),
     averageRetailPrice: yup
       .string()
@@ -297,7 +310,7 @@ const Contact = () => {
             <input type="hidden" name="form-name" value="contact" />
             <section className="information">
               <h3>Information</h3>
-              <div className="form-row business-information-row">
+              <div className="form-row">
                 <div className="form-column">
                   <div className="form-row-item">
                     <label htmlFor="store-name">Store Name</label>
@@ -306,6 +319,19 @@ const Contact = () => {
                   <div className="error-message">
                     {form.formState.errors.storeName?.message && (
                       <p>{form.formState.errors.storeName?.message}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="form-row business-information-row">
+                <div className="form-column">
+                  <div className="form-row-item">
+                    <label htmlFor="email">Email</label>
+                    <input {...form.register("email")} id="email" required />
+                  </div>
+                  <div className="error-message">
+                    {form.formState.errors.email?.message && (
+                      <p>{form.formState.errors.email?.message}</p>
                     )}
                   </div>
                 </div>
@@ -395,6 +421,22 @@ const Contact = () => {
                       id="country"
                       required
                     />
+                    {/* <select
+                      {...form.register("country")}
+                      id="country"
+                      required
+                      defaultValue="US"
+                    >
+                      {countries.map(country => (
+                        <option
+                          key={country.code}
+                          value={country.code}
+                          selected={country.code === "US"}
+                        >
+                          {country.name}
+                        </option>
+                      ))}
+                    </select> */}
                   </div>
                   <div className="error-message">
                     {form.formState.errors.country?.message && (

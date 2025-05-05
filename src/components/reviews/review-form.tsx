@@ -143,6 +143,7 @@ const ReviewForm = ({ bottomline }: Props) => {
       {isSuccess ? (
         <SuccessMessage />
       ) : (
+        // @ts-ignore
         <animated.div style={animationProps}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="input-wrapper">
@@ -240,6 +241,7 @@ const ReviewDrawer = ({
       }
     },
   })
+  // @ts-ignore
   return <animated.div style={animationProps}>{children}</animated.div>
 }
 

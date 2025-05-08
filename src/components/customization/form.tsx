@@ -49,7 +49,7 @@ const Form = ({
   stepMap.set(4, "LENS COATING")
   const { isRxAble, setRxAble, rxInfo, rxInfoDispatch } =
     useContext(RxInfoContext)
-  const messageRef = useRef<any>()
+  const messageRef = useRef<any>(null)
 
   const [isFormValid, setIsFormValid] = useState(true)
   const errorRefs = useRef({})
@@ -575,7 +575,6 @@ const Form = ({
       {shopifyCollection.products.map((product: ShopifyProduct, index) => {
         // fix variant.image is null
         if (product.variants[0].image === null) {
-          // product.variants[0].image = product.media[0].image
           product.variants[0].image = product.media[0].image
         }
         return (
@@ -615,7 +614,6 @@ const Form = ({
                           </span>
                         )}
                     </span>
-                    {/* <Price product={product} /> */}
                   </h4>
                   <p>{product.description}</p>
                 </div>
@@ -694,18 +692,17 @@ const Form = ({
                           {variant.title}
                           <span className="price">
                             {` + $${variant.price}`}
-                            {
-                              isDiscounted(
-                                variant.price,
-                                variant.compareAtPrice
-                              ) && (
-                                <span>
-                                  {" "}
-                                  <span className="strikethrough-grey">
-                                    ${variant.compareAtPrice}
-                                  </span>
+                            {isDiscounted(
+                              variant.price,
+                              variant.compareAtPrice
+                            ) && (
+                              <span>
+                                {" "}
+                                <span className="strikethrough-grey">
+                                  ${variant.compareAtPrice}
                                 </span>
-                              )}
+                              </span>
+                            )}
                           </span>
                         </h6>
                       </div>

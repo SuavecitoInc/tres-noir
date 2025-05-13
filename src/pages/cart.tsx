@@ -314,6 +314,11 @@ const Cart = ({
   stepMap.set(3, "LENS MATERIAL")
   stepMap.set(4, "LENS COATING")
   stepMap.set(5, "CASE")
+
+  const stepMapSafetyGlasses = new Map()
+  stepMapSafetyGlasses.set(1, "RX TYPE")
+  stepMapSafetyGlasses.set(2, "CASE")
+
   const loadingOverlay = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (cart) {
@@ -811,6 +816,11 @@ const Cart = ({
 
   const renderCustomProduct = (item: tnItem) => {
     const hasDiscount = checkForDiscountInBundle(item.lineItems)
+    // custom types: customized glasses, customized safety glasses
+    // customized safety glasses have 3 line items
+    // customized glasses have 6 line items
+    const isSafetyGlasses = item.lineItems.length === 3
+    const currentStepMap = isSafetyGlasses ? stepMapSafetyGlasses : stepMap
     return (
       <li key={item.id} className="customized">
         <div className="close-btn">
@@ -878,7 +888,7 @@ const Cart = ({
                             >
                               {i === 0 && (
                                 <div className="step-name">
-                                  <p>{stepMap.get(subIndex)}</p>
+                                  <p>{currentStepMap.get(subIndex)}</p>
                                 </div>
                               )}
 
@@ -889,7 +899,7 @@ const Cart = ({
                                 <span key={subItem.shopifyItem.id}>
                                   {formatItemTitle(
                                     subItem,
-                                    stepMap.get(subIndex),
+                                    currentStepMap.get(subIndex),
                                     item.isCustom
                                   )}
                                 </span>

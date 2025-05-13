@@ -1,4 +1,5 @@
 import React, { createContext, useState, useMemo, useEffect } from "react"
+import type { ReactNode } from "react"
 import {
   SelectedVariants,
   ShopifyVariant,
@@ -135,7 +136,7 @@ export const CustomizeContext = createContext(defaultContext)
 export const CustomizeSafetyGlassesProvider = ({
   children,
 }: {
-  children: any
+  children: ReactNode[]
 }) => {
   const [currentStep, setCurrentStep] = useState(1)
   const [productUrl, setProductUrl] = useState("")

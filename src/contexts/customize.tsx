@@ -1,10 +1,5 @@
-import React, {
-  createContext,
-  ReactChild,
-  useState,
-  useMemo,
-  useEffect,
-} from "react"
+import React, { createContext, useState, useMemo, useEffect } from "react"
+import type { ReactNode } from "react"
 import {
   SelectedVariants,
   ShopifyVariant,
@@ -242,7 +237,7 @@ const defaultContext = {
 
 export const CustomizeContext = createContext(defaultContext)
 
-export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
+export const CustomizeProvider = ({ children }: { children: ReactNode[] }) => {
   const [currentStep, setCurrentStep] = useState(1)
   const [productUrl, setProductUrl] = useState("")
   const [hasSavedCustomized, setHasSavedCustomized] = useState({

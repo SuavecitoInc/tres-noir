@@ -367,7 +367,7 @@ const Form = ({
       case 1:
         // disable photocramitic for all except clear lens
         if (lens.toLowerCase() !== "clear") {
-          const validationArr = ["Single Vision - Photocramatic"]
+          const validationArr = ["Single Vision - Photocromic"]
           blockedSelections.push(...validationArr)
           if (
             validationArr.includes(

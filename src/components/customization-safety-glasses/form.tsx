@@ -361,7 +361,6 @@ const Form = ({
 
   // useEffect with steps to filter collection
   useEffect(() => {
-    console.log("currentStep selectedVariants", currentStep, selectedVariants)
     // temp array to store blocked selections
     let blockedSelections: any[] = []
     switch (currentStep) {
@@ -383,7 +382,7 @@ const Form = ({
         break
     }
     setFilteredCollection([...new Set(blockedSelections)])
-  }, [currentStep])
+  }, [currentStep, lens])
 
   return (
     <Component>

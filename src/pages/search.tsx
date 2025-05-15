@@ -20,6 +20,11 @@ const searchClient = algoliasearch(
   process.env.GATSBY_ALGOLIA_SEARCH_KEY as string
 )
 
+const searchIndex =
+  process.env.GATSBY_ENVIRONMENT === "production"
+    ? "Products"
+    : "staging_Products"
+
 interface Location {
   location: {
     state: {
@@ -109,7 +114,7 @@ const Search = ({ location: { state } }: Location) => {
 
   return (
     <Layout>
-      <InstantSearch searchClient={searchClient} indexName="Products">
+      <InstantSearch searchClient={searchClient} indexName={searchIndex}>
         <Configure hitsPerPage={hitsPerPage} />
         <SEO title="Search" />
         <Results />

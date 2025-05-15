@@ -1,11 +1,20 @@
+require("dotenv").config({
+  path: `.env`,
+})
+
 const pagePath = `content`
-const indexName = `Products`
+const indexName =
+  process.env.GATSBY_ENVIRONMENT === "production"
+    ? `Products`
+    : `staging_Products`
 
 const excludedProductTypes = [
+  "Insurance",
   "Lense Customization",
   "Lenses",
   "Upsell AO",
   "Case Add-Ons",
+  "Safety Lens Customization",
 ]
 
 const productsQuery = `{
@@ -175,6 +184,11 @@ const queries = [
   {
     query: productsQuery,
     transformer: ({ data }) => {
+      console.log(
+        "Running Algolia query with environment:",
+        process.env.GATSBY_ENVIRONMENT
+      )
+      console.log("Algolia index name:", indexName)
       const p = products(data)
       return p.map(productToAlgoliaRecord)
     },

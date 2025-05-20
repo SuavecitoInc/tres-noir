@@ -1356,7 +1356,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
             {lensType !== LensType.GLASSES && (
               <div className="col">
                 <CaseGridSunglasses
-                  caseCollection={caseCollection.reverse()}
+                  caseCollection={caseCollection}
                   selectedCase={selectedCase}
                   setSelectedCase={setSelectedCase}
                   casesAvailable={contentfulProduct.casesAvailable}

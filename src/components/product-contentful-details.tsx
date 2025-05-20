@@ -80,6 +80,7 @@ enum LENSE_COLORS {
   CLEAR = "clear",
   YELLOW = "yellow",
   BURNT_ORANGE = "burnt orange",
+  PHOTOCROMIC = "photocromic",
 }
 
 const ProductDetails: React.FC<Props> = ({
@@ -125,6 +126,8 @@ const ProductDetails: React.FC<Props> = ({
         case LENSE_COLORS.BURNT_ORANGE:
           imageData = lensColors.burnt_orange
           break
+        case LENSE_COLORS.PHOTOCROMIC:
+          imageData = lensColors.clear
         default:
           imageData = lensColors.clear
       }

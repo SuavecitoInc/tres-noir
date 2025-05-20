@@ -17,6 +17,7 @@ import {
 } from "../types/customize"
 import { ImageStorage } from "../contexts/storefront-cart/types/storefront-cart"
 import { useDiscountedPricing } from "../hooks/useDiscountedPricing"
+import { SafetyLensColor } from "../types/safety"
 
 const Page = styled.div`
   .row {
@@ -275,7 +276,7 @@ const Customize = ({
               {currentStep === 1 && (
                 <Step1
                   handle={shopifyProduct.handle}
-                  lens={variant.shopify.title as "smoke" | "clear" | "yellow"}
+                  lens={variant.shopify.title as SafetyLensColor}
                 />
               )}
               {currentStep === 2 && (

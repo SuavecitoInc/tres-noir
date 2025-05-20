@@ -23,6 +23,7 @@ import type {
 } from "../../contexts/storefront-cart/types/storefront-cart"
 import { isDiscounted, formatPrice } from "../../helpers/shopify"
 import ReadersTable from "../readers-table"
+import type { SafetyLensColor } from "../../types/safety"
 
 const Form = ({
   shopifyCollection,
@@ -31,7 +32,7 @@ const Form = ({
 }: {
   shopifyCollection: ShopifyCollection
   handle: string
-  lens: "smoke" | "clear" | "yellow"
+  lens: SafetyLensColor
 }) => {
   const {
     currentStep,
@@ -281,19 +282,36 @@ const Form = ({
 
   useEffect(() => {
     if (hasSavedCustomized[`step${currentStep}`] === false) {
-      handleChange(null, shopifyCollection.products[0].variants[0], false)
+      // if first option is disabled, select the second one.
+      let initialSelection = shopifyCollection.products[0].variants[0]
+      for (let i = 0; i < shopifyCollection.products.length; i++) {
+        if (!filteredCollection.includes(shopifyCollection.products[i].title)) {
+          initialSelection = shopifyCollection.products[i].variants[0]
+          break
+        }
+      }
+      handleChange(null, initialSelection, false)
     }
-  }, [shopifyCollection.products[0].variants[0]]) // this is the only dependency that should be here
+  }, [shopifyCollection.products, filteredCollection]) // this is the only dependency that should be here
 
-  // useEffect to fix bug where Non Precription Lens selection will still error out
-  useEffect(() => {
-    if (
-      currentStep === 1 &&
-      selectedVariants.step1.product.title === "Non-Prescription Lens"
-    ) {
-      enableContinue()
-    }
-  }, [currentStep, selectedVariants])
+  // useEffect(() => {
+  //   if (hasSavedCustomized[`step${currentStep}`] === false) {
+  //     // if first option is disabled, select the second one.
+  //     // validationArr.includes(shopifyCollection.products[0].variants[0].title)
+  //     console.log("blockedselections", filteredCollection)
+  //     handleChange(null, shopifyCollection.products[0].variants[0], false)
+  //   }
+  // }, [shopifyCollection.products[0].variants[0], filteredCollection]) // this is the only dependency that should be here
+
+  // // useEffect to fix bug where Non Precription Lens selection will still error out
+  // useEffect(() => {
+  //   if (
+  //     currentStep === 1 &&
+  //     selectedVariants.step1.product.title === "Non-Prescription Lens"
+  //   ) {
+  //     enableContinue()
+  //   }
+  // }, [currentStep, selectedVariants])
 
   // restore on refresh
   useEffect(() => {
@@ -366,8 +384,19 @@ const Form = ({
     switch (currentStep) {
       case 1:
         // disable photocramitic for all except clear lens
-        if (lens.toLowerCase() !== "clear") {
+        if (lens.toLowerCase() !== "photocromic") {
           const validationArr = ["Single Vision - Photocromic"]
+          blockedSelections.push(...validationArr)
+          if (
+            validationArr.includes(
+              selectedVariants[`step${currentStep}`].product.title
+            )
+          ) {
+            disableContinue(currentStep)
+          }
+        }
+        if (lens.toLowerCase() === "photocromic") {
+          const validationArr = ["Single Vision"]
           blockedSelections.push(...validationArr)
           if (
             validationArr.includes(
@@ -383,6 +412,11 @@ const Form = ({
     }
     setFilteredCollection([...new Set(blockedSelections)])
   }, [currentStep, lens])
+
+  console.log(
+    "selectedVariants[`step${currentStep}`]",
+    selectedVariants[`step${currentStep}`]
+  )
 
   return (
     <Component>

@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react"
 import { useStaticQuery, graphql } from "gatsby"
 import Form from "./form"
 import useCollectionDiscountedPricing from "../../hooks/useCollectionDiscountedPricing"
+import type { SafetyLensColor } from "../../types/safety"
 
 type Props = {
   handle: string
-  lens: "smoke" | "clear" | "yellow"
+  lens: SafetyLensColor
 }
 const Step1: React.FC<Props> = ({ handle, lens }) => {
   const { shopifyCollection } = useStaticQuery(graphql`

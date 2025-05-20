@@ -60,6 +60,9 @@ export const useCaseCollection = (reverse: boolean = false) => {
   const caseCollection = getCaseCollection().products
 
   const data = useMemo(() => {
+    if (reverse) {
+      return caseCollection.reverse()
+    }
     return caseCollection
   }, [caseCollection])
 

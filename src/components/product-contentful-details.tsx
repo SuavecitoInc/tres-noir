@@ -57,7 +57,7 @@ const Component = styled.div`
     justify-content: space-between;
   }
   .lens-frame-width div {
-    flex:1;
+    flex: 1;
   }
 `
 
@@ -138,6 +138,8 @@ const ProductDetails: React.FC<Props> = ({
     getLensData()
   )
 
+  const isSafetyGlasses = lensType === "safety"
+
   return (
     <Component>
       <div className="tr">
@@ -148,11 +150,19 @@ const ProductDetails: React.FC<Props> = ({
         </div>
         <div className="td">
           <div className="image">
-            <StaticImage
-              src="../images/microfiber-pouch.png"
-              alt="Microfiber Pouch"
-              height={80}
-            />
+            {isSafetyGlasses ? (
+              <StaticImage
+                src="../images/microfiber-pouch.png"
+                alt="Microfiber Pouch"
+                height={80}
+              />
+            ) : (
+              <StaticImage
+                src="../images/microfiber-pouch.png"
+                alt="Microfiber Pouch"
+                height={80}
+              />
+            )}
           </div>
           <div className="image">
             <StaticImage
@@ -165,7 +175,7 @@ const ProductDetails: React.FC<Props> = ({
           <div className="image"></div>
 
           <div className="details">
-            <p>MICROFIBER POUCH</p>
+            <p>{isSafetyGlasses ? "SAFETY POUCH" : "MICROFIBER POUCH"}</p>
           </div>
 
           <div className="details">

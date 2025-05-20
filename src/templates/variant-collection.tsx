@@ -6,6 +6,7 @@ import Layout from "../components/layout"
 import SEO from "../components/seo"
 import FreeShipping from "../components/free-shipping"
 import CollectionImage from "../components/collection-image"
+import Filters from "../components/filters-contentful-variants"
 import { viewedCollectionGTMEvent } from "../helpers/gtm"
 import { ContentfulProductVariant } from "../types/contentful"
 
@@ -56,10 +57,12 @@ const VariantCollection = ({
     contentfulHomepage,
   } = data
   const defaultFilters = { frameWidth: "", colorName: "" }
-  // const [filters, setFilters] = useState<{
-  //   frameWidth: string
-  //   colorName: string
-  // }>(defaultFilters)
+  const [filters, setFilters] = useState<{
+    frameWidth: string
+    colorName: string
+  }>(defaultFilters)
+  // delete
+  console.log("collection.variants", collection)
   const [variants, setVariants] = useState<ContentfulProductVariant[]>(
     collection.variants
   )
@@ -198,6 +201,15 @@ const VariantCollection = ({
           <p className="collection-description">{collection.description}</p>
         </div>
 
+        <div className="filters-container">
+          <Filters
+            collection={collection}
+            filters={filters}
+            setFilters={setFilters}
+            setVariants={setVariants as any}
+          />
+        </div>
+
         <Grid>
           {variants.length ? (
             variants.map(variant => {
@@ -269,6 +281,7 @@ export const query = graphql`
         product {
           handle
           title
+          frameWidth
         }
       }
     }

@@ -19,6 +19,7 @@ export interface ContentfulProductVariant {
   product: {
     handle: string
     title: string
+    frameWidth: string[]
   }[]
 }
 
@@ -53,4 +54,16 @@ export interface ContentfulCollection {
     data: IGatsbyImageData
   }
   products: ContentfulProduct[]
+}
+
+export interface ContentfulVariantCollection {
+  description: string
+  handle: string
+  id: string
+  image: {
+    data: IGatsbyImageData
+  }
+  title: string
+  variants: ContentfulProductVariant[]
+  sku: string
 }

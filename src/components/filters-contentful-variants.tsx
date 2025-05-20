@@ -2,10 +2,13 @@ import React, { Dispatch, useState, useEffect } from "react"
 import styled from "styled-components"
 import { StaticImage, GatsbyImage } from "gatsby-plugin-image"
 import { useSpring, animated, config } from "react-spring"
-import { ContentfulCollection, ContentfulProduct } from "../types/contentful"
+import {
+  ContentfulVariantCollection,
+  ContentfulProductVariant,
+} from "../types/contentful"
 import { useHeight } from "../hooks/useHeight"
 import { useFrameColors } from "../hooks/useFrameColors"
-import { getFilters } from "../utils/getContentfulCollectionFilters"
+import { getVariantFilters } from "../utils/getContentfulCollectionFilters"
 import { BiPlus as IconPlus, BiMinus as IconMinus } from "react-icons/bi"
 
 const DisplayFilters = styled.div`
@@ -175,7 +178,7 @@ const Filters = styled.div`
 `
 
 interface Props {
-  collection: ContentfulCollection
+  collection: ContentfulVariantCollection
   filters: {
     frameWidth: string
     colorName: string
@@ -184,7 +187,7 @@ interface Props {
     frameWidth: string
     colorName: string
   }>
-  setProducts: Dispatch<ContentfulProduct[]>
+  setVariants: Dispatch<ContentfulProductVariant[]>
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -198,7 +201,7 @@ const FiltersContentful = ({
   collection,
   filters,
   setFilters,
-  setProducts,
+  setVariants,
 }: Props) => {
   const [showFilters, setShowFilters] = useState<boolean>(false)
   const [panel, setPanel] = useState<string>(FilterTypes.FrameWidth)
@@ -207,19 +210,19 @@ const FiltersContentful = ({
 
   const frameColors = useFrameColors()
 
-  const generateFilters = (products: ContentfulProduct[]) => {
-    const { frameWidthList, colorsList } = getFilters(products)
+  const generateFilters = (variants: ContentfulProductVariant[]) => {
+    const { frameWidthList, colorsList } = getVariantFilters(variants)
     // set values
     setFrameWidths(frameWidthList)
     setColors(colorsList)
   }
 
   useEffect(() => {
-    generateFilters(collection.products)
+    generateFilters(collection.variants)
   }, [])
 
   const filter = (type: string, value: string): void => {
-    let filteredProducts: ContentfulProduct[] = collection.products
+    let filteredVariants: ContentfulProductVariant[] = collection.variants
     if (filters[type] === value) {
       filters[type] = ""
     } else {
@@ -232,34 +235,32 @@ const FiltersContentful = ({
       // frame width
       if (filters[filter]) {
         if (filter === FilterTypes.FrameWidth) {
-          filteredProducts = filteredProducts.filter(product =>
-            product.frameWidth.includes(filters[filter])
+          filteredVariants = filteredVariants.filter(variant =>
+            variant.product[0].frameWidth.includes(filters[filter])
           )
         }
         // frame color
         if (filter === FilterTypes.ColorName) {
-          filteredProducts = filteredProducts.filter(product => {
+          filteredVariants = filteredVariants.filter(variant => {
             let found = false
-            product.variants.forEach(variant => {
-              if (variant.frameColor.includes(filters[filter])) {
-                found = true
-              }
-            })
+            if (variant.frameColor.includes(filters[filter])) {
+              found = true
+            }
             return found
           })
         }
       }
     })
 
-    setProducts(filteredProducts)
+    setVariants(filteredVariants)
     setFilters(filters)
-    generateFilters(filteredProducts)
+    generateFilters(filteredVariants)
   }
 
   const reset = (): void => {
     setFilters({ frameWidth: "", colorName: "" })
-    setProducts(collection.products)
-    generateFilters(collection.products)
+    setVariants(collection.variants)
+    generateFilters(collection.variants)
   }
 
   const handleShowFilters = () => {

@@ -488,7 +488,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
       (variant: any) => variant.sku === contentfulProduct.variants[0].sku
     ),
   })
-  const caseCollection = useCaseCollection()
+  const caseCollection = useCaseCollection().reverse()
 
   const [selectedCase, setSelectedCase] = useState<any>(
     caseCollection[0].variants[0]
@@ -1356,7 +1356,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
             {lensType !== LensType.GLASSES && (
               <div className="col">
                 <CaseGridSunglasses
-                  caseCollection={caseCollection}
+                  caseCollection={caseCollection.reverse()}
                   selectedCase={selectedCase}
                   setSelectedCase={setSelectedCase}
                   casesAvailable={contentfulProduct.casesAvailable}

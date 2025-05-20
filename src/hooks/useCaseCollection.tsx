@@ -1,7 +1,7 @@
 import React, { useMemo } from "react"
 import { useStaticQuery, graphql } from "gatsby"
 
-export const useCaseCollection = () => {
+export const useCaseCollection = (reverse: boolean = false) => {
   const getCaseCollection = () => {
     const { shopifyCollection } = useStaticQuery(graphql`
       query GetAOCaseCollectionStock {

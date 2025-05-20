@@ -488,7 +488,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
       (variant: any) => variant.sku === contentfulProduct.variants[0].sku
     ),
   })
-  const caseCollection = useCaseCollection().reverse()
+  const caseCollection = useCaseCollection(true)
 
   const [selectedCase, setSelectedCase] = useState<any>(
     caseCollection[0].variants[0]

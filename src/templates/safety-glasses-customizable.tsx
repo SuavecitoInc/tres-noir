@@ -412,6 +412,7 @@ type Props = {
   location: any
 }
 const ProductCustomizable = ({ data, location: any }: Props) => {
+  const caseCollection = useCaseCollection()
   const {
     contentfulProduct,
     shopifyProduct,
@@ -488,13 +489,10 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
       (variant: any) => variant.sku === contentfulProduct.variants[0].sku
     ),
   })
-  const caseCollection = useCaseCollection(true)
 
   const [selectedCase, setSelectedCase] = useState<any>(
-    caseCollection[0].variants[0]
+    caseCollection[1].variants[0] // safety pouch
   )
-
-  const [showPolarizedModal, setShowPolarizedModal] = useState<boolean>(false)
 
   // used to swap polarized image if the lens color is different from original sku
   const [polarizedImage, setPolarizedImage] = useState<

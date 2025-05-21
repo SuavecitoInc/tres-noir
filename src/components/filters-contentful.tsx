@@ -366,7 +366,8 @@ const FiltersContentful = ({
               <div className="color-options">
                 {colors.length &&
                   colors.map((colorName: string) => {
-                    const image = frameColors[colorName.replace("-", "_")]
+                    const image =
+                      frameColors[colorName.replace("-", "_").replace(" ", "_")]
                     return (
                       <button
                         className="filter color-filter"

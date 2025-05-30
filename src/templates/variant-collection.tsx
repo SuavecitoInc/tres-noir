@@ -61,8 +61,6 @@ const VariantCollection = ({
     frameWidth: string
     colorName: string
   }>(defaultFilters)
-  // delete
-  console.log("collection.variants", collection)
   const [variants, setVariants] = useState<ContentfulProductVariant[]>(
     collection.variants
   )

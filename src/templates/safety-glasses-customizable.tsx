@@ -468,9 +468,10 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
   enum LensType {
     GLASSES = "glasses",
     SUNGLASSES = "sunglasses",
+    SAFETY = "safety",
   }
 
-  const [lensType, setLensType] = useState<string>("sunglasses")
+  const [lensType, setLensType] = useState<string>("safety")
   contentfulProduct.variants = useFilterDuplicateFrames(
     lensType,
     contentfulProduct.variants
@@ -493,7 +494,6 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
   const [selectedCase, setSelectedCase] = useState<any>(
     caseCollection[1].variants[0] // safety pouch
   )
-
   // used to swap polarized image if the lens color is different from original sku
   const [polarizedImage, setPolarizedImage] = useState<
     {
@@ -880,6 +880,10 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
     }
   }
 
+  // check if selected variant is rx only, clear lens variants are rx only
+  const isRxOnly =
+    selectedVariant.contentful.colorName.toLowerCase() === "clear"
+
   // use effects
 
   useEffect(() => {
@@ -986,17 +990,17 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
 
   // useEffect for initializing polarizedVariant on selectedVariant change
   useEffect(() => {
-    if (lensType === LensType.GLASSES) {
-      const polarizedToggle =
-        actionsRef.current?.querySelector("#polarized-toggle")
-      const customizeBtn = actionsRef.current?.querySelector("#customize-btn")
-      customizeBtn?.classList.remove("disable")
-      polarizedToggle?.classList.add("disable")
-      const polarizedSwitch: HTMLInputElement | null | undefined =
-        polarizedToggle?.querySelector("#switch")
-      if (polarizedSwitch) polarizedSwitch.checked = false
-      return
-    }
+    // if (lensType === LensType.GLASSES) {
+    //   const polarizedToggle =
+    //     actionsRef.current?.querySelector("#polarized-toggle")
+    //   const customizeBtn = actionsRef.current?.querySelector("#customize-btn")
+    //   customizeBtn?.classList.remove("disable")
+    //   polarizedToggle?.classList.add("disable")
+    //   const polarizedSwitch: HTMLInputElement | null | undefined =
+    //     polarizedToggle?.querySelector("#switch")
+    //   if (polarizedSwitch) polarizedSwitch.checked = false
+    //   return
+    // }
     const contentfulData = selectedVariant.contentful
     const sku = selectedVariant.shopify.sku
     const polVar = shopifyProduct.variants.find(
@@ -1061,15 +1065,16 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
             <div className="col images">
               <ProductCarousel
                 key={`${selectedVariant?.contentful.id}-${lensType}`}
-                imageSet={
-                  polarizedImage.length !== 0
-                    ? polarizedImage
-                    : selectedVariant?.contentful &&
-                      lensType === LensType.GLASSES &&
-                      selectedVariant.contentful.imageSetClear
-                    ? selectedVariant.contentful.imageSetClear
-                    : selectedVariant.contentful.imageSet
-                }
+                // imageSet={
+                //   polarizedImage.length !== 0
+                //     ? polarizedImage
+                //     : selectedVariant?.contentful &&
+                //       lensType === LensType.GLASSES &&
+                //       selectedVariant.contentful.imageSetClear
+                //     ? selectedVariant.contentful.imageSetClear
+                //     : selectedVariant.contentful.imageSet
+                // }
+                imageSet={selectedVariant.contentful.imageSet}
               />
             </div>
             <div className="col">
@@ -1115,11 +1120,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                 {selectedVariant.shopify.title !== "Default Title" && (
                   <p className="selected-text-label">
                     Lens Color:{" "}
-                    <span>
-                      {lensType === LensType.GLASSES
-                        ? selectedVariant.shopify.title.split(" - ")[0]
-                        : selectedVariant.shopify.title}
-                    </span>
+                    <span>{selectedVariant.contentful.colorName}</span>
                   </p>
                 )}
 
@@ -1301,7 +1302,9 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                     </div>
                   ) : (
                     <div>
-                      {lensType !== LensType.GLASSES && (
+                      {/* lensType !== LensType.Glasses */}
+                      {/* Rx Only for Clear Lense */}
+                      {!isRxOnly && (
                         <>
                           {" "}
                           <button
@@ -1321,13 +1324,14 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                         className={`btn ${isPolarized ? "disable" : ""}`}
                         // to={contentfulProduct && customizeUrl}
                         id="customize-btn"
-                        to={`/products/${
-                          contentfulProduct.handle
-                        }/customize?variant=${selectedVariant.shopify.sku}${
-                          lensType !== LensType.SUNGLASSES
-                            ? `&lens_type=${lensType}`
-                            : ""
-                        }`}
+                        // to={`/products/${
+                        //   contentfulProduct.handle
+                        // }/customize?variant=${selectedVariant.shopify.sku}${
+                        //   lensType !== LensType.SUNGLASSES
+                        //     ? `&lens_type=${lensType}`
+                        //     : ""
+                        // }`}
+                        to={`/products/${contentfulProduct.handle}/customize?variant=${selectedVariant.shopify.sku}&lens_type=${LensType.SAFETY}`}
                       >
                         ADD PRESCRIPTION
                       </Link>
@@ -1342,7 +1346,8 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
           </div>
           <div className="row mobile-reverse">
             <div
-              className={`col ${lensType !== LensType.GLASSES ? "images" : ""}`}
+              // className={`col ${lensType !== LensType.GLASSES ? "images" : ""}`}
+              className="col images"
             >
               <ProductDetails
                 frameWidth={contentfulProduct.frameWidthMeasurement}
@@ -1351,7 +1356,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                 lensType={lensType}
               />
             </div>
-            {lensType !== LensType.GLASSES && (
+            {/* {lensType !== LensType.GLASSES && (
               <div className="col">
                 <CaseGridSunglasses
                   caseCollection={caseCollection}
@@ -1360,11 +1365,19 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                   casesAvailable={contentfulProduct.casesAvailable}
                 />
               </div>
-            )}
+            )} */}
+            <div className="col">
+              <CaseGridSunglasses
+                caseCollection={caseCollection}
+                selectedCase={selectedCase}
+                setSelectedCase={setSelectedCase}
+                casesAvailable={contentfulProduct.casesAvailable}
+              />
+            </div>
           </div>
           {contentfulProduct.featuredStyles && (
             <>
-              {lensType === LensType.SUNGLASSES && (
+              {lensType === LensType.SAFETY && (
                 <Divider className="desktop-only" />
               )}
 

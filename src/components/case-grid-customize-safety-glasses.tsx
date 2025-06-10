@@ -166,7 +166,7 @@ const CaseGridCustomize: React.FC<Props> = ({ casesAvailable }) => {
 
   useEffect(() => {
     if (hasSavedCustomized["case"] === false) {
-      handleChange(caseCollection[0].variants[0], false)
+      handleChange(caseCollection[1].variants[0], false)
     }
   }, [])
 

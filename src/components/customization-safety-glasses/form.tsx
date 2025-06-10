@@ -413,11 +413,6 @@ const Form = ({
     setFilteredCollection([...new Set(blockedSelections)])
   }, [currentStep, lens])
 
-  console.log(
-    "selectedVariants[`step${currentStep}`]",
-    selectedVariants[`step${currentStep}`]
-  )
-
   return (
     <Component>
       <div className="step-header" ref={topRef}>

@@ -143,6 +143,17 @@ const ProductDetails: React.FC<Props> = ({
 
   const isSafetyGlasses = lensType === "safety"
 
+  // TODO: Update details based on Glasses or Safety Glasses
+  const pouchValue = isSafetyGlasses ? "SAFETY POUCH" : "MICROFIBER POUCH"
+
+  const lensMaterialValue = isSafetyGlasses ? "POLYCARBONATE" : "CR-39"
+
+  const lensColorValue = lensType === "glasses" ? "Clear" : lensColor
+
+  const frameMaterialValue = isSafetyGlasses
+    ? "POLYCARBONATE"
+    : "HAND-CUT ACETATE"
+
   return (
     <Component>
       <div className="tr">
@@ -178,7 +189,7 @@ const ProductDetails: React.FC<Props> = ({
           <div className="image"></div>
 
           <div className="details">
-            <p>{isSafetyGlasses ? "SAFETY POUCH" : "MICROFIBER POUCH"}</p>
+            <p>{pouchValue}</p>
           </div>
 
           <div className="details">
@@ -203,10 +214,7 @@ const ProductDetails: React.FC<Props> = ({
             />
           </div>
           <div className="image">
-            <GatsbyImage
-              image={lensData}
-              alt={`${lensType === "glasses" ? "Clear" : lensColor} lens`}
-            />
+            <GatsbyImage image={lensData} alt={`${lensColorValue} lens`} />
           </div>
           <div className="image">
             <StaticImage
@@ -218,17 +226,17 @@ const ProductDetails: React.FC<Props> = ({
 
           <div className="details">
             <p>LENS MATERIAL</p>
-            <p>CR-39</p>
+            <p>{lensMaterialValue}</p>
           </div>
 
           <div className="details">
             <p>LENS COLOR</p>
-            <p>{lensType === "glasses" ? "Clear" : lensColor}</p>
+            <p>{lensColorValue}</p>
           </div>
 
           <div className="details">
             <p>FRAME MATERIAL</p>
-            <p>HAND-CUT ACETATE</p>
+            <p>{frameMaterialValue}</p>
           </div>
         </div>
       </div>

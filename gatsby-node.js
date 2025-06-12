@@ -213,11 +213,11 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
   //     },
   //   })
   // })
-  // new safety glasses
+  // new safety glasses patch
   pageable.data.allContentfulProduct.edges.forEach(
     async ({ node: { handle, productType } }) => {
       const template =
-        productType[0] === "Safety Glasses"
+        productType === "Safety Glasses"
           ? `./src/templates/learn-more/safety-glasses.tsx`
           : `./src/templates/learn-more/index.tsx`
 

@@ -47,6 +47,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
         edges {
           node {
             handle
+            productType
           }
         }
       }
@@ -203,15 +204,32 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       })
     }
   )
-  pageable.data.allContentfulProduct.edges.forEach(({ node: { handle } }) => {
-    createPage({
-      path: `/${handle}`,
-      component: path.resolve(`./src/templates/learn-more/index.tsx`),
-      context: {
-        handle,
-      },
-    })
-  })
+  // pageable.data.allContentfulProduct.edges.forEach(({ node: { handle } }) => {
+  //   createPage({
+  //     path: `/${handle}`,
+  //     component: path.resolve(`./src/templates/learn-more/index.tsx`),
+  //     context: {
+  //       handle,
+  //     },
+  //   })
+  // })
+  // new safety glasses
+  pageable.data.allContentfulProduct.edges.forEach(
+    async ({ node: { handle, productType } }) => {
+      const template =
+        productType[0] === "Safety Glasses"
+          ? `./src/templates/learn-more/safety-glasses.tsx`
+          : `./src/templates/learn-more/index.tsx`
+
+      createPage({
+        path: `/${handle}`,
+        component: path.resolve(template),
+        context: {
+          handle,
+        },
+      })
+    }
+  )
   pageable.data.allContentfulCollection.edges.forEach(
     ({ node: { handle } }) => {
       const template = "collection-contentful"

@@ -204,15 +204,6 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       })
     }
   )
-  // pageable.data.allContentfulProduct.edges.forEach(({ node: { handle } }) => {
-  //   createPage({
-  //     path: `/${handle}`,
-  //     component: path.resolve(`./src/templates/learn-more/index.tsx`),
-  //     context: {
-  //       handle,
-  //     },
-  //   })
-  // })
   // new safety glasses patch
   pageable.data.allContentfulProduct.edges.forEach(
     async ({ node: { handle, productType } }) => {

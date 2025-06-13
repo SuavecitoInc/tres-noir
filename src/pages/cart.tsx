@@ -22,6 +22,7 @@ import { VscClose } from "react-icons/vsc"
 import UpsellCart from "../components/upsell-cart"
 import { SelectedVariantStorage } from "../types/global"
 import { CustomizeContext } from "../contexts/customize"
+import { CustomizeContext as SafetyCustomizeContext } from "../contexts/customize-safety-glasses"
 import { RxInfoContext } from "../contexts/rxInfo"
 import { isDiscounted } from "../helpers/shopify"
 import EnableShipInsure from "../components/enable-shipinsure"
@@ -308,6 +309,12 @@ const Cart = ({
   const { setSelectedVariants, setCurrentStep, setHasSavedCustomized } =
     useContext(CustomizeContext)
 
+  const {
+    setSelectedVariants: setSelectedSafetyVariants,
+    setCurrentStep: setCurrentSafetyStep,
+    setHasSavedCustomized: setHasSavedSafetyCustomized,
+  } = useContext(SafetyCustomizeContext)
+
   const stepMap = new Map()
   stepMap.set(1, "RX TYPE")
   stepMap.set(2, "LENS TYPE")
@@ -352,18 +359,39 @@ const Cart = ({
             payload: prescription,
           })
         }
-        // prepare context for editing
-        // setting context
-        setSelectedVariants(resumedSelectedVariants)
-        // setting savedCustomized context so radio won't default to top option
-        setHasSavedCustomized({
-          step1: true,
-          step2: true,
-          step3: true,
-          step4: true,
-          case: true,
-        })
-        setCurrentStep(5)
+
+        // safety glasses have 3 line items, customized glasses have 6 line items
+        const isSafetyGlasses = item.lineItems.length === 3
+        // glasses summary = 5, safety glasses summary = 2
+        const currentStep = isSafetyGlasses ? 2 : 5
+        if (isSafetyGlasses) {
+          // prepare context for editing
+          // setting context
+          setSelectedSafetyVariants(resumedSelectedVariants)
+          // setting savedCustomized context so radio won't default to top option
+          setHasSavedSafetyCustomized({
+            step1: true,
+            case: true,
+          })
+          setCurrentSafetyStep(currentStep)
+        } else {
+          // prepare context for editing
+          // setting context
+          setSelectedVariants(resumedSelectedVariants)
+          // setting savedCustomized context so radio won't default to top option
+          setHasSavedCustomized({
+            step1: true,
+            step2: true,
+            step3: true,
+            step4: true,
+            case: true,
+          })
+          setCurrentStep(currentStep)
+        }
+        alert(
+          "You are about to edit your customized glasses. Please make sure you have your prescription ready. Step: " +
+            currentStep
+        )
         // navigate to step 5 of customize page
         navigate(
           // @ts-ignore

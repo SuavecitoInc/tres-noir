@@ -22,7 +22,6 @@ import type {
   rxType,
 } from "../../contexts/storefront-cart/types/storefront-cart"
 import { isDiscounted, formatPrice } from "../../helpers/shopify"
-import ReadersTable from "../readers-table"
 import type { SafetyLensColor } from "../../types/safety"
 
 const Form = ({
@@ -42,7 +41,6 @@ const Form = ({
     setSelectedVariants,
     hasSavedCustomized,
     setHasSavedCustomized,
-    defaultVariant,
   } = useContext(CustomizeContext)
 
   const stepMap = new Map()
@@ -57,20 +55,15 @@ const Form = ({
   const topRef = useRef<HTMLDivElement>(null)
   const [filteredCollection, setFilteredCollection] = useState<string[]>([])
   const [editHasError, setEditHasError] = useState(false)
-  const isReaders = selectedVariants.step1.product.title === "Reader's"
+  // const isReaders = selectedVariants.step1.product.title === "Reader's"
 
   const handleChange = (
     evt: React.ChangeEvent<HTMLInputElement> | null,
     variant: ShopifyVariant,
     isSetFromEvent: boolean = true
   ) => {
-    setRxAble(variant.product?.title !== "Non-Prescription Lens")
-    if (variant.product?.title === "Non-Prescription Lens") {
-      if (messageRef.current) {
-        removeChildNodes(messageRef.current)
-        continueBtn.current?.classList.remove("disable")
-      }
-    } else if (variant.product?.title === "Single Vision") {
+    setRxAble(true) // !== "Non-Prescription Lens"
+    if (variant.product?.title === "Single Vision") {
       if (messageRef.current) {
         if (messageRef.current.querySelector("#readers-error")) {
           removeChildNodes(messageRef.current)
@@ -87,11 +80,6 @@ const Form = ({
         errorRefs.current[`select-left-add`].classList.add("disable")
       if (errorRefs.current[`select-left-add`])
         errorRefs.current[`select-left-add`].querySelector("select").value = ""
-    } else if (variant.product?.title === "Reader's") {
-      if (messageRef.current) {
-        removeChildNodes(messageRef.current)
-        continueBtn.current?.classList.remove("disable")
-      }
     } else {
       if (messageRef.current) {
         if (messageRef.current.querySelector("#readers-error")) {
@@ -195,28 +183,6 @@ const Form = ({
       setIsFormValid(isValid)
       return isValid
     }
-    if (isReaders) {
-      if (rxInfo.lensPower === "") {
-        let node = document.createElement("li")
-        node.textContent = "Please add a lens power"
-        node.setAttribute("id", "readers-error")
-        messages.push(node)
-        isValid = false
-        if (!isValid && messageRef.current) {
-          for (let i = 0; i < messages.length; ++i) {
-            messageRef.current?.appendChild(messages[i])
-          }
-        }
-        if (!isValid) {
-          continueBtn.current?.classList.add("disable")
-        }
-        setIsFormValid(isValid)
-        return isValid
-      } else {
-        setIsFormValid(isValid)
-        return isValid
-      }
-    }
     if (
       rxInfo.right.sph === "0.00" &&
       rxInfo.left.sph === "0.00" &&
@@ -293,25 +259,6 @@ const Form = ({
       handleChange(null, initialSelection, false)
     }
   }, [shopifyCollection.products, filteredCollection]) // this is the only dependency that should be here
-
-  // useEffect(() => {
-  //   if (hasSavedCustomized[`step${currentStep}`] === false) {
-  //     // if first option is disabled, select the second one.
-  //     // validationArr.includes(shopifyCollection.products[0].variants[0].title)
-  //     console.log("blockedselections", filteredCollection)
-  //     handleChange(null, shopifyCollection.products[0].variants[0], false)
-  //   }
-  // }, [shopifyCollection.products[0].variants[0], filteredCollection]) // this is the only dependency that should be here
-
-  // // useEffect to fix bug where Non Precription Lens selection will still error out
-  // useEffect(() => {
-  //   if (
-  //     currentStep === 1 &&
-  //     selectedVariants.step1.product.title === "Non-Prescription Lens"
-  //   ) {
-  //     enableContinue()
-  //   }
-  // }, [currentStep, selectedVariants])
 
   // restore on refresh
   useEffect(() => {
@@ -567,284 +514,286 @@ const Form = ({
           </React.Fragment>
         )
       })}
-      {(currentStep === 1 &&
-        selectedVariants.step1.product.title !== "Non-Prescription Lens" &&
-        selectedVariants.step1.product.title !== "Reader's") ||
-      selectedVariants.step1.product.title === "" ? (
-        <div className="rx-info">
-          <div className="rx-box">
-            <div className="rx-col">
-              <p>Right Eye (OD)</p>
-              <div
-                className="rx-select"
-                ref={el => {
-                  errorRefs.current["select-right-sph"] = el
-                }}
-              >
-                <label htmlFor="right-sph">SPH</label>
-                <select
-                  id="right-sph"
-                  defaultValue={rxInfo.right.sph}
-                  onChange={evt => handleRx(evt)}
+      {
+        // (currentStep === 1 &&
+        //   selectedVariants.step1.product.title !== "Non-Prescription Lens" &&
+        //   selectedVariants.step1.product.title !== "Reader's")
+        currentStep === 1 || selectedVariants.step1.product.title === "" ? (
+          <div className="rx-info">
+            <div className="rx-box">
+              <div className="rx-col">
+                <p>Right Eye (OD)</p>
+                <div
+                  className="rx-select"
+                  ref={el => {
+                    errorRefs.current["select-right-sph"] = el
+                  }}
                 >
-                  {range(-20, 20, 0.25, "right-sph").map(el => {
-                    return (
-                      <React.Fragment key={`right-sph-${el}`}>
-                        <option value={el}>{el}</option>
-                      </React.Fragment>
-                    )
-                  })}
-                </select>
-              </div>
-              <div
-                className="rx-select"
-                ref={el => {
-                  errorRefs.current["select-right-cyl"] = el
-                }}
-              >
-                <label htmlFor="right-cyl">CYL</label>
-                <select
-                  id="right-cyl"
-                  defaultValue={rxInfo.right.cyl}
-                  onChange={evt => handleRx(evt)}
-                >
-                  {range(-20, 20, 0.25, "right-cyl").map(el => {
-                    return (
-                      <React.Fragment key={`right-cyl-${el}`}>
-                        <option value={el}>{el}</option>
-                      </React.Fragment>
-                    )
-                  })}
-                </select>
-              </div>
-              <div
-                className={
-                  rxInfo.right.cyl === "0.00"
-                    ? "rx-select disable"
-                    : "rx-select"
-                }
-                ref={el => {
-                  errorRefs.current["select-right-axis"] = el
-                }}
-              >
-                <label htmlFor="right-axis">Axis</label>
-                <select
-                  id="right-axis"
-                  defaultValue={rxInfo.right.axis}
-                  onChange={evt => handleRx(evt)}
-                  disabled={rxInfo.right.cyl === "0.00"}
-                >
-                  <option>{""}</option>
-                  {range(1, 180, 1, "right-axis").map(el => {
-                    return (
-                      <React.Fragment key={`right-axis-${el}`}>
-                        <option value={el}>{el}</option>
-                      </React.Fragment>
-                    )
-                  })}
-                </select>
-              </div>
-              <div
-                className={
-                  selectedVariants.step1.product.title === "Single Vision"
-                    ? "rx-select disable"
-                    : "rx-select"
-                }
-                ref={el => {
-                  errorRefs.current["select-right-add"] = el
-                }}
-              >
-                <label htmlFor="right-add">Add</label>
-                <select
-                  id="right-add"
-                  defaultValue={rxInfo.right.add}
-                  onChange={evt => handleRx(evt)}
-                  disabled={
-                    selectedVariants.step1.product.title === "Single Vision"
-                  }
-                >
-                  <option>{""}</option>
-                  {range(0, 3.5, 0.25, "right-add").map(el => {
-                    return (
-                      <React.Fragment key={`right-add-${el}`}>
-                        <option value={el}>{el}</option>
-                      </React.Fragment>
-                    )
-                  })}
-                </select>
-              </div>
-            </div>
-            <div className="rx-col">
-              <p>Left Eye (OS)</p>
-              <div
-                className="rx-select"
-                ref={el => {
-                  errorRefs.current["select-left-sph"] = el
-                }}
-              >
-                <label htmlFor="left-sph">SPH</label>
-                <select
-                  id="left-sph"
-                  defaultValue={rxInfo.left.sph}
-                  onChange={evt => handleRx(evt)}
-                >
-                  {range(-20, 20, 0.25, "left-sph").map(el => {
-                    return (
-                      <React.Fragment key={`left-sph-${el}`}>
-                        <option value={el}>{el}</option>
-                      </React.Fragment>
-                    )
-                  })}
-                </select>
-              </div>
-              <div
-                className="rx-select"
-                ref={el => {
-                  errorRefs.current["select-left-cyl"] = el
-                }}
-              >
-                <label htmlFor="left-cyl">CYL</label>
-                <select
-                  id="left-cyl"
-                  defaultValue={rxInfo.left.cyl}
-                  onChange={evt => handleRx(evt)}
-                >
-                  {range(-20, 20, 0.25, "left-cyl").map(el => {
-                    return (
-                      <React.Fragment key={`left-cyl-${el}`}>
-                        <option value={el}>{el}</option>
-                      </React.Fragment>
-                    )
-                  })}
-                </select>
-              </div>
-              <div
-                className={
-                  rxInfo.left.cyl === "0.00" ? "rx-select disable" : "rx-select"
-                }
-                ref={el => {
-                  errorRefs.current["select-left-axis"] = el
-                }}
-              >
-                <label htmlFor="left-axis">Axis</label>
-                <select
-                  id="left-axis"
-                  defaultValue={rxInfo.left.axis}
-                  onChange={evt => handleRx(evt)}
-                  disabled={rxInfo.left.cyl === "0.00"}
-                >
-                  <option>{""}</option>
-                  {range(1, 180, 1, "left-axis").map(el => (
-                    <React.Fragment key={`left-axis-${el}`}>
-                      <option value={el}>{el}</option>
-                    </React.Fragment>
-                  ))}
-                </select>
-              </div>
-              <div
-                className={
-                  selectedVariants.step1.product.title === "Single Vision"
-                    ? "rx-select disable"
-                    : "rx-select"
-                }
-                ref={el => {
-                  errorRefs.current["select-left-add"] = el
-                }}
-              >
-                <label htmlFor="left-add">Add</label>
-                <select
-                  id="left-add"
-                  defaultValue={rxInfo.left.add}
-                  onChange={evt => handleRx(evt)}
-                  disabled={
-                    selectedVariants.step1.product.title === "Single Vision"
-                  }
-                >
-                  <option>{""}</option>
-                  {range(0, 3.5, 0.25, "left-add").map(el => (
-                    <React.Fragment key={`left-add-${el}`}>
-                      <option value={el}>{el}</option>
-                    </React.Fragment>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
-          <div className="rx-box">
-            <div className="rx-col">
-              <div className="rx-select">
-                <div className="pd-box">
-                  <label htmlFor="right-pd">Pupillary Distance Right</label>
-                  <div>
-                    <FaQuestionCircle />
-                    <span className="tooltip-text">
-                      <a href="https://www.youtube.com/watch?v=OBuX8QEabZc">
-                        Need help measuring your pd? Click here!
-                      </a>
-                    </span>
-                  </div>
+                  <label htmlFor="right-sph">SPH</label>
+                  <select
+                    id="right-sph"
+                    defaultValue={rxInfo.right.sph}
+                    onChange={evt => handleRx(evt)}
+                  >
+                    {range(-20, 20, 0.25, "right-sph").map(el => {
+                      return (
+                        <React.Fragment key={`right-sph-${el}`}>
+                          <option value={el}>{el}</option>
+                        </React.Fragment>
+                      )
+                    })}
+                  </select>
                 </div>
-                <select
-                  id="right-pd"
-                  defaultValue={rxInfo.right.pd}
-                  onChange={evt => handleRx(evt)}
+                <div
+                  className="rx-select"
+                  ref={el => {
+                    errorRefs.current["select-right-cyl"] = el
+                  }}
                 >
-                  {range(24, 78.5, 0.5, "right-pd").map(el => {
-                    return (
-                      <React.Fragment key={`right-pd-${el}`}>
-                        <option value={el}>{el}</option>
-                      </React.Fragment>
-                    )
-                  })}
-                </select>
-              </div>
-            </div>
-            <div className="rx-col">
-              <div className="rx-select">
-                <div className="pd-box">
-                  <label htmlFor="left-pd">Pupillary Distance Left</label>
-                  <div>
-                    <FaQuestionCircle />
-                    <span className="tooltip-text">
-                      <a href="https://www.youtube.com/watch?v=OBuX8QEabZc">
-                        Need help measuring your pd? Click here!
-                      </a>
-                    </span>
-                  </div>
+                  <label htmlFor="right-cyl">CYL</label>
+                  <select
+                    id="right-cyl"
+                    defaultValue={rxInfo.right.cyl}
+                    onChange={evt => handleRx(evt)}
+                  >
+                    {range(-20, 20, 0.25, "right-cyl").map(el => {
+                      return (
+                        <React.Fragment key={`right-cyl-${el}`}>
+                          <option value={el}>{el}</option>
+                        </React.Fragment>
+                      )
+                    })}
+                  </select>
                 </div>
-                <select
-                  id="left-pd"
-                  defaultValue={rxInfo.left.pd}
-                  onChange={evt => handleRx(evt)}
+                <div
+                  className={
+                    rxInfo.right.cyl === "0.00"
+                      ? "rx-select disable"
+                      : "rx-select"
+                  }
+                  ref={el => {
+                    errorRefs.current["select-right-axis"] = el
+                  }}
                 >
-                  {range(24, 78.5, 0.5, "left-pd").map(el => {
-                    return (
-                      <React.Fragment key={`left-pd-${el}`}>
+                  <label htmlFor="right-axis">Axis</label>
+                  <select
+                    id="right-axis"
+                    defaultValue={rxInfo.right.axis}
+                    onChange={evt => handleRx(evt)}
+                    disabled={rxInfo.right.cyl === "0.00"}
+                  >
+                    <option>{""}</option>
+                    {range(1, 180, 1, "right-axis").map(el => {
+                      return (
+                        <React.Fragment key={`right-axis-${el}`}>
+                          <option value={el}>{el}</option>
+                        </React.Fragment>
+                      )
+                    })}
+                  </select>
+                </div>
+                <div
+                  className={
+                    selectedVariants.step1.product.title === "Single Vision"
+                      ? "rx-select disable"
+                      : "rx-select"
+                  }
+                  ref={el => {
+                    errorRefs.current["select-right-add"] = el
+                  }}
+                >
+                  <label htmlFor="right-add">Add</label>
+                  <select
+                    id="right-add"
+                    defaultValue={rxInfo.right.add}
+                    onChange={evt => handleRx(evt)}
+                    disabled={
+                      selectedVariants.step1.product.title === "Single Vision"
+                    }
+                  >
+                    <option>{""}</option>
+                    {range(0, 3.5, 0.25, "right-add").map(el => {
+                      return (
+                        <React.Fragment key={`right-add-${el}`}>
+                          <option value={el}>{el}</option>
+                        </React.Fragment>
+                      )
+                    })}
+                  </select>
+                </div>
+              </div>
+              <div className="rx-col">
+                <p>Left Eye (OS)</p>
+                <div
+                  className="rx-select"
+                  ref={el => {
+                    errorRefs.current["select-left-sph"] = el
+                  }}
+                >
+                  <label htmlFor="left-sph">SPH</label>
+                  <select
+                    id="left-sph"
+                    defaultValue={rxInfo.left.sph}
+                    onChange={evt => handleRx(evt)}
+                  >
+                    {range(-20, 20, 0.25, "left-sph").map(el => {
+                      return (
+                        <React.Fragment key={`left-sph-${el}`}>
+                          <option value={el}>{el}</option>
+                        </React.Fragment>
+                      )
+                    })}
+                  </select>
+                </div>
+                <div
+                  className="rx-select"
+                  ref={el => {
+                    errorRefs.current["select-left-cyl"] = el
+                  }}
+                >
+                  <label htmlFor="left-cyl">CYL</label>
+                  <select
+                    id="left-cyl"
+                    defaultValue={rxInfo.left.cyl}
+                    onChange={evt => handleRx(evt)}
+                  >
+                    {range(-20, 20, 0.25, "left-cyl").map(el => {
+                      return (
+                        <React.Fragment key={`left-cyl-${el}`}>
+                          <option value={el}>{el}</option>
+                        </React.Fragment>
+                      )
+                    })}
+                  </select>
+                </div>
+                <div
+                  className={
+                    rxInfo.left.cyl === "0.00"
+                      ? "rx-select disable"
+                      : "rx-select"
+                  }
+                  ref={el => {
+                    errorRefs.current["select-left-axis"] = el
+                  }}
+                >
+                  <label htmlFor="left-axis">Axis</label>
+                  <select
+                    id="left-axis"
+                    defaultValue={rxInfo.left.axis}
+                    onChange={evt => handleRx(evt)}
+                    disabled={rxInfo.left.cyl === "0.00"}
+                  >
+                    <option>{""}</option>
+                    {range(1, 180, 1, "left-axis").map(el => (
+                      <React.Fragment key={`left-axis-${el}`}>
                         <option value={el}>{el}</option>
                       </React.Fragment>
-                    )
-                  })}
-                </select>
+                    ))}
+                  </select>
+                </div>
+                <div
+                  className={
+                    selectedVariants.step1.product.title === "Single Vision"
+                      ? "rx-select disable"
+                      : "rx-select"
+                  }
+                  ref={el => {
+                    errorRefs.current["select-left-add"] = el
+                  }}
+                >
+                  <label htmlFor="left-add">Add</label>
+                  <select
+                    id="left-add"
+                    defaultValue={rxInfo.left.add}
+                    onChange={evt => handleRx(evt)}
+                    disabled={
+                      selectedVariants.step1.product.title === "Single Vision"
+                    }
+                  >
+                    <option>{""}</option>
+                    {range(0, 3.5, 0.25, "left-add").map(el => (
+                      <React.Fragment key={`left-add-${el}`}>
+                        <option value={el}>{el}</option>
+                      </React.Fragment>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
+            <div className="rx-box">
+              <div className="rx-col">
+                <div className="rx-select">
+                  <div className="pd-box">
+                    <label htmlFor="right-pd">Pupillary Distance Right</label>
+                    <div>
+                      <FaQuestionCircle />
+                      <span className="tooltip-text">
+                        <a href="https://www.youtube.com/watch?v=OBuX8QEabZc">
+                          Need help measuring your pd? Click here!
+                        </a>
+                      </span>
+                    </div>
+                  </div>
+                  <select
+                    id="right-pd"
+                    defaultValue={rxInfo.right.pd}
+                    onChange={evt => handleRx(evt)}
+                  >
+                    {range(24, 78.5, 0.5, "right-pd").map(el => {
+                      return (
+                        <React.Fragment key={`right-pd-${el}`}>
+                          <option value={el}>{el}</option>
+                        </React.Fragment>
+                      )
+                    })}
+                  </select>
+                </div>
+              </div>
+              <div className="rx-col">
+                <div className="rx-select">
+                  <div className="pd-box">
+                    <label htmlFor="left-pd">Pupillary Distance Left</label>
+                    <div>
+                      <FaQuestionCircle />
+                      <span className="tooltip-text">
+                        <a href="https://www.youtube.com/watch?v=OBuX8QEabZc">
+                          Need help measuring your pd? Click here!
+                        </a>
+                      </span>
+                    </div>
+                  </div>
+                  <select
+                    id="left-pd"
+                    defaultValue={rxInfo.left.pd}
+                    onChange={evt => handleRx(evt)}
+                  >
+                    {range(24, 78.5, 0.5, "left-pd").map(el => {
+                      return (
+                        <React.Fragment key={`left-pd-${el}`}>
+                          <option value={el}>{el}</option>
+                        </React.Fragment>
+                      )
+                    })}
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className="rx-prism">
+              <p>
+                Need prism correction OR further assistance inputting your Rx?
+                Email{" "}
+                <a href="mailto:info@tresnoir.com">
+                  <span>info@tresnoir.com</span>{" "}
+                </a>
+                or call{" "}
+                <a href="tel:+17146564796">
+                  <span>714-656-4796</span>
+                </a>
+              </p>
+            </div>
           </div>
-          <div className="rx-prism">
-            <p>
-              Need prism correction OR further assistance inputting your Rx?
-              Email{" "}
-              <a href="mailto:info@tresnoir.com">
-                <span>info@tresnoir.com</span>{" "}
-              </a>
-              or call{" "}
-              <a href="tel:+17146564796">
-                <span>714-656-4796</span>
-              </a>
-            </p>
-          </div>
-        </div>
-      ) : currentStep === 1 && isReaders ? (
-        <ReadersTable clearErrors={clearErrors} isNowValid={isNowValid} />
-      ) : null}
+        ) : null
+      }
       <div className="row button-row">
         {currentStep === 1 ? (
           <Link className="button" to={productUrl}>

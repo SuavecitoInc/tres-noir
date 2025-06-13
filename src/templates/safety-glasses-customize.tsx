@@ -132,6 +132,8 @@ const Customize = ({
 
   const { currentStep, setProductUrl, selectedVariants } =
     useContext(CustomizeContext)
+  // delete
+  console.log("currentStep", currentStep)
   const [variant, setVariant] = useState({
     contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
     shopify: shopifyProduct.variants[0],

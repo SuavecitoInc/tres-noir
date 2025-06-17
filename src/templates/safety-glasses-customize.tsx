@@ -278,7 +278,7 @@ const Customize = ({
               {currentStep === 1 && (
                 <Step1
                   handle={shopifyProduct.handle}
-                  lens={variant.shopify.title as SafetyLensColor}
+                  lens={variant.contentful.colorName as SafetyLensColor}
                 />
               )}
               {currentStep === 2 && (

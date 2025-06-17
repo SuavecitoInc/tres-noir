@@ -151,7 +151,7 @@ const ProductDetails: React.FC<Props> = ({
   const lensColorValue = lensType === "glasses" ? "Clear" : lensColor
 
   const frameMaterialValue = isSafetyGlasses
-    ? "POLYCARBONATE"
+    ? "MOLD INJECTED"
     : "HAND-CUT ACETATE"
 
   return (
@@ -216,12 +216,21 @@ const ProductDetails: React.FC<Props> = ({
           <div className="image">
             <GatsbyImage image={lensData} alt={`${lensColorValue} lens`} />
           </div>
+
           <div className="image">
-            <StaticImage
-              src="../images/frame-material.png"
-              alt="Frame Material"
-              height={50}
-            />
+            {isSafetyGlasses ? (
+              <StaticImage
+                src="../images/frame-material-safety.png"
+                alt="Frame Material"
+                height={50}
+              />
+            ) : (
+              <StaticImage
+                src="../images/frame-material.png"
+                alt="Frame Material"
+                height={50}
+              />
+            )}
           </div>
 
           <div className="details">

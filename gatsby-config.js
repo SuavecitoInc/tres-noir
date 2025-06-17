@@ -7,7 +7,7 @@ const contentfulConfig = {
   accessToken:
     process.env.CONTENTFUL_ACCESS_TOKEN ||
     process.env.CONTENTFUL_DELIVERY_TOKEN,
-  environment: "staging",
+  environment: process.env.CONTENTFUL_ENVIRONMENT || "staging",
 }
 
 const siteUrl = `https://www.tresnoir.com`

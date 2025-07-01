@@ -118,7 +118,10 @@ const ProductContentful = ({
   const isExcludedFromDeals =
     (shopifyProduct && shopifyProduct.handle.includes("mooneyes")) ||
     (shopifyProduct && shopifyProduct.handle.includes("loser-machine"))
-  const lensType = isSunglasses ? "sunglasses" : "glasses"
+  let lensType = isSunglasses ? "sunglasses" : "glasses"
+  if (collectionHandle.includes("safety")) {
+    lensType = "safety"
+  }
 
   // remove variants marked as 'hidden' in shopify
   if (shopifyProduct) {
@@ -129,9 +132,7 @@ const ProductContentful = ({
   const [selectedVariant, setSelectedVariant] =
     useState<ContentfulProductVariant>(data.variants[0])
 
-  const productLink = isSunglasses
-    ? `/products/${data.handle}?lens_type=sunglasses`
-    : `/products/${data.handle}?lens_type=glasses`
+  const productLink = `/products/${data.handle}?lens_type=${lensType}`
 
   const selectVariant = (variant: ContentfulProductVariant) => {
     setSelectedVariant(variant)

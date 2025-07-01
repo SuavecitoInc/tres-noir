@@ -17,6 +17,19 @@
   </tr>
 </table>
 
+> This project is built with [Shopify](https://www.shopify.com/), [Gatsby](https://www.gatsbyjs.com/) and uses [Contentful](https://www.contentful.com/) as a headless CMS. The site is hosted on [Netlify](https://www.netlify.com/).
+
+## Environments
+
+- **Production**:
+  - Shopify: tres-noir
+  - Contentful: master
+  - Algolia: Products
+- **Staging**:
+  - Shopify: staging-tres-noir
+  - Contentful: staging
+  - Algolia: staging_Products
+
 ## Setup
 
 ### Hiding Variants

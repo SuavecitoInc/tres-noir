@@ -83,11 +83,21 @@ export interface SelectedVariants {
   case: any
 }
 
+export interface SafetyGlassesSelectedVariants {
+  step1: any
+  case: any
+}
+
 export interface SavedCustomizeContexts {
   step1: boolean
   step2: boolean
   step3: boolean
   step4: boolean
+  case: boolean
+}
+
+export interface SavedCustomizeSafetyContexts {
+  step1: boolean
   case: boolean
 }
 

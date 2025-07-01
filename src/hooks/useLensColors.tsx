@@ -49,6 +49,23 @@ export const useLensColors = () => {
             gatsbyImageData(quality: 40, height: 55)
           }
         }
+        gold_mirrored: file(relativePath: { eq: "gold-mirrored-lens.png" }) {
+          childImageSharp {
+            gatsbyImageData(quality: 40, height: 55)
+          }
+        }
+        silver_mirrored: file(
+          relativePath: { eq: "silver-mirrored-lens.png" }
+        ) {
+          childImageSharp {
+            gatsbyImageData(quality: 40, height: 55)
+          }
+        }
+        blue_mirrored: file(relativePath: { eq: "blue-mirrored-lens.png" }) {
+          childImageSharp {
+            gatsbyImageData(quality: 40, height: 55)
+          }
+        }
       }
     `
   )

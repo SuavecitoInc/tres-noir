@@ -9,8 +9,12 @@ export const useDiscountIdentifier = () => {
       }
     }
   `)
+  const identifier =
+    data.contentfulHomepage.discountIdentifier.toUpperCase() === "NONE"
+      ? ""
+      : data.contentfulHomepage.discountIdentifier
   return {
-    discountIdentifier: data.contentfulHomepage.discountIdentifier as string,
+    discountIdentifier: identifier,
     enableDiscountIdentifier: data.contentfulHomepage
       .enableDiscountIdentifier as boolean,
     overwriteLabel: true,

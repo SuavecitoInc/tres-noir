@@ -47,6 +47,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
         edges {
           node {
             handle
+            productType
           }
         }
       }
@@ -86,6 +87,12 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       if (productType === "Glasses" && contentfulHandles.includes(handle)) {
         template = "product-customizable"
         // TODO: if it exists in contentful its forsure customizable, add this case to optimize data in product-customizable.tsx
+      } else if (
+        productType === "Safety Glasses" &&
+        contentfulHandles.includes(handle)
+      ) {
+        template = "safety-glasses-customizable"
+        // template = "product-customizable"
       } else if (productType === "Gift Card" || productType === "Gift Cards") {
         template = "gift-card"
       }
@@ -119,6 +126,30 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
         createPage({
           path: `/products/${handle}/customize`,
           component: path.resolve(`./src/templates/customize.tsx`),
+          context: {
+            id,
+            handle,
+            legacyResourceId: legacyResourceId
+              ? legacyResourceId.toString()
+              : "",
+          },
+        })
+      }
+    }
+  )
+  // new safety glasses
+  pageable.data.allShopifyProduct.edges.forEach(
+    async ({ node: { handle, id, productType, legacyResourceId } }) => {
+      if (
+        productType === "Safety Glasses" &&
+        contentfulHandles.includes(handle)
+      ) {
+        createPage({
+          path: `/products/${handle}/customize`,
+          component: path.resolve(
+            `./src/templates/safety-glasses-customize.tsx`
+            // `./src/templates/customize.tsx`
+          ),
           context: {
             id,
             handle,
@@ -173,15 +204,23 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       })
     }
   )
-  pageable.data.allContentfulProduct.edges.forEach(({ node: { handle } }) => {
-    createPage({
-      path: `/${handle}`,
-      component: path.resolve(`./src/templates/learn-more/index.tsx`),
-      context: {
-        handle,
-      },
-    })
-  })
+  // new safety glasses patch
+  pageable.data.allContentfulProduct.edges.forEach(
+    async ({ node: { handle, productType } }) => {
+      const template =
+        productType === "Safety Glasses"
+          ? `./src/templates/learn-more/safety-glasses.tsx`
+          : `./src/templates/learn-more/index.tsx`
+
+      createPage({
+        path: `/${handle}`,
+        component: path.resolve(template),
+        context: {
+          handle,
+        },
+      })
+    }
+  )
   pageable.data.allContentfulCollection.edges.forEach(
     ({ node: { handle } }) => {
       const template = "collection-contentful"

@@ -132,8 +132,6 @@ const Customize = ({
 
   const { currentStep, setProductUrl, selectedVariants } =
     useContext(CustomizeContext)
-  // delete
-  console.log("currentStep", currentStep)
   const [variant, setVariant] = useState({
     contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
     shopify: shopifyProduct.variants[0],
@@ -278,7 +276,7 @@ const Customize = ({
               {currentStep === 1 && (
                 <Step1
                   handle={shopifyProduct.handle}
-                  lens={variant.shopify.title as SafetyLensColor}
+                  lens={variant.contentful.colorName as SafetyLensColor}
                 />
               )}
               {currentStep === 2 && (

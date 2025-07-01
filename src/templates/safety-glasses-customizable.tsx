@@ -766,9 +766,15 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
     }
   }
 
+  // TODO: move to contentful product schema
   // check if selected variant is rx only, clear lens variants are rx only
   const isRxOnly =
     selectedVariant.contentful.colorName.toLowerCase() === "clear"
+  // TODO: move to contentful product schema
+  // check if selected variant is non rx, gold, silver or blue lenses are non rx
+  const isNonRx = ["gold mirrored", "silve mirrored", "blue mirrored"].includes(
+    selectedVariant.contentful.colorName.toLowerCase()
+  )
 
   // use effects
 
@@ -1147,17 +1153,19 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                           >
                             {isAddingToCart ? <Spinner /> : `ADD TO CART`}
                           </button>
-                          <p>- OR -</p>
+                          {!isNonRx && <p>- OR -</p>}
                         </>
                       )}
 
-                      <Link
-                        className="btn"
-                        id="customize-btn"
-                        to={`/products/${contentfulProduct.handle}/customize?variant=${selectedVariant.shopify.sku}&lens_type=${LensType.SAFETY}`}
-                      >
-                        ADD PRESCRIPTION
-                      </Link>
+                      {!isNonRx && (
+                        <Link
+                          className="btn"
+                          id="customize-btn"
+                          to={`/products/${contentfulProduct.handle}/customize?variant=${selectedVariant.shopify.sku}&lens_type=${LensType.SAFETY}`}
+                        >
+                          ADD PRESCRIPTION
+                        </Link>
+                      )}
                     </div>
                   )}
                 </div>

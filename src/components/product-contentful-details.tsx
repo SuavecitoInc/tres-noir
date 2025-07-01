@@ -68,7 +68,7 @@ interface Props {
   lensType: string
 }
 
-enum LENSE_COLORS {
+enum LENS_COLORS {
   SMOKE = "smoke",
   SMOKE_GRADIENT = "smoke gradient",
   BROWN = "brown",
@@ -81,6 +81,9 @@ enum LENSE_COLORS {
   YELLOW = "yellow",
   BURNT_ORANGE = "burnt orange",
   PHOTOCROMIC = "photocromic",
+  GOLD_MIRRORED = "gold mirrored",
+  SILVER_MIRRORED = "silver mirrored",
+  BLUE_MIRRORED = "blue mirrored",
 }
 
 const ProductDetails: React.FC<Props> = ({
@@ -100,34 +103,44 @@ const ProductDetails: React.FC<Props> = ({
   const getLensData = () => {
     if (lensType !== "glasses") {
       switch (lensColor) {
-        case LENSE_COLORS.SMOKE:
+        case LENS_COLORS.SMOKE:
           imageData = lensColors.smoke
           break
-        case LENSE_COLORS.SMOKE_GRADIENT:
+        case LENS_COLORS.SMOKE_GRADIENT:
           imageData = lensColors.smoke_gradient
           break
-        case LENSE_COLORS.BROWN:
+        case LENS_COLORS.BROWN:
           imageData = lensColors.brown
           break
-        case LENSE_COLORS.BROWN_GRADIENT:
+        case LENS_COLORS.BROWN_GRADIENT:
           imageData = lensColors.brown_gradient
           break
-        case LENSE_COLORS.GREEN:
-        case LENSE_COLORS.G15:
+        case LENS_COLORS.GREEN:
+        case LENS_COLORS.G15:
           imageData = lensColors.g15
           break
-        case LENSE_COLORS.GREEN_GRADIENT:
-        case LENSE_COLORS.G15_GRADIENT:
+        case LENS_COLORS.GREEN_GRADIENT:
+        case LENS_COLORS.G15_GRADIENT:
           imageData = lensColors.g15_gradient
           break
-        case LENSE_COLORS.YELLOW:
+        case LENS_COLORS.YELLOW:
           imageData = lensColors.yellow
           break
-        case LENSE_COLORS.BURNT_ORANGE:
+        case LENS_COLORS.BURNT_ORANGE:
           imageData = lensColors.burnt_orange
           break
-        case LENSE_COLORS.PHOTOCROMIC:
+        case LENS_COLORS.PHOTOCROMIC:
           imageData = lensColors.clear
+          break
+        case LENS_COLORS.GOLD_MIRRORED:
+          imageData = lensColors.gold_mirrored
+          break
+        case LENS_COLORS.SILVER_MIRRORED:
+          imageData = lensColors.silver_mirrored
+          break
+        case LENS_COLORS.BLUE_MIRRORED:
+          imageData = lensColors.blue_mirrored
+          break
         default:
           imageData = lensColors.clear
       }
@@ -151,7 +164,7 @@ const ProductDetails: React.FC<Props> = ({
   const lensColorValue = lensType === "glasses" ? "Clear" : lensColor
 
   const frameMaterialValue = isSafetyGlasses
-    ? "POLYCARBONATE"
+    ? "MOLD INJECTED"
     : "HAND-CUT ACETATE"
 
   return (
@@ -216,12 +229,21 @@ const ProductDetails: React.FC<Props> = ({
           <div className="image">
             <GatsbyImage image={lensData} alt={`${lensColorValue} lens`} />
           </div>
+
           <div className="image">
-            <StaticImage
-              src="../images/frame-material.png"
-              alt="Frame Material"
-              height={50}
-            />
+            {isSafetyGlasses ? (
+              <StaticImage
+                src="../images/frame-material-safety.png"
+                alt="Frame Material"
+                height={50}
+              />
+            ) : (
+              <StaticImage
+                src="../images/frame-material.png"
+                alt="Frame Material"
+                height={50}
+              />
+            )}
           </div>
 
           <div className="details">

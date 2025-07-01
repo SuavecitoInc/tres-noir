@@ -76,6 +76,15 @@ const Component = styled.section`
         right: unset;
       }
     }
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, 0.25);
+      margin: 0 -15px;
+    }
   }
 `
 
@@ -84,8 +93,9 @@ interface Props {
   collectionName?: string
   collectionDescription?: string
   textColor?: string
-  position?: string
   showOverlay?: boolean
+  xPosition?: string
+  yPosition?: string
 }
 
 const CollectionImage: React.FC<Props> = ({
@@ -93,14 +103,22 @@ const CollectionImage: React.FC<Props> = ({
   collectionName,
   collectionDescription,
   textColor = "white",
-  position = "right",
   showOverlay = true,
+  xPosition = "left",
+  yPosition = "top",
 }) => {
+  // set defaults when api returns null or undefined
+  if (!yPosition) yPosition = "top"
+  if (!xPosition) xPosition = "left"
+
   const inlineStyleText = {
     color: textColor,
-    right: showOverlay && position === "right" ? "0" : "unset",
-    left: showOverlay && position === "left" ? "15px" : "unset",
+    right: showOverlay && xPosition === "right" ? "0" : "unset",
+    left: showOverlay && xPosition === "left" ? "15px" : "unset",
+    top: yPosition === "top" ? "8px" : "unset",
+    bottom: yPosition === "bottom" ? "8px" : "unset",
   }
+
   const hasText = collectionName || collectionDescription
   const inlineStyleImage = {
     filter:
@@ -118,12 +136,17 @@ const CollectionImage: React.FC<Props> = ({
           style={inlineStyleImage}
         />
         {showOverlay ? (
-          <div className="inner-text" style={inlineStyleText}>
-            {collectionName && <h1>{collectionName}</h1>}
-            {collectionDescription && (
-              <p className="collection-description">{collectionDescription}</p>
-            )}
-          </div>
+          <>
+            <div className="overlay"></div>
+            <div className="inner-text" style={inlineStyleText}>
+              {collectionName && <h1>{collectionName}</h1>}
+              {collectionDescription && (
+                <p className="collection-description">
+                  {collectionDescription}
+                </p>
+              )}
+            </div>
+          </>
         ) : (
           <div className="overlay-less-inner-text" style={inlineStyleText}>
             {collectionName && <h1>{collectionName}</h1>}

@@ -75,8 +75,9 @@ const CollectionContentful = ({
             collectionName={collection.name}
             collectionDescription={collection.description}
             textColor={collection.featuredImageTextColor}
-            position={collection.featuredImageTextPosition}
             showOverlay={collection.showOverlay}
+            xPosition={collection.featuredImageTextPosition}
+            yPosition={collection.featuredImageTextPositionY}
           />
         )}
         {products && (
@@ -157,6 +158,7 @@ export const query = graphql`
       }
       featuredImageTextColor
       featuredImageTextPosition
+      featuredImageTextPositionY
       products {
         title
         handle

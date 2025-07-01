@@ -57,7 +57,7 @@ const Component = styled.div`
     justify-content: space-between;
   }
   .lens-frame-width div {
-    flex:1;
+    flex: 1;
   }
 `
 
@@ -68,7 +68,7 @@ interface Props {
   lensType: string
 }
 
-enum LENSE_COLORS {
+enum LENS_COLORS {
   SMOKE = "smoke",
   SMOKE_GRADIENT = "smoke gradient",
   BROWN = "brown",
@@ -80,6 +80,10 @@ enum LENSE_COLORS {
   CLEAR = "clear",
   YELLOW = "yellow",
   BURNT_ORANGE = "burnt orange",
+  PHOTOCROMIC = "photocromic",
+  GOLD_MIRRORED = "gold mirrored",
+  SILVER_MIRRORED = "silver mirrored",
+  BLUE_MIRRORED = "blue mirrored",
 }
 
 const ProductDetails: React.FC<Props> = ({
@@ -99,31 +103,43 @@ const ProductDetails: React.FC<Props> = ({
   const getLensData = () => {
     if (lensType !== "glasses") {
       switch (lensColor) {
-        case LENSE_COLORS.SMOKE:
+        case LENS_COLORS.SMOKE:
           imageData = lensColors.smoke
           break
-        case LENSE_COLORS.SMOKE_GRADIENT:
+        case LENS_COLORS.SMOKE_GRADIENT:
           imageData = lensColors.smoke_gradient
           break
-        case LENSE_COLORS.BROWN:
+        case LENS_COLORS.BROWN:
           imageData = lensColors.brown
           break
-        case LENSE_COLORS.BROWN_GRADIENT:
+        case LENS_COLORS.BROWN_GRADIENT:
           imageData = lensColors.brown_gradient
           break
-        case LENSE_COLORS.GREEN:
-        case LENSE_COLORS.G15:
+        case LENS_COLORS.GREEN:
+        case LENS_COLORS.G15:
           imageData = lensColors.g15
           break
-        case LENSE_COLORS.GREEN_GRADIENT:
-        case LENSE_COLORS.G15_GRADIENT:
+        case LENS_COLORS.GREEN_GRADIENT:
+        case LENS_COLORS.G15_GRADIENT:
           imageData = lensColors.g15_gradient
           break
-        case LENSE_COLORS.YELLOW:
+        case LENS_COLORS.YELLOW:
           imageData = lensColors.yellow
           break
-        case LENSE_COLORS.BURNT_ORANGE:
+        case LENS_COLORS.BURNT_ORANGE:
           imageData = lensColors.burnt_orange
+          break
+        case LENS_COLORS.PHOTOCROMIC:
+          imageData = lensColors.clear
+          break
+        case LENS_COLORS.GOLD_MIRRORED:
+          imageData = lensColors.gold_mirrored
+          break
+        case LENS_COLORS.SILVER_MIRRORED:
+          imageData = lensColors.silver_mirrored
+          break
+        case LENS_COLORS.BLUE_MIRRORED:
+          imageData = lensColors.blue_mirrored
           break
         default:
           imageData = lensColors.clear
@@ -138,6 +154,19 @@ const ProductDetails: React.FC<Props> = ({
     getLensData()
   )
 
+  const isSafetyGlasses = lensType === "safety"
+
+  // TODO: Update details based on Glasses or Safety Glasses
+  const pouchValue = isSafetyGlasses ? "SAFETY POUCH" : "MICROFIBER POUCH"
+
+  const lensMaterialValue = isSafetyGlasses ? "POLYCARBONATE" : "CR-39"
+
+  const lensColorValue = lensType === "glasses" ? "Clear" : lensColor
+
+  const frameMaterialValue = isSafetyGlasses
+    ? "MOLD INJECTED"
+    : "HAND-CUT ACETATE"
+
   return (
     <Component>
       <div className="tr">
@@ -148,11 +177,19 @@ const ProductDetails: React.FC<Props> = ({
         </div>
         <div className="td">
           <div className="image">
-            <StaticImage
-              src="../images/microfiber-pouch.png"
-              alt="Microfiber Pouch"
-              height={80}
-            />
+            {isSafetyGlasses ? (
+              <StaticImage
+                src="../images/microfiber-pouch.png"
+                alt="Microfiber Pouch"
+                height={80}
+              />
+            ) : (
+              <StaticImage
+                src="../images/microfiber-pouch.png"
+                alt="Microfiber Pouch"
+                height={80}
+              />
+            )}
           </div>
           <div className="image">
             <StaticImage
@@ -165,7 +202,7 @@ const ProductDetails: React.FC<Props> = ({
           <div className="image"></div>
 
           <div className="details">
-            <p>MICROFIBER POUCH</p>
+            <p>{pouchValue}</p>
           </div>
 
           <div className="details">
@@ -190,32 +227,38 @@ const ProductDetails: React.FC<Props> = ({
             />
           </div>
           <div className="image">
-            <GatsbyImage
-              image={lensData}
-              alt={`${lensType === "glasses" ? "Clear" : lensColor} lens`}
-            />
+            <GatsbyImage image={lensData} alt={`${lensColorValue} lens`} />
           </div>
+
           <div className="image">
-            <StaticImage
-              src="../images/frame-material.png"
-              alt="Frame Material"
-              height={50}
-            />
+            {isSafetyGlasses ? (
+              <StaticImage
+                src="../images/frame-material-safety.png"
+                alt="Frame Material"
+                height={50}
+              />
+            ) : (
+              <StaticImage
+                src="../images/frame-material.png"
+                alt="Frame Material"
+                height={50}
+              />
+            )}
           </div>
 
           <div className="details">
             <p>LENS MATERIAL</p>
-            <p>CR-39</p>
+            <p>{lensMaterialValue}</p>
           </div>
 
           <div className="details">
             <p>LENS COLOR</p>
-            <p>{lensType === "glasses" ? "Clear" : lensColor}</p>
+            <p>{lensColorValue}</p>
           </div>
 
           <div className="details">
             <p>FRAME MATERIAL</p>
-            <p>HAND-CUT ACETATE</p>
+            <p>{frameMaterialValue}</p>
           </div>
         </div>
       </div>

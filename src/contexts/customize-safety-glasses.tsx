@@ -3,8 +3,9 @@ import type { ReactNode } from "react"
 import {
   SelectedVariants,
   ShopifyVariant,
-  SavedCustomizeContexts,
+  SavedCustomizeSafetyContexts,
   SelectedVariantStorage,
+  SafetyGlassesSelectedVariants,
 } from "../types/global"
 
 const defaultSelectedVariants = {
@@ -42,110 +43,6 @@ const defaultSelectedVariants = {
     sku: "",
     title: "",
   },
-  step2: {
-    image: {
-      originalSrc: "",
-      altText: "",
-      localFile: {
-        childImageSharp: {
-          gatsbyImageData: {},
-        },
-      },
-    },
-    legacyResourceId: "",
-    price: 0,
-    compareAtPrice: null,
-    product: {
-      title: "",
-      description: "",
-      onlineStoreUrl: "",
-      productType: "",
-      collections: {
-        handle: "",
-        title: "",
-      },
-      vendor: "",
-    },
-    selectedOptions: [
-      {
-        name: "",
-        value: "",
-      },
-    ],
-    storefrontId: "",
-    sku: "",
-    title: "",
-  },
-  step3: {
-    image: {
-      originalSrc: "",
-      altText: "",
-      localFile: {
-        childImageSharp: {
-          gatsbyImageData: {},
-        },
-      },
-    },
-    legacyResourceId: "",
-    price: 0,
-    compareAtPrice: null,
-    product: {
-      title: "",
-      description: "",
-      onlineStoreUrl: "",
-      productType: "",
-      collections: {
-        handle: "",
-        title: "",
-      },
-      vendor: "",
-    },
-    selectedOptions: [
-      {
-        name: "",
-        value: "",
-      },
-    ],
-    storefrontId: "",
-    sku: "",
-    title: "",
-  },
-  step4: [
-    {
-      image: {
-        originalSrc: "",
-        altText: "",
-        localFile: {
-          childImageSharp: {
-            gatsbyImageData: {},
-          },
-        },
-      },
-      legacyResourceId: "",
-      price: 0,
-      compareAtPrice: null,
-      product: {
-        title: "",
-        description: "",
-        onlineStoreUrl: "",
-        productType: "",
-        collections: {
-          handle: "",
-          title: "",
-        },
-        vendor: "",
-      },
-      selectedOptions: [
-        {
-          name: "",
-          value: "",
-        },
-      ],
-      storefrontId: "",
-      sku: "",
-      title: "",
-    },
-  ],
   case: {
     image: {
       originalSrc: "",
@@ -222,35 +119,34 @@ const defaultContext = {
   productUrl: "/",
   setProductUrl: (productUrl: string) => {},
   selectedVariants: defaultSelectedVariants,
-  setSelectedVariants: (selectedVariants: SelectedVariants) => {},
+  setSelectedVariants: (selectedVariants: SafetyGlassesSelectedVariants) => {},
   setSelectedVariantsToDefault: () => {},
   hasSavedCustomized: {
     step1: false,
-    step2: false,
-    step3: false,
-    step4: false,
     case: false,
   },
-  setHasSavedCustomized: (hasSavedCustomized: SavedCustomizeContexts) => {},
+  setHasSavedCustomized: (
+    hasSavedCustomized: SavedCustomizeSafetyContexts
+  ) => {},
   defaultVariant: defaultVariant,
 }
 
 export const CustomizeContext = createContext(defaultContext)
 
-export const CustomizeProvider = ({ children }: { children: ReactNode[] }) => {
+export const CustomizeSafetyGlassesProvider = ({
+  children,
+}: {
+  children: ReactNode[]
+}) => {
   const [currentStep, setCurrentStep] = useState(1)
   const [productUrl, setProductUrl] = useState("")
   const [hasSavedCustomized, setHasSavedCustomized] = useState({
     step1: false,
-    step2: false,
-    step3: false,
-    step4: false,
     case: false,
   })
 
-  const [selectedVariants, setSelectedVariants] = useState<SelectedVariants>(
-    defaultSelectedVariants
-  )
+  const [selectedVariants, setSelectedVariants] =
+    useState<SafetyGlassesSelectedVariants>(defaultSelectedVariants)
 
   const setSelectedVariantsToDefault = () => {
     setSelectedVariants(defaultSelectedVariants)

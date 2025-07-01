@@ -74,6 +74,11 @@ export const useFrameColors = () => {
             gatsbyImageData(quality: 40, width: 50)
           }
         }
+        matte_black: file(relativePath: { eq: "black.png" }) {
+          childImageSharp {
+            gatsbyImageData(quality: 40, width: 50)
+          }
+        }
       }
     `
   )

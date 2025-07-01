@@ -772,9 +772,11 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
     selectedVariant.contentful.colorName.toLowerCase() === "clear"
   // TODO: move to contentful product schema
   // check if selected variant is non rx, gold, silver or blue lenses are non rx
-  const isNonRx = ["gold mirrored", "silve mirrored", "blue mirrored"].includes(
-    selectedVariant.contentful.colorName.toLowerCase()
-  )
+  const isNonRx = [
+    "gold mirrored",
+    "silver mirrored",
+    "blue mirrored",
+  ].includes(selectedVariant.contentful.colorName.toLowerCase())
 
   // use effects
 

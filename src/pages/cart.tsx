@@ -388,10 +388,6 @@ const Cart = ({
           })
           setCurrentStep(currentStep)
         }
-        alert(
-          "You are about to edit your customized glasses. Please make sure you have your prescription ready. Step: " +
-            currentStep
-        )
         // navigate to step 5 of customize page
         navigate(
           // @ts-ignore

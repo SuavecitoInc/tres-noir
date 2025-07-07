@@ -1245,18 +1245,13 @@ export const query = graphql`
       featuredStyles {
         localFile {
           childImageSharp {
-            gatsbyImageData(
+            data: gatsbyImageData(
               placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
           }
         }
-        data: gatsbyImageData(
-          placeholder: DOMINANT_COLOR
-          quality: 60
-          width: 800
-        )
         title
       }
       variants {

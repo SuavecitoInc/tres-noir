@@ -8,6 +8,7 @@ const contentfulConfig = {
     process.env.CONTENTFUL_ACCESS_TOKEN ||
     process.env.CONTENTFUL_DELIVERY_TOKEN,
   environment: "master",
+  downloadLocal: true,
 }
 
 const siteUrl = `https://www.tresnoir.com`

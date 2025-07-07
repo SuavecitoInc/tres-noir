@@ -129,6 +129,8 @@ const CaseGridSunglasses = (props: {
   caseCollection: Product[]
   casesAvailable: string[]
 }) => {
+  // delete
+  console.log("case collection", props.caseCollection)
   const { selectedCase, setSelectedCase, caseCollection, casesAvailable } =
     props
 

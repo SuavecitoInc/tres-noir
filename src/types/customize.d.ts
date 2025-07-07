@@ -3,7 +3,7 @@ import { IGatsbyImageData } from "gatsby-plugin-image"
 export interface ContentfulProduct {
   handle: string
   fitDimensions: string
-  frameWidthMeasurement: number;
+  frameWidthMeasurement: number
   variants: ContentfulProductVariant[]
   casesAvailable: string[]
 }
@@ -17,91 +17,179 @@ export interface ContentfulProductVariant {
   }
   customizations: {
     bifocal: {
-      data: IGatsbyImageData
+      localFile: {
+        childImageSharp: {
+          data: IGatsbyImageData
+        }
+      }
       title: string
     }
     bifocalGradientTintSmokeLenses: {
-      data: IGatsbyImageData
+      localFile: {
+        childImageSharp: {
+          data: IGatsbyImageData
+        }
+      }
       title: string
     }
     bifocalGradientTintBrownLenses: {
-      data: IGatsbyImageData
+      localFile: {
+        childImageSharp: {
+          data: IGatsbyImageData
+        }
+      }
       title: string
     }
     bifocalGradientTintG15Lenses: {
-      data: IGatsbyImageData
+      localFile: {
+        childImageSharp: {
+          data: IGatsbyImageData
+        }
+      }
       title: string
     }
     clear: {
-      data: IGatsbyImageData
+      localFile: {
+        childImageSharp: {
+          data: IGatsbyImageData
+        }
+      }
       title: string
     }
     gradientTintSmokeLenses: {
-      data: IGatsbyImageData
+      localFile: {
+        childImageSharp: {
+          data: IGatsbyImageData
+        }
+      }
       title: string
     }
     gradientTintBrownLenses: {
-      data: IGatsbyImageData
+      localFile: {
+        childImageSharp: {
+          data: IGatsbyImageData
+        }
+      }
       title: string
     }
     gradientTintG15Lenses: {
-      data: IGatsbyImageData
+      localFile: {
+        childImageSharp: {
+          data: IGatsbyImageData
+        }
+      }
       title: string
     }
     sunGlassesSmokeLenses: {
-      data: IGatsbyImageData
+      localFile: {
+        childImageSharp: {
+          data: IGatsbyImageData
+        }
+      }
       title: string
     }
     sunGlassesBrownLenses: {
-      data: IGatsbyImageData
+      localFile: {
+        childImageSharp: {
+          data: IGatsbyImageData
+        }
+      }
       title: string
     }
     sunGlassesGreenLenses: {
-      data: IGatsbyImageData
+      localFile: {
+        childImageSharp: {
+          data: IGatsbyImageData
+        }
+      }
       title: string
     }
     sunGlassesOrangeLenses: {
-      data: IGatsbyImageData
+      localFile: {
+        childImageSharp: {
+          data: IGatsbyImageData
+        }
+      }
       title: string
     }
     sunGlassesYellowLenses: {
-      data: IGatsbyImageData
+      localFile: {
+        childImageSharp: {
+          data: IGatsbyImageData
+        }
+      }
       title: string
     }
     sunGlassesBlueLenses: {
-      data: IGatsbyImageData
+      localFile: {
+        childImageSharp: {
+          data: IGatsbyImageData
+        }
+      }
       title: string
     }
     sunGlassesG15Lenses: {
-      data: IGatsbyImageData
+      localFile: {
+        childImageSharp: {
+          data: IGatsbyImageData
+        }
+      }
       title: string
     }
     sunGlassesSmokeLensesBifocal: {
-      data: IGatsbyImageData
+      localFile: {
+        childImageSharp: {
+          data: IGatsbyImageData
+        }
+      }
       title: string
     }
     sunGlassesBrownLensesBifocal: {
-      data: IGatsbyImageData
+      localFile: {
+        childImageSharp: {
+          data: IGatsbyImageData
+        }
+      }
       title: string
     }
     sunGlassesGreenLensesBifocal: {
-      data: IGatsbyImageData
+      localFile: {
+        childImageSharp: {
+          data: IGatsbyImageData
+        }
+      }
       title: string
     }
     sunGlassesOrangeLensesBifocal: {
-      data: IGatsbyImageData
+      localFile: {
+        childImageSharp: {
+          data: IGatsbyImageData
+        }
+      }
       title: string
     }
     sunGlassesYellowLensesBifocal: {
-      data: IGatsbyImageData
+      localFile: {
+        childImageSharp: {
+          data: IGatsbyImageData
+        }
+      }
       title: string
     }
     sunGlassesBlueLensesBifocal: {
-      data: IGatsbyImageData
+      localFile: {
+        childImageSharp: {
+          data: IGatsbyImageData
+        }
+      }
       title: string
     }
     sunGlassesG15LensesBifocal: {
-      data: IGatsbyImageData
+      localFile: {
+        childImageSharp: {
+          data: IGatsbyImageData
+        }
+      }
       title: string
     }
   }

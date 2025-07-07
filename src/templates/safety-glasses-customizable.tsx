@@ -1015,7 +1015,10 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                           {variant.colorImage ? (
                             <div className="option-color-image-container">
                               <Img
-                                image={variant.colorImage.data}
+                                image={
+                                  variant.colorImage.localFile.childImageSharp
+                                    .data
+                                }
                                 alt={variant.colorImage.title}
                               />
                               {shopifyVariant &&
@@ -1240,6 +1243,15 @@ export const query = graphql`
       fitDimensions
       casesAvailable
       featuredStyles {
+        localFile {
+          childImageSharp {
+            gatsbyImageData(
+              placeholder: DOMINANT_COLOR
+              quality: 60
+              width: 800
+            )
+          }
+        }
         data: gatsbyImageData(
           placeholder: DOMINANT_COLOR
           quality: 60
@@ -1252,7 +1264,15 @@ export const query = graphql`
         colorName
         sku
         colorImage {
-          data: gatsbyImageData
+          localFile {
+            childImageSharp {
+              data: gatsbyImageData(
+                placeholder: DOMINANT_COLOR
+                quality: 60
+                width: 800
+              )
+            }
+          }
           title
         }
         featuredImage {
@@ -1260,92 +1280,148 @@ export const query = graphql`
           title
         }
         imageSet {
-          data: gatsbyImageData(layout: CONSTRAINED, width: 2048, height: 1365)
+          localFile {
+            childImageSharp {
+              data: gatsbyImageData(
+                layout: CONSTRAINED
+                width: 2048
+                height: 1365
+              )
+            }
+          }
           title
         }
         imageSetClear {
-          data: gatsbyImageData(layout: CONSTRAINED, width: 2048, height: 1365)
+          localFile {
+            childImageSharp {
+              data: gatsbyImageData(
+                layout: CONSTRAINED
+                width: 2048
+                height: 1365
+              )
+            }
+          }
           title
         }
         customizations {
           gradientTintSmokeLenses {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           gradientTintBrownLenses {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           gradientTintG15Lenses {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           sunGlassesSmokeLenses {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           sunGlassesBrownLenses {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           sunGlassesGreenLenses {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           sunGlassesOrangeLenses {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           sunGlassesYellowLenses {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           sunGlassesBlueLenses {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           sunGlassesG15Lenses {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
         }

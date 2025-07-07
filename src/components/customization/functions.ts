@@ -9,8 +9,8 @@ export const changeImage = (
 ) => {
   const { step1, step2 } = selectedVariants
   const defaultImage =
-    variant.contentful.customizations?.clear?.data ??
-    variant.contentful.featuredImage.data
+    variant.contentful.customizations?.clear?.localFile?.childImageSharp
+      ?.data ?? variant.contentful.featuredImage.localFile.childImageSharp.data
   const defaultTitle =
     variant.contentful.customizations?.clear?.title ??
     variant.contentful.featuredImage.title
@@ -22,7 +22,8 @@ export const changeImage = (
       case 1:
         const property = isBifocal ? "bifocal" : "clear"
         setCurrentImage({
-          data: variant.contentful.customizations[property].data,
+          data: variant.contentful.customizations[property].localFile
+            .childImageSharp.data,
           altText: variant.contentful.customizations[property].title,
         })
         break
@@ -34,7 +35,8 @@ export const changeImage = (
           case "Blue Light Blocking":
             const property = isBifocal ? "bifocal" : "clear"
             setCurrentImage({
-              data: variant.contentful.customizations[property].data,
+              data: variant.contentful.customizations[property].localFile
+                .childImageSharp.data,
               altText: variant.contentful.customizations[property].title,
             })
             break
@@ -50,7 +52,8 @@ export const changeImage = (
               ? `sunGlasses${variantTitle}LensesBifocal`
               : `sunGlasses${variantTitle}Lenses`
             setCurrentImage({
-              data: variant.contentful.customizations[property].data,
+              data: variant.contentful.customizations[property].localFile
+                .childImageSharp.data,
               altText: variant.contentful.customizations[property].title,
             })
             break
@@ -62,7 +65,8 @@ export const changeImage = (
               ? `bifocalGradientTint${variantTitle}Lenses`
               : `gradientTint${variantTitle}Lenses`
             setCurrentImage({
-              data: variant.contentful.customizations[property].data,
+              data: variant.contentful.customizations[property].localFile
+                .childImageSharp.data,
               altText: variant.contentful.customizations[property].title,
             })
             break

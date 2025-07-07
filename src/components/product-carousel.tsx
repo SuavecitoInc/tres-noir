@@ -42,7 +42,11 @@ const StyledThumbs = styled(Swiper)`
 `
 
 interface ImageSet {
-  data: IGatsbyImageData
+  localFile: {
+    childImageSharp: {
+      data: IGatsbyImageData
+    }
+  }
   title: string
 }
 
@@ -63,7 +67,11 @@ const ProductCarousel = ({ imageSet }: { imageSet: ImageSet[] }) => {
       >
         {imageSet.map((image: ImageSet, i: number) => (
           <SwiperSlide key={`product-carousel-slide-${i}`}>
-            <GatsbyImage image={image.data} alt={image.title} loading="eager" />
+            <GatsbyImage
+              image={image.localFile.childImageSharp.data}
+              alt={image.title}
+              loading="eager"
+            />
           </SwiperSlide>
         ))}
       </StyledSwiper>
@@ -82,7 +90,7 @@ const ProductCarousel = ({ imageSet }: { imageSet: ImageSet[] }) => {
             {imageSet.map((image: ImageSet, i: number) => (
               <SwiperSlide key={`product-carousel-thumb-${i}`}>
                 <GatsbyImage
-                  image={image.data}
+                  image={image.localFile.childImageSharp.data}
                   alt={image.title}
                   loading="eager"
                 />

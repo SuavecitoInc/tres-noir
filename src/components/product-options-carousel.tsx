@@ -252,7 +252,9 @@ const ProductOptionsCarousel = ({
                   <div className="relative">
                     <OptionImage className="option-image">
                       <GatsbyImage
-                        image={variant.colorImage.data}
+                        image={
+                          variant.colorImage.localFile.childImageSharp.data
+                        }
                         alt={variant.colorName}
                         loading="eager"
                       />

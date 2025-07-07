@@ -22,7 +22,8 @@ export const changeImage = (
       case 1:
         const property = isBifocal ? "bifocal" : "clear"
         setCurrentImage({
-          data: variant.contentful.customizations[property].data,
+          data: variant.contentful.customizations[property].localFile
+            .childImageSharp.data,
           altText: variant.contentful.customizations[property].title,
         })
         break

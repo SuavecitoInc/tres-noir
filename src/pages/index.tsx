@@ -177,6 +177,7 @@ const IndexPage = ({
       return null
     }
   }
+
   return (
     <Layout>
       <SEO
@@ -204,7 +205,10 @@ const IndexPage = ({
         <div className="hero container">
           <div className="featured">
             <GatsbyImage
-              image={contentfulHomepage.hero.gatsbyImageData}
+              image={
+                contentfulHomepage.hero.localFile.childImageSharp
+                  .gatsbyImageData
+              }
               alt="Hero"
             />
             <div className="featured-actions">
@@ -215,7 +219,10 @@ const IndexPage = ({
           </div>
           <div className="featured">
             <GatsbyImage
-              image={contentfulHomepage.hero2.gatsbyImageData}
+              image={
+                contentfulHomepage.hero2.localFile.childImageSharp
+                  .gatsbyImageData
+              }
               alt="Hero"
             />
             <div className="featured-actions">
@@ -249,13 +256,19 @@ const IndexPage = ({
           <div className="about-content container">
             <Link to="/pages/rx-faq" className="about-image">
               <GatsbyImage
-                image={contentfulHomepage.aboutTresNoir1.gatsbyImageData}
+                image={
+                  contentfulHomepage.aboutTresNoir1.localFile.childImageSharp
+                    .gatsbyImageData
+                }
                 alt="About Tres Noir 1"
               />
             </Link>
             <Link to="/collections/new" className="about-image">
               <GatsbyImage
-                image={contentfulHomepage.aboutTresNoir2.gatsbyImageData}
+                image={
+                  contentfulHomepage.aboutTresNoir2.localFile.childImageSharp
+                    .gatsbyImageData
+                }
                 alt="About Tres Noir 2"
               />
             </Link>
@@ -272,38 +285,67 @@ interface HomePageQuery {
   contentfulHomepage: {
     enableSaleHero: boolean
     saleHero: {
-      gatsbyImageData: IGatsbyImageData
+      // gatsbyImageData: IGatsbyImageData
+      localFile: {
+        childImageSharp: {
+          gatsbyImageData: IGatsbyImageData
+        }
+      }
     }
     saleHeroUrl: string
     enableSaleHeroUrl: boolean
     heroCarousel: [
       {
-        data: IGatsbyImageData
+        localFile: {
+          childImageSharp: {
+            data: IGatsbyImageData
+          }
+        }
         title: string
       }
     ]
     heroCarouselLinks: string[]
     hero: {
-      gatsbyImageData: IGatsbyImageData
+      localFile: {
+        childImageSharp: {
+          gatsbyImageData: IGatsbyImageData
+        }
+      }
     }
     hero2: {
-      gatsbyImageData: IGatsbyImageData
+      localFile: {
+        childImageSharp: {
+          gatsbyImageData: IGatsbyImageData
+        }
+      }
     }
     tagline: {
       tagline: string
     }
     featuredStyles: [
       {
-        data: IGatsbyImageData
+        localFile: {
+          childImageSharp: {
+            data: IGatsbyImageData
+          }
+        }
         title: string
       }
     ]
     featuredStylesLinks: string[]
     aboutTresNoir1: {
-      gatsbyImageData: IGatsbyImageData
+      localFile: {
+        childImageSharp: {
+          gatsbyImageData: IGatsbyImageData
+        }
+      }
     }
     aboutTresNoir2: {
-      gatsbyImageData: IGatsbyImageData
+      localFile: {
+        childImageSharp: {
+          gatsbyImageData: IGatsbyImageData
+        }
+      }
     }
   }
 }
@@ -318,29 +360,54 @@ export const query = graphql`
       saleHeroUrl
       enableSaleHeroUrl
       heroCarousel {
-        data: gatsbyImageData(layout: CONSTRAINED, quality: 40)
+        localFile {
+          childImageSharp {
+            data: gatsbyImageData(layout: CONSTRAINED, quality: 40)
+          }
+        }
         title
       }
       heroCarouselLinks
       hero {
-        gatsbyImageData
+        localFile {
+          childImageSharp {
+            gatsbyImageData
+          }
+        }
       }
       hero2 {
-        gatsbyImageData
+        localFile {
+          childImageSharp {
+            gatsbyImageData
+          }
+        }
       }
       tagline {
         tagline
       }
       featuredStyles {
+        localFile {
+          childImageSharp {
+            data: gatsbyImageData(layout: CONSTRAINED, quality: 40, width: 600)
+          }
+        }
         data: gatsbyImageData(layout: CONSTRAINED, quality: 40, width: 600)
         title
       }
       featuredStylesLinks
       aboutTresNoir1 {
-        gatsbyImageData
+        localFile {
+          childImageSharp {
+            gatsbyImageData
+          }
+        }
       }
       aboutTresNoir2 {
-        gatsbyImageData
+        localFile {
+          childImageSharp {
+            gatsbyImageData
+          }
+        }
       }
     }
   }

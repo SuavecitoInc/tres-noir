@@ -48,12 +48,20 @@ const StyledSwiper = styled(Swiper)`
   }
 `
 type FeaturedImage = {
-  data: IGatsbyImageData
+  localFile: {
+    childImageSharp: {
+      data: IGatsbyImageData
+    }
+  }
   title: string
 }
 type FeaturedStylesProps = {
   images: {
-    data: IGatsbyImageData
+    localFile: {
+      childImageSharp: {
+        data: IGatsbyImageData
+      }
+    }
     title: string
   }[]
 }
@@ -101,7 +109,7 @@ const FeaturedStyles = ({ images }: FeaturedStylesProps) => {
           {images.map((image, i: number) => (
             <SwiperSlide key={`featured-styles-slide-${i}`}>
               <GatsbyImage
-                image={image.data}
+                image={image.localFile.childImageSharp.data}
                 alt={image.title}
                 loading="eager"
               />

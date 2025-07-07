@@ -155,7 +155,6 @@ export const query = graphql`
       description
       showOverlay
       featuredImage {
-        # data: gatsbyImageData(width: 2048, formats: [AUTO, WEBP], quality: 50)
         localFile {
           childImageSharp {
             data: gatsbyImageData(

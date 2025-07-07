@@ -355,7 +355,11 @@ export const query = graphql`
     contentfulHomepage {
       enableSaleHero
       saleHero {
-        gatsbyImageData
+        localFile {
+          childImageSharp {
+            gatsbyImageData
+          }
+        }
       }
       saleHeroUrl
       enableSaleHeroUrl
@@ -391,7 +395,6 @@ export const query = graphql`
             data: gatsbyImageData(layout: CONSTRAINED, quality: 40, width: 600)
           }
         }
-        data: gatsbyImageData(layout: CONSTRAINED, quality: 40, width: 600)
         title
       }
       featuredStylesLinks

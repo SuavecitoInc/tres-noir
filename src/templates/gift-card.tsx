@@ -213,8 +213,9 @@ const GiftCard = ({ data: { shopifyProduct } }: any) => {
     const id = selectedVariant.storefrontId
     const legacyResourceId = `gid://shopify/ProductVariant/${selectedVariant.legacyResourceId}`
     const image = selectedVariant.image
-      ? selectedVariant.image.localFile.childImageSharp.gatsbyImageData
-      : shopifyProduct.featuredImage.localFile.childImageSharp.gatsbyImageData
+      ? selectedVariant.image?.localFile?.childImageSharp?.gatsbyImageData
+      : shopifyProduct.featuredImage?.localFile?.childImageSharp
+          ?.gatsbyImageData
     const qty: number = +selectedVariantQuantity
     addProductToCart(id, qty, legacyResourceId, image)
 
@@ -367,7 +368,7 @@ export const query = graphql`
             localFile {
               id
               childImageSharp {
-                gatsbyImageData
+                gatsbyImageData(quality: 40, placeholder: DOMINANT_COLOR)
               }
             }
           }

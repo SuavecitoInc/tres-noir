@@ -71,7 +71,9 @@ const CollectionContentful = ({
         <FreeShipping />
         {collection.featuredImage && (
           <CollectionImage
-            collectionImage={collection.featuredImage.data}
+            collectionImage={
+              collection.featuredImage?.localFile?.childImageSharp?.data
+            }
             collectionName={collection.name}
             collectionDescription={collection.description}
             textColor={collection.featuredImageTextColor}
@@ -114,7 +116,11 @@ const CollectionContentful = ({
         </Grid>
 
         {collection.featuredImage2 && products.length > 6 && (
-          <CollectionImage collectionImage={collection.featuredImage2.data} />
+          <CollectionImage
+            collectionImage={
+              collection.featuredImage2?.localFile?.childImageSharp?.data
+            }
+          />
         )}
 
         <Grid>
@@ -149,12 +155,28 @@ export const query = graphql`
       description
       showOverlay
       featuredImage {
-        data: gatsbyImageData(width: 2048, formats: [AUTO, WEBP], quality: 50)
+        localFile {
+          childImageSharp {
+            data: gatsbyImageData(
+              width: 2048
+              formats: [AUTO, WEBP]
+              quality: 50
+            )
+          }
+        }
         description
         url
       }
       featuredImage2 {
-        data: gatsbyImageData(width: 2048, formats: [AUTO, WEBP], quality: 50)
+        localFile {
+          childImageSharp {
+            data: gatsbyImageData(
+              width: 2048
+              formats: [AUTO, WEBP]
+              quality: 50
+            )
+          }
+        }
       }
       featuredImageTextColor
       featuredImageTextPosition
@@ -172,24 +194,36 @@ export const query = graphql`
           id
           sku
           featuredImage {
-            data: gatsbyImageData(
-              width: 600
-              quality: 40
-              aspectRatio: 1.5
-              cropFocus: CENTER
-            )
+            localFile {
+              childImageSharp {
+                data: gatsbyImageData(
+                  width: 600
+                  quality: 40
+                  aspectRatio: 1.5
+                  # cropFocus: CENTER
+                )
+              }
+            }
           }
           featuredImageClear {
-            data: gatsbyImageData(
-              width: 600
-              quality: 40
-              aspectRatio: 1.5
-              cropFocus: CENTER
-            )
+            localFile {
+              childImageSharp {
+                data: gatsbyImageData(
+                  width: 600
+                  quality: 40
+                  aspectRatio: 1.5
+                  # cropFocus: CENTER
+                )
+              }
+            }
           }
           colorName
           colorImage {
-            data: gatsbyImageData(width: 40)
+            localFile {
+              childImageSharp {
+                data: gatsbyImageData(width: 40)
+              }
+            }
           }
           frameColor
           dominantFrameColor

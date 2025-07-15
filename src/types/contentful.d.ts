@@ -4,14 +4,26 @@ export interface ContentfulProductVariant {
   id: string
   sku: string
   featuredImage: {
-    data: IGatsbyImageData
+    localFile: {
+      childImageSharp: {
+        data: IGatsbyImageData
+      }
+    }
   }
   featuredImageClear: {
-    data: IGatsbyImageData
+    localFile: {
+      childImageSharp: {
+        data: IGatsbyImageData
+      }
+    }
   }
   colorName: string
   colorImage: {
-    data: IGatsbyImageData
+    localFile: {
+      childImageSharp: {
+        data: IGatsbyImageData
+      }
+    }
   }
   frameColor: string[]
   dominantFrameColor: string
@@ -41,18 +53,30 @@ export interface ContentfulCollection {
   description: string
   showOverlay: boolean
   featuredImage: {
-    data: IGatsbyImageData
+    localFile: {
+      childImageSharp: {
+        data: IGatsbyImageData
+      }
+    }
     description: string
     url: string
   }
   featuredImage2: {
-    data: IGatsbyImageData
+    localFile: {
+      childImageSharp: {
+        data: IGatsbyImageData
+      }
+    }
   }
   featuredImageTextColor: string
   featuredImageTextPosition: string
   featuredImageTextPositionY: string
   featuredImageClear: {
-    data: IGatsbyImageData
+    localFile: {
+      childImageSharp: {
+        data: IGatsbyImageData
+      }
+    }
   }
   products: ContentfulProduct[]
 }
@@ -62,7 +86,11 @@ export interface ContentfulVariantCollection {
   handle: string
   id: string
   image: {
-    data: IGatsbyImageData
+    localFile: {
+      childImageSharp: {
+        data: IGatsbyImageData
+      }
+    }
   }
   title: string
   variants: ContentfulProductVariant[]

@@ -250,9 +250,13 @@ const ProductContentful = ({
         <Link to={`${productLink}&variant=${selectedVariant.sku}`}>
           <Img
             image={
-              !isSunglasses && selectedVariant.featuredImageClear?.data
-                ? selectedVariant.featuredImageClear.data
-                : selectedVariant.featuredImage.data
+              !isSunglasses &&
+              selectedVariant.featuredImageClear?.localFile?.childImageSharp
+                ?.data
+                ? selectedVariant.featuredImageClear?.localFile?.childImageSharp
+                    ?.data
+                : selectedVariant.featuredImage?.localFile?.childImageSharp
+                    ?.data
             }
             alt={data.title}
           />

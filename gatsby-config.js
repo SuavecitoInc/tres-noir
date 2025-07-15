@@ -2,15 +2,6 @@ require("dotenv").config({
   path: `.env`,
 })
 
-const contentfulConfig = {
-  spaceId: process.env.CONTENTFUL_SPACE_ID,
-  accessToken:
-    process.env.CONTENTFUL_ACCESS_TOKEN ||
-    process.env.CONTENTFUL_DELIVERY_TOKEN,
-  environment: "master",
-  downloadLocal: true,
-}
-
 const siteUrl = `https://www.tresnoir.com`
 
 /**
@@ -105,32 +96,6 @@ module.exports = {
         path: `${__dirname}/src/images`,
       },
     },
-    `gatsby-transformer-sharp`,
-    {
-      resolve: `gatsby-plugin-sharp`,
-      options: {
-        defaults: {
-          formats: [`webp`, `auto`],
-          quality: 40,
-          placeholder: `dominantColor`,
-        },
-      },
-    },
-    `gatsby-plugin-image`,
-    {
-      resolve: `gatsby-plugin-manifest`,
-      options: {
-        name: `gatsby-starter-default`,
-        short_name: `starter`,
-        start_url: `/`,
-        background_color: `#FFFFFF`,
-        theme_color: `#FFFFFF`,
-        display: `minimal-ui`,
-        icon: `src/images/tres-noir-favicon.png`, // This path is relative to the root of the site.
-      },
-    },
-    `gatsby-plugin-netlify`,
-    `gatsby-plugin-gatsby-cloud`,
     {
       resolve: `gatsby-source-shopify`,
       options: {
@@ -144,7 +109,39 @@ module.exports = {
     },
     {
       resolve: `gatsby-source-contentful`,
-      options: contentfulConfig,
+      options: {
+        spaceId: process.env.CONTENTFUL_SPACE_ID,
+        accessToken:
+          process.env.CONTENTFUL_ACCESS_TOKEN ||
+          process.env.CONTENTFUL_DELIVERY_TOKEN,
+        environment: "master",
+        downloadLocal: true,
+        assetDownloadWorkers: 5,
+      },
+    },
+    {
+      resolve: `gatsby-plugin-sharp`,
+      options: {
+        defaults: {
+          formats: [`webp`, `auto`],
+          quality: 40,
+          placeholder: `dominantColor`,
+        },
+      },
+    },
+    `gatsby-plugin-image`,
+    `gatsby-transformer-sharp`,
+    {
+      resolve: `gatsby-plugin-manifest`,
+      options: {
+        name: `gatsby-starter-default`,
+        short_name: `starter`,
+        start_url: `/`,
+        background_color: `#FFFFFF`,
+        theme_color: `#FFFFFF`,
+        display: `minimal-ui`,
+        icon: `src/images/tres-noir-favicon.png`, // This path is relative to the root of the site.
+      },
     },
     `gatsby-plugin-styled-components`,
     {

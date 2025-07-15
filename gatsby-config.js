@@ -116,7 +116,7 @@ module.exports = {
           process.env.CONTENTFUL_DELIVERY_TOKEN,
         environment: "master",
         downloadLocal: true,
-        assetDownloadWorkers: 5,
+        assetDownloadWorkers: 25,
       },
     },
     {

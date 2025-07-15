@@ -316,7 +316,7 @@ export const query = graphql`
         colorImage {
           localFile {
             childImageSharp {
-              data: gatsbyImageData
+              data: gatsbyImageData(placeholder: DOMINANT_COLOR, quality: 40)
             }
           }
           title

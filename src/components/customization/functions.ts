@@ -10,7 +10,8 @@ export const changeImage = (
   const { step1, step2 } = selectedVariants
   const defaultImage =
     variant.contentful.customizations?.clear?.localFile?.childImageSharp
-      ?.data ?? variant.contentful.featuredImage.localFile.childImageSharp.data
+      ?.data ??
+    variant.contentful.featuredImage?.localFile?.childImageSharp?.data
   const defaultTitle =
     variant.contentful.customizations?.clear?.title ??
     variant.contentful.featuredImage.title

@@ -94,7 +94,7 @@ const Carousel = ({
             <SwiperSlide key={`thumb-${i}`}>
               <Link to={imageLinks[i]}>
                 <GatsbyImage
-                  image={image.localFile.childImageSharp.data}
+                  image={image?.localFile?.childImageSharp?.data}
                   alt={image.title}
                   loading="eager"
                 />

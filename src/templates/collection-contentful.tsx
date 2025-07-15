@@ -72,7 +72,7 @@ const CollectionContentful = ({
         {collection.featuredImage && (
           <CollectionImage
             collectionImage={
-              collection.featuredImage.localFile.childImageSharp.data
+              collection.featuredImage?.localFile?.childImageSharp?.data
             }
             collectionName={collection.name}
             collectionDescription={collection.description}
@@ -118,7 +118,7 @@ const CollectionContentful = ({
         {collection.featuredImage2 && products.length > 6 && (
           <CollectionImage
             collectionImage={
-              collection.featuredImage2.localFile.childImageSharp.data
+              collection.featuredImage2?.localFile?.childImageSharp?.data
             }
           />
         )}

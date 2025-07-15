@@ -411,13 +411,14 @@ const LearnMore = ({ data: { contentfulProduct } }: any) => {
           <GatsbyImage
             className="details-image"
             image={
-              contentfulProduct.frameDetailsImage.localFile.childImageSharp.data
+              contentfulProduct.frameDetailsImage?.localFile?.childImageSharp
+                ?.data
             }
             alt={text.frameDetailsAlt}
           />
           <GatsbyImage
             image={
-              contentfulProduct.variantsImage.localFile.childImageSharp.data
+              contentfulProduct.variantsImage?.localFile?.childImageSharp?.data
             }
             alt={contentfulProduct.variantsImage.description}
           />
@@ -508,7 +509,8 @@ const LearnMore = ({ data: { contentfulProduct } }: any) => {
           <div className="wrapper">
             <GatsbyImage
               image={
-                contentfulProduct.lensesInfoImage.localFile.childImageSharp.data
+                contentfulProduct.lensesInfoImage?.localFile?.childImageSharp
+                  ?.data
               }
               alt={text.lensesInfoAlt}
             />
@@ -556,7 +558,7 @@ export const query = graphql`
       customizeImage {
         localFile {
           childImageSharp {
-            data: gatsbyImageData
+            data: gatsbyImageData(placeholder: DOMINANT_COLOR, quality: 40)
           }
         }
         description
@@ -564,14 +566,14 @@ export const query = graphql`
       frameDetailsImage {
         localFile {
           childImageSharp {
-            data: gatsbyImageData
+            data: gatsbyImageData(placeholder: DOMINANT_COLOR, quality: 40)
           }
         }
       }
       fitDiagram {
         localFile {
           childImageSharp {
-            data: gatsbyImageData
+            data: gatsbyImageData(placeholder: DOMINANT_COLOR, quality: 40)
           }
         }
       }
@@ -581,7 +583,7 @@ export const query = graphql`
       lensesInfoImage {
         localFile {
           childImageSharp {
-            data: gatsbyImageData
+            data: gatsbyImageData(placeholder: DOMINANT_COLOR, quality: 40)
           }
         }
       }
@@ -593,7 +595,7 @@ export const query = graphql`
       variantsImage {
         localFile {
           childImageSharp {
-            data: gatsbyImageData
+            data: gatsbyImageData(placeholder: DOMINANT_COLOR, quality: 40)
           }
         }
         description

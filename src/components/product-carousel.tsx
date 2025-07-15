@@ -68,7 +68,7 @@ const ProductCarousel = ({ imageSet }: { imageSet: ImageSet[] }) => {
         {imageSet.map((image: ImageSet, i: number) => (
           <SwiperSlide key={`product-carousel-slide-${i}`}>
             <GatsbyImage
-              image={image.localFile.childImageSharp.data}
+              image={image?.localFile?.childImageSharp?.data}
               alt={image.title}
               loading="eager"
             />
@@ -90,7 +90,7 @@ const ProductCarousel = ({ imageSet }: { imageSet: ImageSet[] }) => {
             {imageSet.map((image: ImageSet, i: number) => (
               <SwiperSlide key={`product-carousel-thumb-${i}`}>
                 <GatsbyImage
-                  image={image.localFile.childImageSharp.data}
+                  image={image?.localFile?.childImageSharp?.data}
                   alt={image.title}
                   loading="eager"
                 />

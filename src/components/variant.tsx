@@ -116,7 +116,9 @@ const Variant = ({
       <article className="variant-container">
         <Link to={link}>
           <GatsbyImage
-            image={contentfulData.featuredImage.localFile.childImageSharp.data}
+            image={
+              contentfulData.featuredImage?.localFile?.childImageSharp?.data
+            }
             alt={"contentfulData.title"}
           />
           {badge && <Badge label={badge.label} color={badge.color} />}

@@ -206,8 +206,8 @@ const IndexPage = ({
           <div className="featured">
             <GatsbyImage
               image={
-                contentfulHomepage.hero.localFile.childImageSharp
-                  .gatsbyImageData
+                contentfulHomepage.hero?.localFile?.childImageSharp
+                  ?.gatsbyImageData
               }
               alt="Hero"
             />
@@ -220,8 +220,8 @@ const IndexPage = ({
           <div className="featured">
             <GatsbyImage
               image={
-                contentfulHomepage.hero2.localFile.childImageSharp
-                  .gatsbyImageData
+                contentfulHomepage.hero2?.localFile?.childImageSharp
+                  ?.gatsbyImageData
               }
               alt="Hero"
             />
@@ -257,8 +257,8 @@ const IndexPage = ({
             <Link to="/pages/rx-faq" className="about-image">
               <GatsbyImage
                 image={
-                  contentfulHomepage.aboutTresNoir1.localFile.childImageSharp
-                    .gatsbyImageData
+                  contentfulHomepage.aboutTresNoir1?.localFile?.childImageSharp
+                    ?.gatsbyImageData
                 }
                 alt="About Tres Noir 1"
               />
@@ -266,8 +266,8 @@ const IndexPage = ({
             <Link to="/collections/new" className="about-image">
               <GatsbyImage
                 image={
-                  contentfulHomepage.aboutTresNoir2.localFile.childImageSharp
-                    .gatsbyImageData
+                  contentfulHomepage.aboutTresNoir2?.localFile?.childImageSharp
+                    ?.gatsbyImageData
                 }
                 alt="About Tres Noir 2"
               />
@@ -285,7 +285,6 @@ interface HomePageQuery {
   contentfulHomepage: {
     enableSaleHero: boolean
     saleHero: {
-      // gatsbyImageData: IGatsbyImageData
       localFile: {
         childImageSharp: {
           gatsbyImageData: IGatsbyImageData
@@ -357,7 +356,7 @@ export const query = graphql`
       saleHero {
         localFile {
           childImageSharp {
-            gatsbyImageData
+            gatsbyImageData(placeholder: DOMINANT_COLOR, quality: 40)
           }
         }
       }
@@ -382,7 +381,7 @@ export const query = graphql`
       hero2 {
         localFile {
           childImageSharp {
-            gatsbyImageData
+            gatsbyImageData(placeholder: DOMINANT_COLOR, quality: 40)
           }
         }
       }
@@ -401,14 +400,14 @@ export const query = graphql`
       aboutTresNoir1 {
         localFile {
           childImageSharp {
-            gatsbyImageData
+            gatsbyImageData(placeholder: DOMINANT_COLOR, quality: 40)
           }
         }
       }
       aboutTresNoir2 {
         localFile {
           childImageSharp {
-            gatsbyImageData
+            gatsbyImageData(placeholder: DOMINANT_COLOR, quality: 40)
           }
         }
       }

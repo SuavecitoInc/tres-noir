@@ -194,7 +194,7 @@ const VariantCollection = ({
         <FreeShipping />
         {collection.image && (
           <CollectionImage
-            collectionImage={collection.image.localFile.childImageSharp.data}
+            collectionImage={collection.image?.localFile?.childImageSharp?.data}
           />
         )}
         <div className="desc-container">

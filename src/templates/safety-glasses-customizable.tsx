@@ -616,7 +616,8 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
             ],
           },
         ],
-        selectedVariant.contentful.imageSet[0].localFile.childImageSharp.data,
+        selectedVariant.contentful.imageSet[0]?.localFile?.childImageSharp
+          ?.data,
         matchingKey
       )
 

@@ -366,8 +366,9 @@ const Product = ({
     const id = selectedVariant.storefrontId
     const sku = selectedVariant.sku
     const image = selectedVariant.image
-      ? selectedVariant.image.localFile.childImageSharp.gatsbyImageData
-      : shopifyProduct.featuredImage.localFile.childImageSharp.gatsbyImageData
+      ? selectedVariant.image?.localFile?.childImageSharp?.gatsbyImageData
+      : shopifyProduct.featuredImage?.localFile?.childImageSharp
+          ?.gatsbyImageData
     const qty: number = +selectedVariantQuantity
     addProductToCart(id, qty, sku, image)
     //alert("ADDED TO CART")
@@ -484,6 +485,7 @@ const Product = ({
             <div className="col">
               <div className="heading">
                 <h1>{shopifyProduct.title}</h1>
+                {/* @ts-ignore */}
                 <ProductBottomline reviewListRef={reviewListRef} />
                 <form>
                   <div className="product-dropdown">
@@ -621,6 +623,7 @@ const Product = ({
           <YouMayAlsoLike shopifyProduct={shopifyProduct} />
           <Divider className="r-divider" />
           <div className="review-row">
+            {/* @ts-ignore */}
             <Reviews reviewListRef={reviewListRef} />
           </div>
         </Page>
@@ -682,7 +685,7 @@ export const query = graphql`
             localFile {
               id
               childImageSharp {
-                gatsbyImageData
+                gatsbyImageData(quality: 40, placeholder: DOMINANT_COLOR)
               }
             }
           }

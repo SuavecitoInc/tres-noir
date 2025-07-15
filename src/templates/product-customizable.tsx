@@ -734,8 +734,8 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
         ],
         // sets cart image to be correct polarized image if its a mismatch from non-polarized variant
         polarizedImage.length !== 0
-          ? polarizedImage[0].localFile.childImageSharp.data
-          : selectedVariant.contentful.imageSet[0].localFile.childImageSharp
+          ? polarizedImage[0]?.localFile?.childImageSharp?.data
+          : selectedVariant.contentful.imageSet[0]?.localFile?.childImageSharp
               .data,
         matchingKey
       )
@@ -1159,8 +1159,8 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                             <div className="option-color-image-container">
                               <Img
                                 image={
-                                  variant.colorImage.localFile.childImageSharp
-                                    .data
+                                  variant.colorImage?.localFile?.childImageSharp
+                                    ?.data
                                 }
                                 alt={variant.colorImage.title}
                               />

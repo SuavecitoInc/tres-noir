@@ -253,9 +253,10 @@ const ProductContentful = ({
               !isSunglasses &&
               selectedVariant.featuredImageClear?.localFile?.childImageSharp
                 ?.data
-                ? selectedVariant.featuredImageClear.localFile.childImageSharp
-                    .data
-                : selectedVariant.featuredImage.localFile.childImageSharp.data
+                ? selectedVariant.featuredImageClear?.localFile?.childImageSharp
+                    ?.data
+                : selectedVariant.featuredImage?.localFile?.childImageSharp
+                    ?.data
             }
             alt={data.title}
           />

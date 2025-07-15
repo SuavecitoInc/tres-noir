@@ -109,7 +109,7 @@ const FeaturedStyles = ({ images }: FeaturedStylesProps) => {
           {images.map((image, i: number) => (
             <SwiperSlide key={`featured-styles-slide-${i}`}>
               <GatsbyImage
-                image={image.localFile.childImageSharp.data}
+                image={image?.localFile?.childImageSharp?.data}
                 alt={image.title}
                 loading="eager"
               />

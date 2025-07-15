@@ -119,7 +119,8 @@ const Product = ({
     e.preventDefault()
     const id = selectedVariant.storefrontId
     const sku = selectedVariant.sku
-    const image = data.featuredImage.localFile.childImageSharp.gatsbyImageData
+    const image =
+      data.featuredImage?.localFile?.childImageSharp?.gatsbyImageData
     const qty = 1
     addProductToCart(id, qty, sku, image)
 
@@ -169,7 +170,8 @@ const Product = ({
                 <GatsbyImage
                   className="product-image"
                   image={
-                    data.featuredImage.localFile.childImageSharp.gatsbyImageData
+                    data.featuredImage?.localFile?.childImageSharp
+                      ?.gatsbyImageData
                   }
                   alt={
                     data.featuredImage.altText

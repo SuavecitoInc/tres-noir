@@ -2,7 +2,7 @@ import React from "react"
 import { Link } from "gatsby"
 import { Swiper, SwiperSlide } from "swiper/react"
 import { Navigation } from "swiper"
-import { GatsbyImage } from "gatsby-plugin-image"
+import { GatsbyImage, IGatsbyImageData } from "gatsby-plugin-image"
 import { BsChevronLeft as Left, BsChevronRight as Right } from "react-icons/bs"
 import styled from "styled-components"
 
@@ -33,7 +33,11 @@ const StyledSwiper = styled(Swiper)`
 `
 
 interface ImageSet {
-  data: any
+  localFile: {
+    childImageSharp: {
+      data: IGatsbyImageData
+    }
+  }
   title: string
 }
 
@@ -90,7 +94,7 @@ const Carousel = ({
             <SwiperSlide key={`thumb-${i}`}>
               <Link to={imageLinks[i]}>
                 <GatsbyImage
-                  image={image.data}
+                  image={image?.localFile?.childImageSharp?.data}
                   alt={image.title}
                   loading="eager"
                 />

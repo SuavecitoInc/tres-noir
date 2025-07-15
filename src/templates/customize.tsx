@@ -142,7 +142,10 @@ const Customize = ({
     shopifyProduct.variants[0].price
   )
   const [currentImage, setCurrentImage] = useState({
-    data: variant?.contentful && variant.contentful.customizations?.clear?.data,
+    data:
+      variant?.contentful &&
+      variant.contentful.customizations?.clear?.localFile?.childImageSharp
+        ?.data,
     altText:
       variant?.contentful && variant.contentful.customizations?.clear?.title,
   })
@@ -317,198 +320,298 @@ export const query = graphql`
         colorName
         sku
         colorImage {
-          data: gatsbyImageData
+          localFile {
+            childImageSharp {
+              data: gatsbyImageData(placeholder: DOMINANT_COLOR, quality: 40)
+            }
+          }
           title
         }
         customizations {
           bifocal {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                data: gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           bifocalGradientTintSmokeLenses {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                data: gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           bifocalGradientTintBrownLenses {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                data: gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           bifocalGradientTintG15Lenses {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                data: gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           clear {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                data: gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           gradientTintSmokeLenses {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                data: gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           gradientTintBrownLenses {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                data: gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           gradientTintG15Lenses {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                data: gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           sunGlassesSmokeLenses {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                data: gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           sunGlassesBrownLenses {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                data: gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           sunGlassesGreenLenses {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                data: gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           sunGlassesOrangeLenses {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                data: gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           sunGlassesYellowLenses {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                data: gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           sunGlassesBlueLenses {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                data: gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           sunGlassesG15Lenses {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                data: gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           sunGlassesSmokeLensesBifocal {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                data: gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           sunGlassesBrownLensesBifocal {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                data: gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           sunGlassesGreenLensesBifocal {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                data: gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           sunGlassesOrangeLensesBifocal {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                data: gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           sunGlassesYellowLensesBifocal {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                data: gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           sunGlassesBlueLensesBifocal {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                data: gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
           sunGlassesG15LensesBifocal {
-            data: gatsbyImageData(
-              placeholder: DOMINANT_COLOR
-              quality: 60
-              width: 800
-            )
+            localFile {
+              childImageSharp {
+                data: gatsbyImageData(
+                  placeholder: DOMINANT_COLOR
+                  quality: 60
+                  width: 800
+                )
+              }
+            }
             title
           }
         }
         featuredImage {
-          data: gatsbyImageData
+          localFile {
+            childImageSharp {
+              data: gatsbyImageData
+            }
+          }
           title
         }
         imageSet {
-          data: gatsbyImageData(
-            layout: CONSTRAINED
-            placeholder: BLURRED
-            width: 2048
-            height: 1365
-          )
+          localFile {
+            childImageSharp {
+              data: gatsbyImageData(
+                layout: CONSTRAINED
+                placeholder: BLURRED
+                width: 2048
+                height: 1365
+              )
+            }
+          }
           title
         }
         id

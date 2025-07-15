@@ -410,11 +410,16 @@ const LearnMore = ({ data: { contentfulProduct } }: any) => {
         <section className="frame-details wrapper">
           <GatsbyImage
             className="details-image"
-            image={contentfulProduct.frameDetailsImage.data}
+            image={
+              contentfulProduct.frameDetailsImage?.localFile?.childImageSharp
+                ?.data
+            }
             alt={text.frameDetailsAlt}
           />
           <GatsbyImage
-            image={contentfulProduct.variantsImage.data}
+            image={
+              contentfulProduct.variantsImage?.localFile?.childImageSharp?.data
+            }
             alt={contentfulProduct.variantsImage.description}
           />
         </section>
@@ -449,7 +454,10 @@ const LearnMore = ({ data: { contentfulProduct } }: any) => {
             <div className="row wrapper">
               <div className="col">
                 <GatsbyImage
-                  image={contentfulProduct.customizeImage.data}
+                  image={
+                    contentfulProduct.customizeImage.localFile.childImageSharp
+                      .data
+                  }
                   alt={contentfulProduct.customizeImage.description}
                   className="faded"
                 />
@@ -500,7 +508,10 @@ const LearnMore = ({ data: { contentfulProduct } }: any) => {
         <section className="lenses-info">
           <div className="wrapper">
             <GatsbyImage
-              image={contentfulProduct.lensesInfoImage.data}
+              image={
+                contentfulProduct.lensesInfoImage?.localFile?.childImageSharp
+                  ?.data
+              }
               alt={text.lensesInfoAlt}
             />
           </div>
@@ -545,20 +556,36 @@ export const query = graphql`
     contentfulProduct(handle: { eq: $handle }) {
       id
       customizeImage {
-        data: gatsbyImageData
+        localFile {
+          childImageSharp {
+            data: gatsbyImageData(placeholder: DOMINANT_COLOR, quality: 40)
+          }
+        }
         description
       }
       frameDetailsImage {
-        data: gatsbyImageData
+        localFile {
+          childImageSharp {
+            data: gatsbyImageData(placeholder: DOMINANT_COLOR, quality: 40)
+          }
+        }
       }
       fitDiagram {
-        data: gatsbyImageData
+        localFile {
+          childImageSharp {
+            data: gatsbyImageData(placeholder: DOMINANT_COLOR, quality: 40)
+          }
+        }
       }
       fitDimensions
       frameWidth
       handle
       lensesInfoImage {
-        data: gatsbyImageData
+        localFile {
+          childImageSharp {
+            data: gatsbyImageData(placeholder: DOMINANT_COLOR, quality: 40)
+          }
+        }
       }
       styleDescription {
         text: styleDescription
@@ -566,7 +593,11 @@ export const query = graphql`
       title
       rxAble
       variantsImage {
-        data: gatsbyImageData
+        localFile {
+          childImageSharp {
+            data: gatsbyImageData(placeholder: DOMINANT_COLOR, quality: 40)
+          }
+        }
         description
         url
       }

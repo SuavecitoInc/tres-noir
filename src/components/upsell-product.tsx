@@ -104,7 +104,7 @@ const UpsellProduct = ({
   )
 
   const [featuredImage, setFeaturedImage] = useState(
-    upsellProduct.featuredImage.localFile.childImageSharp.gatsbyImageData
+    upsellProduct.featuredImage?.localFile?.childImageSharp?.gatsbyImageData
   )
 
   const getBadge = (): { label: string; color: string } | null => {
@@ -146,8 +146,8 @@ const UpsellProduct = ({
     const id = selectedVariant.storefrontId
     const sku = selectedVariant.sku
     const image = selectedVariant.image
-      ? selectedVariant.image.localFile.childImageSharp.gatsbyImageData
-      : upsellProduct.featuredImage.localFile.childImageSharp.gatsbyImageData
+      ? selectedVariant.image?.localFile?.childImageSharp?.gatsbyImageData
+      : upsellProduct.featuredImage?.localFile?.childImageSharp?.gatsbyImageData
 
     addProductToCart(id, 1, sku, image, showDrawer)
     // gtm event
@@ -184,7 +184,7 @@ const UpsellProduct = ({
       newVariant.selectedOptions.some(e => e.name !== "Size")
     ) {
       setFeaturedImage(
-        newVariant.image.localFile.childImageSharp.gatsbyImageData
+        newVariant.image?.localFile?.childImageSharp?.gatsbyImageData
       )
     }
     setSelectedVariant(newVariant)

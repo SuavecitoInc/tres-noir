@@ -193,7 +193,9 @@ const VariantCollection = ({
       <Page className="page">
         <FreeShipping />
         {collection.image && (
-          <CollectionImage collectionImage={collection.image.data} />
+          <CollectionImage
+            collectionImage={collection.image?.localFile?.childImageSharp?.data}
+          />
         )}
         <div className="desc-container">
           <p className="collection-description">{collection.description}</p>
@@ -247,7 +249,16 @@ export const query = graphql`
       title
       description
       image {
-        data: gatsbyImageData(width: 2048, formats: [AUTO, WEBP], quality: 50)
+        localFile {
+          childImageSharp {
+            data: gatsbyImageData(
+              width: 2048
+              formats: [AUTO, WEBP]
+              quality: 50
+              placeholder: BLURRED
+            )
+          }
+        }
         description
         url
       }
@@ -255,24 +266,36 @@ export const query = graphql`
         id
         sku
         featuredImage {
-          data: gatsbyImageData(
-            width: 600
-            quality: 40
-            aspectRatio: 1.5
-            cropFocus: CENTER
-          )
+          localFile {
+            childImageSharp {
+              data: gatsbyImageData(
+                width: 2048
+                formats: [AUTO, WEBP]
+                quality: 50
+                placeholder: BLURRED
+              )
+            }
+          }
         }
         featuredImageClear {
-          data: gatsbyImageData(
-            width: 600
-            quality: 40
-            aspectRatio: 1.5
-            cropFocus: CENTER
-          )
+          localFile {
+            childImageSharp {
+              data: gatsbyImageData(
+                width: 2048
+                formats: [AUTO, WEBP]
+                quality: 50
+                placeholder: BLURRED
+              )
+            }
+          }
         }
         colorName
         colorImage {
-          data: gatsbyImageData(width: 40)
+          localFile {
+            childImageSharp {
+              data: gatsbyImageData(width: 40)
+            }
+          }
         }
         frameColor
         dominantFrameColor

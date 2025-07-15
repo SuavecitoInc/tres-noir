@@ -266,6 +266,7 @@ const CartDrawer = () => {
   })
 
   return (
+    // @ts-ignore
     <animated.div style={{ ...slideInStyles }} className="animated">
       {cart && cart.tnLineItems && cart.tnLineItems.length !== 0 && (
         <Component ref={clickRef}>

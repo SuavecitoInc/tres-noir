@@ -186,7 +186,7 @@ const VariantCollection = ({
         title={collection.title}
         description={collection.description}
         image={{
-          url: collection.image.url,
+          url: collection.image.localFile.publicURL,
           alt: collection.title,
         }}
       />
@@ -258,9 +258,10 @@ export const query = graphql`
               placeholder: BLURRED
             )
           }
+          publicURL
         }
         description
-        url
+        # url
       }
       variants {
         id

@@ -716,7 +716,8 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
         (contentfulProduct.variants[0].dominantFrameColor as string) ?? ""
       const price = seoVariant.price
 
-      const featuredImg = contentfulProduct.variants[0].featuredImage.url
+      const featuredImg =
+        contentfulProduct.variants[0].featuredImage.localFile.publicURL
 
       const description =
         contentfulProduct.styleDescription.styleDescription ?? ""
@@ -935,7 +936,8 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
           title={shopifyProduct.title}
           description={seoDescription}
           image={{
-            url: contentfulProduct.variants[0].featuredImage.url,
+            url: contentfulProduct.variants[0].featuredImage.localFile
+              .publicURL,
             alt: contentfulProduct.variants[0].featuredImage.title,
           }}
           jsonLdPayload={generateProductContentfulJsonLD()}
@@ -1272,7 +1274,10 @@ export const query = graphql`
           title
         }
         featuredImage {
-          url
+          localFile {
+            publicURL
+          }
+          # url
           title
         }
         imageSet {

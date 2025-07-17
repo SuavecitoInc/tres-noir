@@ -57,9 +57,10 @@ export interface ContentfulCollection {
       childImageSharp: {
         data: IGatsbyImageData
       }
+      publicURL: string
     }
     description: string
-    url: string
+    // url: string
   }
   featuredImage2: {
     localFile: {

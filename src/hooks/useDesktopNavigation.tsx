@@ -9,7 +9,12 @@ export const useDesktopNavigation = () => {
           name
           url
           image {
-            gatsbyImageData(quality: 40, width: 600)
+            # gatsbyImageData(quality: 40, width: 600)
+            localFile {
+              childImageSharp {
+                gatsbyImageData(quality: 40, width: 600)
+              }
+            }
             title
           }
           subListItems {
@@ -17,7 +22,12 @@ export const useDesktopNavigation = () => {
             name
             url
             image {
-              gatsbyImageData(quality: 40, width: 600)
+              # gatsbyImageData(quality: 40, width: 600)
+              localFile {
+                childImageSharp {
+                  gatsbyImageData(quality: 40, width: 600)
+                }
+              }
               title
             }
           }

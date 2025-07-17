@@ -177,7 +177,7 @@ const Collection = ({
   const getCollectionImage = () => {
     if (collectionImages && collectionImages.collectionImageTop) {
       return {
-        url: collectionImages.collectionImageTop.url,
+        url: collectionImages.collectionImageTop.localFile.publicURL,
         alt: collectionImages.collectionImageTop.title,
       }
     }
@@ -214,7 +214,8 @@ const Collection = ({
                     <GatsbyImage
                       className="collection-image"
                       image={
-                        collectionImages.collectionImageTop?.gatsbyImageData
+                        collectionImages.collectionImageTop?.localFile
+                          ?.childImageSharp?.gatsbyImageData
                       }
                       alt={
                         collectionImages.collectionImageTop?.title
@@ -235,7 +236,8 @@ const Collection = ({
                     <GatsbyImage
                       className="collection-image"
                       image={
-                        collectionImages.collectionImageTop?.gatsbyImageData
+                        collectionImages.collectionImageTop?.localFile
+                          ?.childImageSharp?.gatsbyImageData
                       }
                       alt={
                         collectionImages.collectionImageTop?.title
@@ -279,13 +281,15 @@ const Collection = ({
             </div>
             {collectionImages &&
               collectionSize >= 8 &&
-              collectionImages.collectionImageMiddle?.gatsbyImageData && (
+              collectionImages.collectionImageMiddle?.localFile?.childImageSharp
+                ?.gatsbyImageData && (
                 <div className="image-container">
                   <div>
                     <GatsbyImage
                       className="collection-image"
                       image={
-                        collectionImages.collectionImageMiddle?.gatsbyImageData
+                        collectionImages.collectionImageMiddle?.localFile
+                          ?.childImageSharp?.gatsbyImageData
                       }
                       alt={
                         collectionImages.collectionImageMiddle?.title
@@ -382,12 +386,21 @@ export const query = graphql`
       showOverlay
       description
       collectionImageTop {
-        url
-        gatsbyImageData
+        localFile {
+          childImageSharp {
+            gatsbyImageData
+          }
+          publicURL
+        }
         title
       }
       collectionImageMiddle {
-        gatsbyImageData
+        localFile {
+          childImageSharp {
+            gatsbyImageData
+          }
+          publicURL
+        }
         title
       }
       name

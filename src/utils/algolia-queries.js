@@ -71,6 +71,9 @@ const productsQuery = `{
             file {
               url
             }
+            localFile {
+              publicURL
+            }
           }
         }
       }
@@ -120,7 +123,7 @@ function products(data) {
           product_type: node.productType,
           tags: node.tags,
           product_image: contentful
-            ? contentful.node.variants[0].featuredImage.file.url
+            ? contentful.node.variants[0].featuredImage.localFile.publicURL
             : node.featuredImage
             ? node.featuredImage.originalSrc
             : "",

@@ -349,7 +349,7 @@ const LearnMore = ({ data: { contentfulProduct } }: any) => {
         title={`${productTitle} - Learn More`}
         description={seoDescription}
         image={{
-          url: contentfulProduct.variantsImage.url,
+          url: contentfulProduct.variantsImage.localFile.publicURL,
           alt: contentfulProduct.variantsImage.description,
         }}
       />
@@ -579,9 +579,10 @@ export const query = graphql`
           childImageSharp {
             data: gatsbyImageData(placeholder: DOMINANT_COLOR, quality: 40)
           }
+          publicURL
         }
         description
-        url
+        # url
       }
     }
   }

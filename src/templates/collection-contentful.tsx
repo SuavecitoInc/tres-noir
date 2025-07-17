@@ -63,7 +63,7 @@ const CollectionContentful = ({
         title={collection.name}
         description={collection.featuredImage.description}
         image={{
-          url: collection.featuredImage.url,
+          url: collection.featuredImage.localFile.publicURL,
           alt: collection.featuredImage.description,
         }}
       />
@@ -163,9 +163,10 @@ export const query = graphql`
               quality: 50
             )
           }
+          publicURL
         }
         description
-        url
+        # url
       }
       featuredImage2 {
         localFile {

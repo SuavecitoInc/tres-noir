@@ -25,6 +25,9 @@ const Component = styled.div`
       font-size: 1rem;
     }
   }
+  .shipping-message.no-bottom {
+    margin-bottom: 1.45rem;
+  }
 `
 
 const DEFAULT_MESSAGE = "NON-CUSTOM ORDERS SHIP SAME OR NEXT BUSINESS DAY"
@@ -40,18 +43,23 @@ const FreeShipping = () => {
   `)
   const { shippingMessage, shippingMessageToggle } = data.contentfulHomepage
 
-  const message = shippingMessageToggle ? shippingMessage : DEFAULT_MESSAGE
+  // removed default message
+  const message: false | string = shippingMessageToggle
+    ? shippingMessage
+    : false
 
   return (
     <Component>
-      <div className="shipping-message">
+      <div
+        className={message ? "shipping-message" : "shipping-message no-bottom"}
+      >
         <StaticImage
           src="../images/double-diamonds.png"
           alt="double diamonds"
           width={38}
         />
         <p className="top-msg">Free US Shipping When you Spend $50</p>
-        <p className="bottom-msg">{message}</p>
+        {message && <p className="bottom-msg">{message}</p>}
       </div>
     </Component>
   )

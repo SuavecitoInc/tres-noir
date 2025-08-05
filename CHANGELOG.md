@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## v.0.12 - 2025-08-05
+## v.0.12.1 - 2025-08-05
 
 **Breaking Changes**
 

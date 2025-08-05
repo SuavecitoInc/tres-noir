@@ -10,7 +10,8 @@ const indexName =
 
 const excludedProductTypes = [
   "Insurance",
-  "Lense Customization",
+  "Lense Customization", // TODO: Remove this once the product type is fixed in Shopify
+  "Lens Customization",
   "Lenses",
   "Upsell AO",
   "Case Add-Ons",

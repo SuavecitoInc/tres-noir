@@ -98,7 +98,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       }
 
       if (
-        productType !== "Lense Customization" &&
+        productType !== "Lense Customization" && // TODO: Remove this once the product type is fixed in Shopify
         productType !== "Lens Customization" &&
         productType !== "Lenses" &&
         productType !== "Upsell AO" &&

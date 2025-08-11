@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v.0.12.1 - 2025-08-05
+
+**Breaking Changes**
+
+- Fixed the spelling of the Lens Customization product type. The previous misspelling "Lense Customization" has been corrected to "Lens Customization". This will require updates in any related code or configurations that referenced the old spelling.
+
 ## v.0.12 - 2025-05-05
 
 **Features**

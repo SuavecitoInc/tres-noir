@@ -195,13 +195,6 @@ const IndexPage = ({
           enableSaleHeroUrl={enableSaleHeroUrl}
         /> */}
 
-        <HeroCarousel
-          imageSet={contentfulHomepage && contentfulHomepage.heroCarousel}
-          imageLinks={
-            contentfulHomepage && contentfulHomepage.heroCarouselLinks
-          }
-        />
-
         <div className="hero container">
           <div className="featured">
             <GatsbyImage
@@ -232,6 +225,13 @@ const IndexPage = ({
             </div>
           </div>
         </div>
+
+        <HeroCarousel
+          imageSet={contentfulHomepage && contentfulHomepage.heroCarousel}
+          imageLinks={
+            contentfulHomepage && contentfulHomepage.heroCarouselLinks
+          }
+        />
 
         <h2 className="sub-title home-text">
           {contentfulHomepage.tagline.tagline}

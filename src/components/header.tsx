@@ -190,7 +190,7 @@ const Header = ({
 
   return (
     <Component>
-      <BannerMessage />
+      {/* <BannerMessage /> */}
       <div className="top-wrapper">
         {isIndex ? (
           <h1 className="h1">

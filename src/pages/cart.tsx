@@ -20,6 +20,7 @@ import {
 import { startedCheckoutGTMEvent } from "../helpers/gtm"
 import { VscClose } from "react-icons/vsc"
 import UpsellCart from "../components/upsell-cart"
+import UpsellCartPopUp from "../components/upsell-cart-popup"
 import { SelectedVariantStorage } from "../types/global"
 import { CustomizeContext } from "../contexts/customize"
 import { CustomizeContext as SafetyCustomizeContext } from "../contexts/customize-safety-glasses"
@@ -1071,14 +1072,15 @@ const Cart = ({
                     </div>
                   </section>
                 </div>
-                <section className="cart-wrapper wrapper">
+                {/* <section className="cart-wrapper wrapper">
                   <UpsellCart />
-                </section>
+                </section> */}
                 {isRemovingFromCart && (
                   <LoaderContainer>
                     <Loader />
                   </LoaderContainer>
                 )}
+                <UpsellCartPopUp />
               </section>
             )}
           </>

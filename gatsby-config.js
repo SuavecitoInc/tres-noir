@@ -53,6 +53,10 @@ module.exports = {
       resolve: "@sentry/gatsby",
       options: {
         dsn: process.env.SENTRY_DSN, // this is the default
+        authToken: process.env.SENTRY_AUTH_TOKEN,
+        org: process.env.SENTRY_ORG,
+        project: process.env.SENTRY_PROJECT,
+        release: "tres-noir@" + "2025-01",
         deleteSourcemapsAfterUpload: true,
       },
     },

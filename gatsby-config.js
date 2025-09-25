@@ -52,7 +52,7 @@ module.exports = {
     {
       resolve: "@sentry/gatsby",
       options: {
-        dsn: "https://280a9ca765dc4642b0c7d17a9599f04b@o1181994.ingest.sentry.io/6550192", // this is the default
+        dsn: "https://280a9ca765dc4642b0c7d17a9599f04b@o1181994.ingest.us.sentry.io/6550192", // this is the default
         authToken: process.env.SENTRY_AUTH_TOKEN,
         org: "suavecito-inc",
         project: "tres-noir-production",

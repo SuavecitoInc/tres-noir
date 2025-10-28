@@ -153,6 +153,7 @@ interface InitialValue {
   question4: string
   question5: string
   question6: string
+  fax?: string | undefined
 }
 
 const initialValue: InitialValue = {
@@ -175,6 +176,7 @@ const initialValue: InitialValue = {
   question4: "",
   question5: "",
   question6: "",
+  fax: "",
 }
 
 // uncomment this to use test data
@@ -241,6 +243,7 @@ const Contact = () => {
     question4: yup.string().required("Question 4 is required"),
     question5: yup.string().required("Question 5 is required"),
     question6: yup.string().required("Question 6 is required"),
+    fax: yup.string(), // honeypot field
   })
 
   const form = useForm({
@@ -263,6 +266,10 @@ const Contact = () => {
       resetState()
       setIsSubmitting(true)
       console.log("Form submitted with data:", data)
+      if (data.fax) {
+        // If the honeypot field is filled, treat it as spam
+        throw new Error("These aren't the droids we're looking for.")
+      }
       const response = await fetch("/api/newDealerApplication", {
         method: "POST",
         headers: {
@@ -651,6 +658,11 @@ const Contact = () => {
                     <p>{form.formState.errors.question6?.message}</p>
                   )}
                 </div>
+              </div>
+              {/* Honeypot field */}
+              <div style={{ display: "none" }}>
+                <label htmlFor="fax">Fax</label>
+                <input {...form.register("fax")} id="fax" />
               </div>
             </section>
             <section className="submission-information">

@@ -65,6 +65,7 @@ function createHmacSha256Hash(data: string): string {
 
 // uncomment this function to use with waiting for the response
 // netlify functions have a standard 10 second timeout, but you can request an increase to 30 seconds on a paid plan
+
 export default async function newDealerApplication(
   req: GatsbyFunctionRequest,
   res: GatsbyFunctionResponse
@@ -87,8 +88,12 @@ export default async function newDealerApplication(
       body: data,
     })
 
-    const responseJson = await response.json()
+    const responseJson: any = await response.json()
     console.log("Response from endpoint:", responseJson)
+    if (responseJson.error) {
+      console.log("Error from endpoint:", responseJson.error)
+      return res.status(403).json({ error: responseJson.error })
+    }
     res.status(200).json({ message: "ok" })
   } catch (error) {
     console.log("Error Creating PDF:", error)

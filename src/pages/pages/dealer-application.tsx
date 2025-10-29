@@ -3,6 +3,7 @@ import { navigate } from "gatsby"
 import { useForm } from "react-hook-form"
 import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup"
+import ReCAPTCHA from "react-google-recaptcha"
 
 import styled from "styled-components"
 import Layout from "../../components/layout"
@@ -96,6 +97,10 @@ const Page = styled.div`
       color: white;
     }
   }
+  .recaptcha-section {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
   @media only screen and (max-width: 468px) {
     .form-row.business-information-row,
     .form-row.address-row-1,
@@ -153,7 +158,6 @@ interface InitialValue {
   question4: string
   question5: string
   question6: string
-  fax?: string | undefined
 }
 
 const initialValue: InitialValue = {
@@ -176,13 +180,13 @@ const initialValue: InitialValue = {
   question4: "",
   question5: "",
   question6: "",
-  fax: "",
 }
 
 // uncomment this to use test data
 // const initialValue: InitialValue = {
 //   storeName: "Demo Store",
 //   storeTel: "1234567890",
+//   email: "jriv@suavecito.com",
 //   address: "123 Test St",
 //   city: "Test City",
 //   stateProvince: "Test State",
@@ -256,9 +260,15 @@ const Contact = () => {
   const [isSuccess, setIsSuccess] = useState(false)
   const [isError, setIsError] = useState(false)
 
+  const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null)
+
   const resetState = () => {
     setIsError(false)
     setIsSuccess(false)
+  }
+
+  const handleRecaptchaChange = (value: string | null) => {
+    setRecaptchaValue(value)
   }
 
   const onSubmit = async (data: typeof initialValue) => {
@@ -266,10 +276,7 @@ const Contact = () => {
       resetState()
       setIsSubmitting(true)
       console.log("Form submitted with data:", data)
-      if (data.fax) {
-        // If the honeypot field is filled, treat it as spam
-        throw new Error("These aren't the droids we're looking for.")
-      }
+
       const response = await fetch("/api/newDealerApplication", {
         method: "POST",
         headers: {
@@ -279,11 +286,14 @@ const Contact = () => {
         body: JSON.stringify({
           ...data,
           date: formattedDate,
+          captchaToken: recaptchaValue,
         }),
       })
+
       const json = await response.json()
       if (response.status !== 200) {
-        throw Error(JSON.stringify(response.status))
+        // throw Error(JSON.stringify(response.status))
+        throw Error(json.error || "Something went wrong")
       }
       console.log("Form submission response:", json)
       setIsSubmitting(false)
@@ -659,11 +669,12 @@ const Contact = () => {
                   )}
                 </div>
               </div>
-              {/* Honeypot field */}
-              <div style={{ display: "none" }}>
-                <label htmlFor="fax">Fax</label>
-                <input {...form.register("fax")} id="fax" />
-              </div>
+            </section>
+            <section className="recaptcha-section">
+              <ReCAPTCHA
+                sitekey="6Lf1cvsrAAAAABwFmf16ynqVyRzC_QicL8NPNzI5"
+                onChange={handleRecaptchaChange}
+              />
             </section>
             <section className="submission-information">
               <p>Date: {formattedDate}</p>

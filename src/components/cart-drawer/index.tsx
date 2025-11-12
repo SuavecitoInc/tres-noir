@@ -314,7 +314,8 @@ const CartDrawer = () => {
               </button>
               <a
                 className="btn"
-                href={cart.checkoutUrl}
+                // href={cart.checkoutUrl}
+                href={`${cart.checkoutUrl}&logged_in=true`}
                 onClick={evt => setIsCartDrawerOpen(false)}
               >
                 CHECKOUT

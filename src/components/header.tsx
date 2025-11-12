@@ -20,6 +20,7 @@ import { useClickAway } from "react-use"
 import DesktopNavigation from "./desktopNavigation"
 import BannerMessage from "./banner-message"
 import CartIcon from "./cart-drawer/cart-icon"
+import { useCustomerAuth } from "../hooks/useCustomerAuth"
 
 const Component = styled.header`
   font-family: var(--sub-heading-font);
@@ -167,6 +168,7 @@ const Header = ({
   setIsDrawerOpen,
   isIndex,
 }: HeaderProps) => {
+  const { isAuthenticated } = useCustomerAuth()
   const [currentPath, setCurrentPath] = useState("/")
   const [visibleAccountSubNav, setVisibileAccountSubNav] =
     useState<boolean>(false)
@@ -259,7 +261,54 @@ const Header = ({
               />
             </Link>
 
-            <a
+            {/* New Customer Account */}
+
+            {/* {isAuthenticated ? (
+              <a
+                href="https://shopify.com/73565339827/account"
+                className="border-left"
+              >
+                <StaticImage
+                  className="img-btn"
+                  src="../images/icon-user.png"
+                  alt="User"
+                  placeholder="dominantColor"
+                  style={{ marginBottom: 0, maxWidth: 26 }}
+                />
+              </a>
+            ) : (
+              <Link
+                to="/account"
+                state={{ prevPath: currentPath }}
+                className="border-left"
+                title="Account"
+              >
+                <StaticImage
+                  className="img-btn"
+                  src="../images/icon-user.png"
+                  alt="User"
+                  placeholder="dominantColor"
+                  style={{ marginBottom: 0, maxWidth: 26 }}
+                />
+              </Link>
+            )} */}
+
+            <Link
+              to="/account"
+              state={{ prevPath: currentPath }}
+              className="border-left"
+              title="Account"
+            >
+              <StaticImage
+                className="img-btn"
+                src="../images/icon-user.png"
+                alt="User"
+                placeholder="dominantColor"
+                style={{ marginBottom: 0, maxWidth: 26 }}
+              />
+            </Link>
+
+            {/* <a
               href="https://account.tresnoir.com/account"
               className="border-left"
             >
@@ -270,7 +319,7 @@ const Header = ({
                 placeholder="dominantColor"
                 style={{ marginBottom: 0, maxWidth: 26 }}
               />
-            </a>
+            </a> */}
 
             <CartIcon></CartIcon>
             <button

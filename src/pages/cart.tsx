@@ -1066,7 +1066,10 @@ const Cart = ({
                       )}
                     </div>
                     <div className="btn-container">
-                      <a href={cart.checkoutUrl} className="btn checkout">
+                      <a
+                        href={`${cart.checkoutUrl}&logged_in=true`}
+                        className="btn checkout"
+                      >
                         Check Out
                       </a>
                     </div>

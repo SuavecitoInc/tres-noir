@@ -148,6 +148,18 @@ const VariantCollection = ({
     // variant collection currently only used for clearance and collaboration items, neither of which are included in sales
     // keep BOGO b/c clearance items are included in BOGO sales
     try {
+      // enable random badge, product must be tagged with `badge:SKU:<BADGE_NAME>`
+      const badgeTag = shopifyProduct.tags.find(tag =>
+        tag.startsWith(`badge:${variant.sku}:`)
+      )
+      if (badgeTag) {
+        const badgeLabel = badgeTag.split(`badge:${variant.sku}:`)[1]
+        return {
+          label: badgeLabel,
+          color: "#39b54a",
+        }
+      }
+
       // bogo is enabled and product is not an exclusion (e.g. collaboration products)
       if (contentfulHomepage.enableBogo && !isExcludedFromDeals) {
         return {
@@ -218,6 +230,7 @@ const VariantCollection = ({
               const colorName = getColorOptionName(variant)
               const formattedTitle = [productTitle, colorName].join(" - ")
               const badge = getBadge(variant)
+
               return (
                 <Variant
                   key={variant.id}

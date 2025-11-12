@@ -571,6 +571,20 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
 
   const getBadge = (): { label: string; color: string } | null => {
     try {
+      // enable random badge, product must be tagged with `badge:SKU:<BADGE_NAME>`
+      const badgeTag = shopifyProduct.tags.find(tag =>
+        tag.startsWith(`badge:${selectedVariant.shopify.sku}:`)
+      )
+      if (badgeTag) {
+        const badgeLabel = badgeTag.split(
+          `badge:${selectedVariant.shopify.sku}:`
+        )[1]
+        return {
+          label: badgeLabel,
+          color: "#39b54a",
+        }
+      }
+
       // bogo is enabled and product is not a mooneyes product
       if (enableBogo && !isExcludedFromDeals) {
         return {

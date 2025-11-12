@@ -150,7 +150,7 @@ const VariantCollection = ({
     try {
       // enable random badge, product must be tagged with `badge:SKU:<BADGE_NAME>`
       const badgeTag = shopifyProduct.tags.find(tag =>
-        tag.startsWith(`badge:${variant.sku}:`)
+        tag.toLowerCase().startsWith(`badge:${variant.sku.toLowerCase()}:`)
       )
       if (badgeTag) {
         const badgeLabel = badgeTag.split(`badge:${variant.sku}:`)[1]

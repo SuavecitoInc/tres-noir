@@ -573,12 +573,14 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
     try {
       // enable random badge, product must be tagged with `badge:SKU:<BADGE_NAME>`
       const badgeTag = shopifyProduct.tags.find(tag =>
-        tag.startsWith(`badge:${selectedVariant.shopify.sku}:`)
+        tag
+          .toLowerCase()
+          .startsWith(`badge:${selectedVariant.shopify.sku.toLowerCase()}:`)
       )
       if (badgeTag) {
-        const badgeLabel = badgeTag.split(
-          `badge:${selectedVariant.shopify.sku}:`
-        )[1]
+        const badgeLabel = badgeTag
+          .toLowerCase()
+          .split(`badge:${selectedVariant.shopify.sku.toLowerCase()}:`)[1]
         return {
           label: badgeLabel,
           color: "#39b54a",

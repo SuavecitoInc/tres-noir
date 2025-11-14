@@ -87,6 +87,8 @@ export async function getCustomerOrders(
             node {
               id
               number
+              name
+              createdAt
               financialStatus
               totalPrice {
                 amount
@@ -139,4 +141,121 @@ export async function getCustomerOrders(
   `
 
   return queryCustomerAccount(accessToken, query, { first })
+}
+
+export async function getCustomerOrder(accessToken: string, id: string) {
+  const query = `#graphql
+    query getOrder($id: ID!) {
+      order(id: $id) {
+        id
+        number
+        createdAt
+        financialStatus
+        billingAddress {
+          address1
+          address2
+          city
+          company
+          country
+          firstName
+          lastName
+          formatted
+          formattedArea
+          id
+          name
+          phoneNumber
+          province
+          territoryCode
+          zip
+        }
+        customer {
+          displayName
+          emailAddress {
+            emailAddress
+          }
+          firstName
+          id
+          lastName
+        }
+        lineItems(first: 250) {
+          edges {
+            node {
+              id
+              quantity
+              customAttributes {
+                key
+                value
+              }
+              sku
+              title
+              variantId
+              productId
+              variantTitle
+              variantOptions {
+                name
+                value
+              }
+              image {
+                altText
+                height
+                id
+                url(transform: {
+                      maxWidth: 200,
+                      maxHeight: 200,
+                      crop: CENTER
+                    })
+                width
+              }
+              price {
+                amount
+                currencyCode
+              }
+            }
+          }
+        }
+        name
+        shippingAddress {
+          address1
+          address2
+          city
+          company
+          country
+          firstName
+          lastName
+          formatted
+          formattedArea
+          id
+          name
+          phoneNumber
+          province
+          territoryCode
+          zip
+        }
+        paymentInformation {
+          paymentStatus
+          totalPaidAmount {
+            amount
+            currencyCode
+          }
+        }
+        shippingLine {
+          title
+          originalPrice {
+            amount
+            currencyCode
+          }
+        }
+        subtotal {
+          amount
+          currencyCode
+        }
+        totalPrice {
+          amount
+          currencyCode
+        }
+      }
+    }
+  `
+
+  return queryCustomerAccount(accessToken, query, { id })
 }

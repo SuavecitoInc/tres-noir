@@ -1,53 +1,72 @@
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect } from "react"
+import styled from "styled-components"
+
 import { useCustomerAuth } from "../../hooks/useCustomerAuth"
-import {
-  getCustomerInfo,
-  getCustomerOrders,
-} from "../../api/customerAccountClient"
+import { getCustomerInfo } from "../../api/customerAccountClient"
 
 import Layout from "../../components/layout"
-import Orders from "../../components/account/orders"
+import Loader from "../../components/loader"
+import { navigate } from "gatsby"
+
+// TODO: move to config
+const REDIRECT_TO_SHOPIFY_ACCOUNT = false
+
+const LoginView = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 50px;
+  .content {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .login-button {
+    font-family: var(--heading-font);
+    background-color: #000;
+    border-radius: 0;
+    border: 1px solid #000;
+    color: #fff;
+    display: block;
+    padding: 10px 20px;
+    text-decoration: none;
+    cursor: pointer;
+  }
+`
 
 const AccountPage = () => {
   const { isAuthenticated, accessToken, login, logout, clear, isLoading } =
     useCustomerAuth()
-  const [customerData, setCustomerData] = useState(null)
-  const [ordersData, setOrdersData] = useState([])
 
-  useEffect(() => {
-    if (isAuthenticated && accessToken) {
-      getCustomerInfo(accessToken)
-        .then(data => {
-          console.log("Customer info fetched:", data)
-          // setCustomerData(data)
+  const loadData = useCallback(async () => {
+    try {
+      if (isAuthenticated && accessToken) {
+        const customerInfo = await getCustomerInfo(accessToken)
+
+        if (!REDIRECT_TO_SHOPIFY_ACCOUNT) {
+          navigate("/account/orders")
+        } else {
           window.location.href =
             process.env.GATSBY_CUSTOMER_ACCOUNTS_SHOPIFY_URL!
-        })
-        .catch(error => {
-          console.error("Error fetching customer info:", error)
-          clear()
-        })
-      // disabled for now, as I think we will just have this page be a login and loading page that redirects to shopify account page
-      // getCustomerOrders(accessToken)
-      //   .then(response => {
-      //     console.log("Customer orders fetched:", response.data)
-      //     if (response?.data?.customer?.orders?.edges) {
-      //       const orders = response.data.customer.orders.edges
-      //       console.log("Parsed orders:", orders)
-      //       setOrdersData(orders)
-      //     }
-      //   })
-      //   .catch(error => {
-      //     console.error("Error fetching customer orders:", error)
-      //     clear()
-      //   })
+        }
+      }
+    } catch (error) {
+      console.error("Error loading data:", error)
+      clear()
     }
   }, [isAuthenticated, accessToken])
+
+  useEffect(() => {
+    loadData()
+  }, [loadData])
 
   if (isLoading) {
     return (
       <Layout>
-        <div>Loading...</div>
+        <Loader />
       </Layout>
     )
   }
@@ -55,29 +74,21 @@ const AccountPage = () => {
   if (!isAuthenticated) {
     return (
       <Layout>
-        <div>
-          <h1>Login Required</h1>
-          <button onClick={login}>Login with Shopify</button>
-        </div>
+        <LoginView>
+          <div className="content">
+            <h1>Account</h1>
+            <button className="login-button" onClick={login}>
+              Login with Shopify
+            </button>
+          </div>
+        </LoginView>
       </Layout>
     )
   }
 
-  // return (
-  //   <Layout>
-  //     <div>
-  //       {/* @ts-expect-error - Display customer information */}
-  //       <h1>Welcome, {customerData?.data?.customer?.firstName}</h1>
-  //       <button onClick={logout}>Logout</button>
-  //       {/* Display customer data */}
-  //       <Orders orders={ordersData} />
-  //     </div>
-  //   </Layout>
-  // )
-
   return (
     <Layout>
-      <div>Loading...</div>
+      <Loader />
     </Layout>
   )
 }

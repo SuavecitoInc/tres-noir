@@ -1,98 +1,19 @@
 import React from "react"
+import { navigate } from "gatsby"
 import styled from "styled-components"
 
+import type {
+  LineItem as LineItemType,
+  Order as OrderType,
+} from "../../types/customer-orders"
+import { rebuildLineItems } from "../../utils/customerOrders"
+
 const IMAGES_TO_SHOW = 3
-
-type LineItemType = {
-  id: string
-  quantity: number
-  customAttributes: {
-    key: string
-    value: string
-  }[]
-  sku: string
-  title: string
-  variantId: string
-  productId: string
-  variantTitle: string
-  variantOptions: {
-    name: string
-    value: string
-  }[][]
-}
-
-type OrderType = {
-  fulfillments: any[]
-  id: string
-  fulfillmentStatus: string
-  financialStatus: string
-  createdAt: string
-  lineItems: {
-    edges: {
-      node: LineItemType
-    }[]
-  }
-  number: string
-  totalPrice: {
-    amount: string
-    currencyCode: string
-  }
-}
 
 interface Props {
   orders: {
     node: OrderType
   }[]
-}
-
-const rebuildLineItems = (lineItems: LineItemType[]) => {
-  const items: any = {}
-  lineItems.forEach(item => {
-    const customizationId = item.customAttributes.find(
-      attr => attr.key === "customizationId"
-    )?.value
-
-    if (customizationId) {
-      if (!items[customizationId]) {
-        items[customizationId] = {
-          id: customizationId,
-          isCustom: true,
-          steps: [],
-        }
-      } else {
-        items[customizationId].steps.push(item)
-      }
-    } else {
-      items[item.id] = {
-        isCustom: false,
-        ...item,
-      }
-    }
-  })
-
-  // convert items object to array
-  const itemsArray = Object.values(items)
-
-  // sort steps by customizationStep attribute
-  itemsArray.forEach((item: any) => {
-    if (item.isCustom) {
-      item.steps.sort((a: LineItemType, b: LineItemType) => {
-        const stepA = parseInt(
-          a.customAttributes.find(attr => attr.key === "customizationStep")
-            ?.value || "0",
-          10
-        )
-        const stepB = parseInt(
-          b.customAttributes.find(attr => attr.key === "customizationStep")
-            ?.value || "0",
-          10
-        )
-        return stepA - stepB
-      })
-    }
-  })
-
-  return itemsArray
 }
 
 const GridItem = styled.div`
@@ -124,14 +45,21 @@ const GridItem = styled.div`
     border-radius: 5px;
     padding: 8px 12px;
     width: 100%;
+    cursor: pointer;
   }
 `
+
+const getLegacyOrderId = (orderId: string) => {
+  // Assuming the orderId is in the format "gid://shopify/Order/1234567890"
+  const parts = orderId.split("/")
+  return parts[parts.length - 1]
+}
 
 const Order = ({ order }: { order: OrderType }) => {
   const orderLines = order.lineItems.edges
 
   const rebuiltLineItems = rebuildLineItems(
-    orderLines.map(({ node }: any) => node)
+    orderLines.map(({ node }: { node: LineItemType }) => node)
   )
 
   console.log("Rebuilt line items:", rebuiltLineItems)
@@ -141,15 +69,25 @@ const Order = ({ order }: { order: OrderType }) => {
       ? rebuiltLineItems.slice(0, IMAGES_TO_SHOW)
       : rebuiltLineItems
 
+  const navigateToOrderDetails = (orderId: string) => {
+    // Implement navigation to order details page
+    const legacyOrderId = getLegacyOrderId(orderId)
+    console.log("Navigate to order details for order ID:", legacyOrderId)
+    navigate(`/account/orders/order?id=${legacyOrderId}`)
+  }
+
   return (
     <GridItem>
       <div className="order-status">
         <p>Status: {order.financialStatus}</p>
       </div>
       <div className="image-grid">
-        {lineItems.map((item: any) => {
-          const isCustom = item.isCustom
-          const imgSrc = isCustom ? item.steps[0]?.image?.url : item.image?.url
+        {lineItems.map(el => {
+          const isCustom = el.isCustom
+          const item = isCustom
+            ? (el.steps[0] as LineItemType)
+            : (el as LineItemType)
+          const imgSrc = item.image?.url
           return (
             <div key={item.id} className="image-grid-item">
               <img src={imgSrc} alt={item.title} />
@@ -163,11 +101,18 @@ const Order = ({ order }: { order: OrderType }) => {
         )}
       </div>
       <div className="bold">{rebuiltLineItems.length} Items</div>
-      <div className="order-number">Order #{order.number}</div>
+      <div className="order-number">Order {order.name}</div>
+      <div className="order-date">
+        Date: {new Date(order.createdAt).toLocaleDateString()}
+      </div>
       <div className="order-total">
         Total: ${order.totalPrice.amount} {order.totalPrice.currencyCode}
       </div>
-      <button type="button" className="view-details-button">
+      <button
+        type="button"
+        className="view-details-button"
+        onClick={() => navigateToOrderDetails(order.id)}
+      >
         View Details
       </button>
     </GridItem>
@@ -179,6 +124,7 @@ const Component = styled.div`
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
+    margin-bottom: 40px;
   }
 `
 
@@ -191,7 +137,7 @@ const Orders = ({ orders }: Props) => {
         <p>No orders found.</p>
       ) : (
         <div className="orders-grid">
-          {orders.map(({ node }: any) => (
+          {orders.map(({ node }) => (
             <Order key={node.id} order={node} />
           ))}
         </div>

@@ -98,11 +98,15 @@ export function useCustomerAuth() {
   const logout = () => {
     // get id token from storage for logout before clearing tokens
     const ID_TOKEN = localStorage.getItem("id_token")
-    clear()
     // logout from Shopify Customer Accounts
+    if (!ID_TOKEN || ID_TOKEN === "undefined" || ID_TOKEN === undefined) {
+      console.error("No ID token found for logout")
+      clear()
+      return
+    }
     const SHOP_ID = process.env.GATSBY_CUSTOMER_ACCOUNTS_SHOP_ID!
     const CUSTOMER_ACCOUNT_API_URL = `https://shopify.com/${SHOP_ID}/auth/logout?id_token_hint=${ID_TOKEN}&post_logout_redirect_uri=${encodeURIComponent(
-      window.location.origin + "/account"
+      window.location.origin + "/account?logged_out=true"
     )}`
     window.location.href = CUSTOMER_ACCOUNT_API_URL
   }

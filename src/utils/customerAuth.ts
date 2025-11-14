@@ -1,6 +1,7 @@
 const SHOP_ID = process.env.GATSBY_CUSTOMER_ACCOUNTS_SHOP_ID!
 const CUSTOMER_ACCOUNT_API_URL = `https://shopify.com/${SHOP_ID}/auth/oauth`
 const CLIENT_ID = process.env.GATSBY_CUSTOMER_ACCOUNTS_CLIENT_ID!
+// This should match the redirect URI registered in your OAuth app settings
 const URL = process.env.GATSBY_CUSTOMER_ACCOUNTS_SHOP_URL!
 const REDIRECT_URI = `${URL}/account/callback` // Your callback URL
 

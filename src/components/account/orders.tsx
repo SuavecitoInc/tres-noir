@@ -119,19 +119,24 @@ const Order = ({ order }: { order: OrderType }) => {
   )
 }
 
-const Component = styled.div`
+const Component = styled.div<{ orders: Props["orders"] }>`
   .orders-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
     margin-bottom: 40px;
+    grid-template-columns: ${({ orders }) =>
+      orders.length === 1
+        ? "33%"
+        : orders.length === 2
+        ? "repeat(2, minmax(300px, 1fr))"
+        : "repeat(3, minmax(300px, 1fr))"};
   }
 `
 
 const Orders = ({ orders }: Props) => {
   console.log("Orders component received orders:", orders)
   return (
-    <Component>
+    <Component orders={orders}>
       <h2>Orders</h2>
       {orders.length === 0 ? (
         <p>No orders found.</p>

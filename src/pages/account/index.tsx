@@ -34,6 +34,9 @@ const LoginView = styled.div`
     padding: 10px 20px;
     text-decoration: none;
     cursor: pointer;
+    @media only screen and (max-width: 468px) {
+      margin-bottom: 1.75rem;
+    }
   }
 `
 

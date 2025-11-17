@@ -128,8 +128,14 @@ const Component = styled.div<{ orders: Props["orders"] }>`
       orders.length === 1
         ? "33%"
         : orders.length === 2
-        ? "repeat(2, minmax(300px, 1fr))"
-        : "repeat(3, minmax(300px, 1fr))"};
+        ? "repeat(2, 1fr)"
+        : "repeat(3, 1fr)"};
+    @media only screen and (max-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @media only screen and (max-width: 468px) {
+      grid-template-columns: 1fr;
+    }
   }
 `
 

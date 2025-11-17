@@ -1,12 +1,14 @@
-import { useEffect, useState, useContext } from "react"
+import { useEffect, useState } from "react"
 
 import { useCart } from "../contexts/storefront-cart"
+import type { DiscountConfig } from "./useDiscountIdentifier"
 import useDiscountIdentifier from "./useDiscountIdentifier"
 
 type Params = {
   prices: { id: string; price: number }[]
   handle: string
 }
+
 export const useCollectionDiscountedPricing = ({ prices, handle }: Params) => {
   const [discountedPrices, setDiscountedPrices] = useState<
     {
@@ -18,17 +20,16 @@ export const useCollectionDiscountedPricing = ({ prices, handle }: Params) => {
   const [offer, setOffer] = useState("")
   // cart
   const { getAppliedDiscountCode } = useCart()
-  const { discountIdentifier, enableDiscountIdentifier } =
-    useDiscountIdentifier()
+  const discounts: DiscountConfig[] = useDiscountIdentifier()
   const abortController = new AbortController()
 
   // on mount
   useEffect(() => {
-    const fetchDiscountedPricing = async () => {
+    const fetchDiscountedPricing = async (discount: DiscountConfig) => {
       try {
         let offer = ""
-        if (enableDiscountIdentifier) {
-          offer = discountIdentifier
+        if (discount.enableDiscountIdentifier) {
+          offer = discount.discountIdentifier
         } else {
           offer = getAppliedDiscountCode()
         }
@@ -44,14 +45,20 @@ export const useCollectionDiscountedPricing = ({ prices, handle }: Params) => {
         })
         const json = await res.json()
         if (res.ok) {
-          setDiscountedPrices(json.prices)
+          setDiscountedPrices(discountedPrices => [
+            ...discountedPrices,
+            ...json.prices,
+          ])
           setIsApplicable(true)
-          setOffer(offer)
+          setOffer(discounts.length > 1 ? "Sale" : offer)
         }
       } catch (error) {}
     }
-    if (!enableDiscountIdentifier) return
-    fetchDiscountedPricing()
+    if (discounts.length === 0) return
+    discounts.forEach(discount => {
+      if (!discount.enableDiscountIdentifier) return
+      fetchDiscountedPricing(discount)
+    })
     return () => {
       abortController.abort()
     }

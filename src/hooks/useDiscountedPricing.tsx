@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 
 import { useCart } from "../contexts/storefront-cart"
+import type { DiscountConfig } from "./useDiscountIdentifier"
 import useDiscountIdentifier from "./useDiscountIdentifier"
 
 type Params = {
@@ -9,6 +10,7 @@ type Params = {
   selectedVariantId: string
   handle: string
 }
+
 export const useDiscountedPricing = ({
   productId,
   prices,
@@ -25,17 +27,16 @@ export const useDiscountedPricing = ({
   const [offer, setOffer] = useState("")
   // cart
   const { getAppliedDiscountCode } = useCart()
-  const { discountIdentifier, enableDiscountIdentifier } =
-    useDiscountIdentifier()
+  const discounts: DiscountConfig[] = useDiscountIdentifier()
   const abortController = new AbortController()
 
   // on mount
   useEffect(() => {
-    const fetchDiscountedPricing = async () => {
+    const fetchDiscountedPricing = async (discount: DiscountConfig) => {
       try {
         let offer = ""
-        if (enableDiscountIdentifier) {
-          offer = discountIdentifier
+        if (discount.enableDiscountIdentifier) {
+          offer = discount.discountIdentifier
         } else {
           offer = getAppliedDiscountCode()
         }
@@ -50,13 +51,20 @@ export const useDiscountedPricing = ({
         })
         const json = await res.json()
         if (res.ok) {
-          setDiscountedPrices(json.prices)
+          setDiscountedPrices(discountedPrices => [
+            ...discountedPrices,
+            ...json.prices,
+          ])
           setIsApplicable(true)
-          setOffer(offer)
+          setOffer(discounts.length > 1 ? "Sale" : offer)
         }
       } catch (error) {}
     }
-    fetchDiscountedPricing()
+    if (discounts.length === 0) return
+    discounts.forEach(discount => {
+      if (!discount.enableDiscountIdentifier) return
+      fetchDiscountedPricing(discount)
+    })
     return () => {
       abortController.abort()
     }

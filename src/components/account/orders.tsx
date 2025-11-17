@@ -8,7 +8,7 @@ import type {
 } from "../../types/customer-orders"
 import { rebuildLineItems } from "../../utils/customerOrders"
 
-const IMAGES_TO_SHOW = 3
+const IMAGES_TO_SHOW = 4
 
 interface Props {
   orders: {
@@ -66,7 +66,7 @@ const Order = ({ order }: { order: OrderType }) => {
 
   const lineItems =
     rebuiltLineItems.length > IMAGES_TO_SHOW
-      ? rebuiltLineItems.slice(0, IMAGES_TO_SHOW)
+      ? rebuiltLineItems.slice(0, IMAGES_TO_SHOW - 1)
       : rebuiltLineItems
 
   const navigateToOrderDetails = (orderId: string) => {
@@ -96,7 +96,7 @@ const Order = ({ order }: { order: OrderType }) => {
         })}
         {rebuiltLineItems.length > IMAGES_TO_SHOW && (
           <div className="image-grid-item more-items">
-            + {rebuiltLineItems.length - IMAGES_TO_SHOW}
+            + {rebuiltLineItems.length - (IMAGES_TO_SHOW - 1)}
           </div>
         )}
       </div>

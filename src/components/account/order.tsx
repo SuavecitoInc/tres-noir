@@ -70,6 +70,9 @@ const OrderContainer = styled.div`
     flex-direction: column;
     margin-bottom: 20px;
   }
+  .back-button {
+    color: #000;
+  }
 `
 
 const Order = ({ orderData }: Props) => {
@@ -84,7 +87,7 @@ const Order = ({ orderData }: Props) => {
   return (
     <OrderContainer>
       <div className="order-header">
-        <button type="button" onClick={goBack}>
+        <button type="button" onClick={goBack} className="back-button">
           &larr;
         </button>
         <h2>Order {orderData.name}</h2>

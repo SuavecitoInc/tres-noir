@@ -18,6 +18,7 @@ const Page = styled.div`
     background: none;
     border: none;
     cursor: pointer;
+    color: #000;
   }
   .logout-button:hover {
     text-decoration: underline;

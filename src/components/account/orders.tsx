@@ -46,6 +46,7 @@ const GridItem = styled.div`
     padding: 8px 12px;
     width: 100%;
     cursor: pointer;
+    color: #000;
   }
 `
 

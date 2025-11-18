@@ -14,6 +14,7 @@ export const useCollectionDiscountedPricing = ({ prices, handle }: Params) => {
     {
       id: string
       discountedPrice: number
+      offer: string
     }[]
   >([])
   const [isApplicable, setIsApplicable] = useState(false)
@@ -39,7 +40,12 @@ export const useCollectionDiscountedPricing = ({ prices, handle }: Params) => {
 
         const res = await fetch("/api/getCollectionDiscountedPricing", {
           method: "POST",
-          body: JSON.stringify({ offer, prices, handle }),
+          body: JSON.stringify({
+            offer,
+            prices,
+            handle,
+            overwriteLabel: discount.overwriteLabel,
+          }),
           signal: abortController.signal,
           cache: "force-cache",
         })
@@ -50,7 +56,7 @@ export const useCollectionDiscountedPricing = ({ prices, handle }: Params) => {
             ...json.prices,
           ])
           setIsApplicable(true)
-          setOffer(discounts.length > 1 ? "Sale" : offer)
+          setOffer(discounts.length > 1 ? "Sale" : offer) // not used anymore, but kept for backward compatibility
         }
       } catch (error) {}
     }

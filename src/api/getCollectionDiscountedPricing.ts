@@ -14,16 +14,20 @@ export default async function getCollectionDiscountedPricing(
 
   const productCreateDiscounts = (
     discount: ShopifyDiscount,
-    prices: PricesType[]
+    prices: PricesType[],
+    offer: string,
+    overwriteLabel: boolean = false
   ) => {
     return prices.map(el =>
-      calculateDiscount(discount, el)
+      calculateDiscount(discount, el, offer, overwriteLabel)
     ) as DiscountedPricesType[]
   }
 
   const calculateDiscount = (
     discount: ShopifyDiscount,
-    variant: PricesType
+    variant: PricesType,
+    offer: string,
+    overwriteLabel: boolean = false
   ) => {
     const discountValue = discount.customerGets.value
     const { id } = variant
@@ -44,6 +48,7 @@ export default async function getCollectionDiscountedPricing(
       return {
         id,
         discountedPrice: Number(roundedDiscountAmount),
+        offer: overwriteLabel ? offer : "Sale",
       }
     }
     return res
@@ -70,10 +75,11 @@ export default async function getCollectionDiscountedPricing(
   // END HELPER FUNCTIONS
   try {
     const API_VERSION = process.env.GATSBY_SHOPIFY_API_VERSION ?? "2025-01"
-    const { offer, handle, prices } = JSON.parse(req.body) as {
+    const { offer, handle, prices, overwriteLabel } = JSON.parse(req.body) as {
       offer: string
       handle: string
       prices: PricesType[]
+      overwriteLabel: boolean
     }
 
     const adminToken: string = process.env.GATSBY_STORE_TOKEN ?? ""
@@ -284,7 +290,12 @@ export default async function getCollectionDiscountedPricing(
 
     switch (applicableItems.__typename) {
       case "AllDiscountItems":
-        const newPrices = productCreateDiscounts(applicableDiscount, prices)
+        const newPrices = productCreateDiscounts(
+          applicableDiscount,
+          prices,
+          offer,
+          overwriteLabel
+        )
         if (!newPrices || !newPrices.length) {
           return res
             .status(400)
@@ -322,7 +333,9 @@ export default async function getCollectionDiscountedPricing(
           )
           const newPrices = productCreateDiscounts(
             applicableDiscount,
-            filteredCollectionPrices
+            filteredCollectionPrices,
+            offer,
+            overwriteLabel
           )
           if (!newPrices || newPrices.length === 0) {
             return res
@@ -374,7 +387,9 @@ export default async function getCollectionDiscountedPricing(
           )
           const newPrices = productCreateDiscounts(
             applicableDiscount,
-            filteredProductPrices
+            filteredProductPrices,
+            offer,
+            overwriteLabel
           )
 
           if (!newPrices || newPrices.length === 0) {

@@ -14,17 +14,21 @@ export default async function getDiscountedPricing(
 
   const productCreateDiscounts = (
     discount: ShopifyDiscount,
-    prices: PricesType[]
+    prices: PricesType[],
+    offer: string,
+    overwriteLabel: boolean = false
   ) => {
     return prices.map(el =>
-      calculateDiscount(discount, el)
+      calculateDiscount(discount, el, offer, overwriteLabel)
     ) as DiscountedPricesType[]
   }
 
   const variantCreateDiscounts = (
     discount: ShopifyDiscount,
     prices: PricesType[],
-    applicableVariants: ShopifyApplicableVariant[]
+    applicableVariants: ShopifyApplicableVariant[],
+    offer: string,
+    overwriteLabel: boolean = false
   ) => {
     let discountedPrices: DiscountedPricesType[] = []
     for (const item of prices) {
@@ -33,7 +37,12 @@ export default async function getDiscountedPricing(
         el => getLegacyId(el.id) === String(id)
       )
       if (variantId) {
-        const discountedPrice = calculateDiscount(discount, item)
+        const discountedPrice = calculateDiscount(
+          discount,
+          item,
+          offer,
+          overwriteLabel
+        )
         discountedPrices.push(discountedPrice as DiscountedPricesType)
       }
     }
@@ -42,7 +51,9 @@ export default async function getDiscountedPricing(
 
   const calculateDiscount = (
     discount: ShopifyDiscount,
-    variant: PricesType
+    variant: PricesType,
+    offer: string,
+    overwriteLabel: boolean = false
   ) => {
     const discountValue = discount.customerGets.value
     const { id } = variant
@@ -63,6 +74,7 @@ export default async function getDiscountedPricing(
       return {
         id,
         discountedPrice: Number(roundedDiscountAmount),
+        offer: overwriteLabel ? offer : "Sale",
       }
     }
     return res
@@ -98,7 +110,9 @@ export default async function getDiscountedPricing(
   // END HELPER FUNCTIONS
   try {
     const API_VERSION = process.env.GATSBY_SHOPIFY_API_VERSION ?? "2025-01"
-    const { offer, handle, productId, prices } = JSON.parse(req.body)
+    const { offer, handle, productId, prices, overwriteLabel } = JSON.parse(
+      req.body
+    )
 
     const adminToken: string = process.env.GATSBY_STORE_TOKEN ?? ""
     const storeName = process.env.GATSBY_STORE_MY_SHOPIFY ?? ""
@@ -270,7 +284,12 @@ export default async function getDiscountedPricing(
 
     switch (applicableItems.__typename) {
       case "AllDiscountItems":
-        const newPrices = productCreateDiscounts(applicableDiscount, prices)
+        const newPrices = productCreateDiscounts(
+          applicableDiscount,
+          prices,
+          offer,
+          overwriteLabel
+        )
         if (!newPrices || !newPrices.length) {
           return res
             .status(400)
@@ -288,7 +307,12 @@ export default async function getDiscountedPricing(
           el => el.hasProduct
         )
         if (requestCollectionIsApplicable) {
-          const newPrices = productCreateDiscounts(applicableDiscount, prices)
+          const newPrices = productCreateDiscounts(
+            applicableDiscount,
+            prices,
+            offer,
+            overwriteLabel
+          )
           if (!newPrices || newPrices.length === 0) {
             return res
               .status(400)
@@ -316,7 +340,12 @@ export default async function getDiscountedPricing(
         // check if request product is applicable to offer
         // case "DiscountProducts":
         if (requestProductIsApplicable) {
-          const newPrices = productCreateDiscounts(applicableDiscount, prices)
+          const newPrices = productCreateDiscounts(
+            applicableDiscount,
+            prices,
+            offer,
+            overwriteLabel
+          )
           if (!newPrices || newPrices.length === 0) {
             return res.status(400).json({
               error: "Product price discount unable to be created",
@@ -330,7 +359,8 @@ export default async function getDiscountedPricing(
           const newPrices = variantCreateDiscounts(
             applicableDiscount,
             prices,
-            applicableVariants
+            applicableVariants,
+            offer
           )
           if (!newPrices || newPrices.length === 0) {
             return res.status(400).json({

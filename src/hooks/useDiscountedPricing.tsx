@@ -21,14 +21,16 @@ export const useDiscountedPricing = ({
     {
       id: string
       discountedPrice: number
+      offer: string
     }[]
   >([])
   const [isApplicable, setIsApplicable] = useState(false)
-  const [offer, setOffer] = useState("")
   // cart
   const { getAppliedDiscountCode } = useCart()
   const discounts: DiscountConfig[] = useDiscountIdentifier()
   const abortController = new AbortController()
+
+  const found = discountedPrices.find(p => p.id === selectedVariantId) ?? null
 
   // on mount
   useEffect(() => {
@@ -46,7 +48,13 @@ export const useDiscountedPricing = ({
 
         const res = await fetch("/api/getDiscountedPricing", {
           method: "POST",
-          body: JSON.stringify({ productId, offer, prices, handle }),
+          body: JSON.stringify({
+            productId,
+            offer,
+            prices,
+            handle,
+            overwriteLabel: discount.overwriteLabel,
+          }),
           signal: abortController.signal,
         })
         const json = await res.json()
@@ -56,7 +64,6 @@ export const useDiscountedPricing = ({
             ...json.prices,
           ])
           setIsApplicable(true)
-          setOffer(discounts.length > 1 ? "Sale" : offer)
         }
       } catch (error) {}
     }
@@ -73,10 +80,8 @@ export const useDiscountedPricing = ({
   return {
     isApplicable:
       isApplicable && discountedPrices.some(p => p.id === selectedVariantId),
-    offer,
-    discountedPrice:
-      discountedPrices.find(p => p.id === selectedVariantId)?.discountedPrice ??
-      null,
+    discountedPrice: found ? found.discountedPrice : null,
+    offer: found ? found.offer : "Sale",
   }
 }
 

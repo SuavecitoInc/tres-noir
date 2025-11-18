@@ -159,8 +159,10 @@ const Collection = ({
     })
     .flat()
 
-  const { isApplicable, discountedPrices, offer } =
-    useCollectionDiscountedPricing({ prices, handle: collection.handle })
+  const { isApplicable, discountedPrices } = useCollectionDiscountedPricing({
+    prices,
+    handle: collection.handle,
+  })
 
   useEffect(() => {
     const collectionInfo = {
@@ -264,7 +266,7 @@ const Collection = ({
                   let discount: Discount = undefined
                   if (found) {
                     discount = {
-                      offer,
+                      offer: found.offer,
                       isApplicable,
                       discountedPrice: found.discountedPrice,
                     }
@@ -312,7 +314,7 @@ const Collection = ({
                     let discount: Discount = undefined
                     if (found) {
                       discount = {
-                        offer,
+                        offer: found.offer,
                         isApplicable,
                         discountedPrice: found.discountedPrice,
                       }

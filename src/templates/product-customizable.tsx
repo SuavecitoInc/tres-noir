@@ -1276,7 +1276,13 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                               <span>${discountedPrice} USD</span>
                             </div>
                             <div className="compare-at-price">
-                              <span>${selectedVariant.shopify.price} USD</span>
+                              <span>
+                                $
+                                {selectedVariant.shopify.compareAtPrice
+                                  ? selectedVariant.shopify.compareAtPrice
+                                  : selectedVariant.shopify.price}{" "}
+                                USD
+                              </span>
                             </div>
                           </div>
                           <span className="right">

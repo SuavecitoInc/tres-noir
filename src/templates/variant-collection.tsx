@@ -9,6 +9,7 @@ import CollectionImage from "../components/collection-image"
 import Filters from "../components/filters-contentful-variants"
 import { viewedCollectionGTMEvent } from "../helpers/gtm"
 import { ContentfulProductVariant } from "../types/contentful"
+import { useCollectionDiscountedPricing } from "../hooks/useCollectionDiscountedPricing"
 
 const Page = styled.div`
   .desc-container {
@@ -65,6 +66,47 @@ const VariantCollection = ({
     collection.variants
   )
 
+  // get shopify variant info for discount pricing
+  const getShopifyVariant = (
+    variant
+  ): {
+    id: string
+    price: number
+    handle: string
+  } => {
+    try {
+      const handle = variant.product[0].handle
+
+      const shopifyProduct = shopifyCollection.products.find(
+        shopifyProduct =>
+          shopifyProduct.handle.toLowerCase() === handle.toLowerCase()
+      )
+
+      const shopifyVariant = shopifyProduct.variants.find(
+        shopifyVariant => shopifyVariant.sku === variant.sku
+      )
+
+      return {
+        id: shopifyVariant.legacyResourceId,
+        price: shopifyVariant.price,
+        handle: shopifyProduct.handle,
+      }
+    } catch (error) {
+      return {
+        id: "",
+        price: 0,
+        handle: "",
+      }
+    }
+  }
+
+  const prices = variants.map(variant => getShopifyVariant(variant))
+  console.log("prices:", prices)
+  const { isApplicable, discountedPrices } = useCollectionDiscountedPricing({
+    prices,
+    handle: collection.handle,
+  })
+
   useEffect(() => {
     const collectionInfo = {
       handle: collection.handle,
@@ -76,6 +118,7 @@ const VariantCollection = ({
   const getShopifyPrice = (
     variant
   ): {
+    id: string
     price: number
     compareAtPrice: number
   } => {
@@ -92,11 +135,13 @@ const VariantCollection = ({
       )
 
       return {
+        id: shopifyVariant.legacyResourceId,
         price: shopifyVariant.price,
         compareAtPrice: shopifyVariant.compareAtPrice ?? null,
       }
     } catch (error) {
       return {
+        id: "",
         price: 0,
         compareAtPrice: 0,
       }
@@ -225,18 +270,23 @@ const VariantCollection = ({
         <Grid>
           {variants.length ? (
             variants.map(variant => {
-              const { price, compareAtPrice } = getShopifyPrice(variant)
+              const { id, price, compareAtPrice } = getShopifyPrice(variant)
               const productTitle = variant.product[0].title
               const colorName = getColorOptionName(variant)
               const formattedTitle = [productTitle, colorName].join(" - ")
-              const badge = getBadge(variant)
+
+              const found = discountedPrices?.find(el => el.id === id)
+
+              const badge = found
+                ? { label: found.offer, color: "red" }
+                : getBadge(variant)
 
               return (
                 <Variant
                   key={variant.id}
                   contentfulData={variant}
                   productHandle={variant.product[0].handle}
-                  price={price}
+                  price={found ? found.discountedPrice : price}
                   name={formattedTitle}
                   compareAtPrice={compareAtPrice}
                   badge={badge}
@@ -327,6 +377,7 @@ export const query = graphql`
         createdAt
         tags
         variants {
+          legacyResourceId
           price
           compareAtPrice
           sku

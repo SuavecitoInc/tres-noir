@@ -375,9 +375,10 @@ export default async function getDiscountedPricing(
         break
     }
 
-    return res
-      .status(400)
-      .json({ error: "Error while fetching from admin api" })
+    // this seems unreachable?
+    // return res
+    //   .status(400)
+    //   .json({ error: "Error while fetching from admin api" })
   } catch (error) {
     console.log("Error on getDiscountedPricing:", error)
   }

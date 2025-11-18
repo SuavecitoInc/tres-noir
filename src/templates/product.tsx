@@ -569,7 +569,11 @@ const Product = ({
 
                             <div className="compare-at-price">
                               <span className="compare-at-price">
-                                ${formatPrice(selectedVariant.price)} USD
+                                $
+                                {selectedVariant.compareAtPrice
+                                  ? formatPrice(selectedVariant.compareAtPrice)
+                                  : formatPrice(selectedVariant.price)}{" "}
+                                USD
                               </span>
                             </div>
                           </div>

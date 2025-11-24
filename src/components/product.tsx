@@ -9,7 +9,6 @@ import { useQuantityQuery } from "../hooks/useQuantityQuery"
 import { addedToCartGTMEvent } from "../helpers/gtm"
 import { isDiscounted, formatPrice } from "../helpers/shopify"
 import Badge from "./badge"
-import useDiscountIdentifier from "../hooks/useDiscountIdentifier"
 import { useCart } from "../contexts/storefront-cart"
 
 const Component = styled.article`
@@ -107,8 +106,6 @@ const Product = ({
   const selectedVariant = data.variants[0]
   const { isApplicable, offer, discountedPrice } = discount
 
-  const { overwriteLabel } = useDiscountIdentifier()
-
   const quantityLevels = useQuantityQuery(data.handle, data.variants.length)
 
   const { addProductToCart, isAddingToCart } = useCart()
@@ -195,7 +192,7 @@ const Product = ({
               {isApplicable && (
                 <div className="badge-container">
                   <Badge
-                    label={overwriteLabel ? "Sale" : offer}
+                    label={offer}
                     color={"red"}
                     position="absolute"
                     top={0}

@@ -42,7 +42,7 @@ export const useDiscountIdentifier = () => {
     }
   )
 
-  return discounts
+  return discounts as DiscountConfig[]
 }
 
 export default useDiscountIdentifier

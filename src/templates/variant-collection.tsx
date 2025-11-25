@@ -288,7 +288,7 @@ const VariantCollection = ({
                   productHandle={variant.product[0].handle}
                   price={found ? found.discountedPrice : price}
                   name={formattedTitle}
-                  compareAtPrice={compareAtPrice}
+                  compareAtPrice={found ? price : compareAtPrice}
                   badge={badge}
                 />
               )

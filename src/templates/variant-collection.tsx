@@ -197,6 +197,7 @@ const VariantCollection = ({
       const badgeTag = shopifyProduct.tags.find(tag =>
         tag.toLowerCase().startsWith(`badge:${variant.sku.toLowerCase()}:`)
       )
+      console.log("badgeTag:", badgeTag)
       if (badgeTag) {
         const badgeLabel = badgeTag.split(`badge:${variant.sku}:`)[1]
         return {
@@ -231,6 +232,7 @@ const VariantCollection = ({
           color: "#DAA520",
         }
       }
+      console.log("no badge found")
       return null
     } catch (error) {
       return null
@@ -277,9 +279,10 @@ const VariantCollection = ({
 
               const found = discountedPrices?.find(el => el.id === id)
 
-              const badge = found
-                ? { label: found.offer, color: "red" }
-                : getBadge(variant)
+              const badge =
+                found && found?.offer
+                  ? { label: found?.offer, color: "red" }
+                  : getBadge(variant)
 
               return (
                 <Variant

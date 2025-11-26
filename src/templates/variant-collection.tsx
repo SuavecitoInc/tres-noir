@@ -57,6 +57,7 @@ const VariantCollection = ({
     shopifyCollection,
     contentfulHomepage,
   } = data
+
   const defaultFilters = { frameWidth: "", colorName: "" }
   const [filters, setFilters] = useState<{
     frameWidth: string
@@ -101,7 +102,6 @@ const VariantCollection = ({
   }
 
   const prices = variants.map(variant => getShopifyVariant(variant))
-  console.log("prices:", prices)
   const { isApplicable, discountedPrices } = useCollectionDiscountedPricing({
     prices,
     handle: collection.handle,
@@ -197,7 +197,6 @@ const VariantCollection = ({
       const badgeTag = shopifyProduct.tags.find(tag =>
         tag.toLowerCase().startsWith(`badge:${variant.sku.toLowerCase()}:`)
       )
-      console.log("badgeTag:", badgeTag)
       if (badgeTag) {
         const badgeLabel = badgeTag.split(`badge:${variant.sku}:`)[1]
         return {
@@ -279,9 +278,17 @@ const VariantCollection = ({
 
               const found = discountedPrices?.find(el => el.id === id)
 
+              // override badge to "Door Buster" if in doorbusters collection
+              const isDoorBuster =
+                data.contentfulVariantCollection.handle === "doorbusters"
+              const defaultBadgeColor = isDoorBuster ? "#39b54a" : "red"
+
               const badge =
                 found && found?.offer
-                  ? { label: found?.offer, color: "red" }
+                  ? {
+                      label: isDoorBuster ? "Doorbuster" : found?.offer,
+                      color: defaultBadgeColor,
+                    }
                   : getBadge(variant)
 
               return (

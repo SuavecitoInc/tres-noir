@@ -102,7 +102,6 @@ const VariantCollection = ({
   }
 
   const prices = variants.map(variant => getShopifyVariant(variant))
-  console.log("prices:", prices)
   const { isApplicable, discountedPrices } = useCollectionDiscountedPricing({
     prices,
     handle: collection.handle,
@@ -198,7 +197,6 @@ const VariantCollection = ({
       const badgeTag = shopifyProduct.tags.find(tag =>
         tag.toLowerCase().startsWith(`badge:${variant.sku.toLowerCase()}:`)
       )
-      console.log("badgeTag:", badgeTag)
       if (badgeTag) {
         const badgeLabel = badgeTag.split(`badge:${variant.sku}:`)[1]
         return {
@@ -292,8 +290,6 @@ const VariantCollection = ({
                       color: defaultBadgeColor,
                     }
                   : getBadge(variant)
-
-              console.log("Rendering variant with badge:", found, badge)
 
               return (
                 <Variant

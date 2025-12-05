@@ -1261,8 +1261,13 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                       <>
                         <div className="flex">
                           <Badge
-                            label={offer}
-                            color={"red"}
+                            // label={offer}
+                            label={badge ? badge.label : offer}
+                            color={
+                              badge && badge.label === "doorbuster"
+                                ? "#39b54a"
+                                : "red"
+                            }
                             position="static"
                             top={0}
                             left={0}

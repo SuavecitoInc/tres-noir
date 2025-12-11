@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react"
-import { useStaticQuery, graphql } from "gatsby"
 import CustomizerContext from "./context"
 import type { AvailablePath, GlassesType } from "./types"
+import useCustomizerCollections from "../../hooks/useCustomizerCollections"
 
 type Props = {
   children: React.ReactNode
@@ -116,95 +116,7 @@ export function CustomizerProvider({ children }: Props) {
   // get collections and collection featured images
 
   const { nonPrescription, singleVision, readers, bifocal, progressive } =
-    useStaticQuery(graphql`
-      query CustomizerQuery {
-        nonPrescription: shopifyCollection(handle: { eq: "non-prescription" }) {
-          title
-          description
-          image {
-            originalSrc
-            altText
-            localFile {
-              id
-              childImageSharp {
-                gatsbyImageData(quality: 50)
-              }
-            }
-          }
-          products {
-            ...shopifyProductsFields
-          }
-        }
-        singleVision: shopifyCollection(handle: { eq: "single-vision" }) {
-          title
-          description
-          image {
-            originalSrc
-            altText
-            localFile {
-              id
-              childImageSharp {
-                gatsbyImageData(quality: 50)
-              }
-            }
-          }
-          products {
-            ...shopifyProductsFields
-          }
-        }
-        readers: shopifyCollection(handle: { eq: "readers" }) {
-          title
-          description
-          image {
-            originalSrc
-            altText
-            localFile {
-              id
-              childImageSharp {
-                gatsbyImageData(quality: 50)
-              }
-            }
-          }
-          products {
-            ...shopifyProductsFields
-          }
-        }
-        bifocal: shopifyCollection(handle: { eq: "bifocal" }) {
-          title
-          description
-          image {
-            originalSrc
-            altText
-            localFile {
-              id
-              childImageSharp {
-                gatsbyImageData(quality: 50)
-              }
-            }
-          }
-          products {
-            ...shopifyProductsFields
-          }
-        }
-        progressive: shopifyCollection(handle: { eq: "progressive" }) {
-          title
-          description
-          image {
-            originalSrc
-            altText
-            localFile {
-              id
-              childImageSharp {
-                gatsbyImageData(quality: 50)
-              }
-            }
-          }
-          products {
-            ...shopifyProductsFields
-          }
-        }
-      }
-    `)
+    useCustomizerCollections()
 
   const CONFIG = {
     Glasses: {

@@ -91,8 +91,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
         productType === "Safety Glasses" &&
         contentfulHandles.includes(handle)
       ) {
-        template = "safety-glasses-customizable"
-        // template = "product-customizable"
+        template = "product-customizable"
       } else if (productType === "Gift Card" || productType === "Gift Cards") {
         template = "gift-card"
       }
@@ -125,7 +124,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       if (productType === "Glasses" && contentfulHandles.includes(handle)) {
         createPage({
           path: `/products/${handle}/customize`,
-          component: path.resolve(`./src/templates/customize.tsx`),
+          component: path.resolve(`./src/templates/customize-v2.tsx`),
           context: {
             id,
             handle,
@@ -146,10 +145,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       ) {
         createPage({
           path: `/products/${handle}/customize`,
-          component: path.resolve(
-            `./src/templates/safety-glasses-customize.tsx`
-            // `./src/templates/customize.tsx`
-          ),
+          component: path.resolve(`./src/templates/customize-v2.tsx`),
           context: {
             id,
             handle,

@@ -1,9 +1,9 @@
-import React, { useContext, useEffect } from "react"
+import React, { useEffect } from "react"
 import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
 import styled from "styled-components"
 import { IGatsbyImageData } from "gatsby-plugin-image"
 import { ShopifyVariant } from "../types/global"
-import { CustomizeContext } from "../contexts/customize"
+import { useCustomizer } from "../contexts/customizer"
 import { formatPrice } from "../helpers/shopify"
 import { useCaseCollection } from "../hooks/useCaseCollection"
 
@@ -130,15 +130,16 @@ interface Product {
 
 interface Props {
   casesAvailable: string[]
+  type: "Glasses" | "Safety Glasses"
 }
 
-const CaseGridCustomize: React.FC<Props> = ({ casesAvailable }) => {
+const CaseGridCustomize: React.FC<Props> = ({ casesAvailable, type }) => {
   const {
     selectedVariants,
     setSelectedVariants,
     hasSavedCustomized,
     setHasSavedCustomized,
-  } = useContext(CustomizeContext)
+  } = useCustomizer()
 
   const caseCollection: Product[] = useCaseCollection()
 
@@ -166,7 +167,14 @@ const CaseGridCustomize: React.FC<Props> = ({ casesAvailable }) => {
 
   useEffect(() => {
     if (hasSavedCustomized["case"] === false) {
-      handleChange(caseCollection[0].variants[0], false)
+      const DEFAULT_CASE =
+        type === "Glasses"
+          ? caseCollection[0].variants[0]
+          : caseCollection[1].variants[0]
+
+      handleChange(DEFAULT_CASE, false)
+
+      // handleChange(caseCollection[0].variants[0], false)
     }
   }, [])
 

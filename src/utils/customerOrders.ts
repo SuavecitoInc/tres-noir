@@ -29,9 +29,8 @@ export const rebuildLineItems = (lineItems: LineItemType[]) => {
           isCustom: true,
           steps: [],
         }
-      } else {
-        items[customizationId].steps.push(item)
       }
+      items[customizationId].steps.push(item)
     } else {
       items[item.id] = {
         isCustom: false,

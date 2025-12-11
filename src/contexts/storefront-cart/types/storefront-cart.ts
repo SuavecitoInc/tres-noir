@@ -1,4 +1,5 @@
-import { SelectedVariants } from "../../../types/global"
+// import { SelectedVariants } from "../../../types/global"
+import type { SelectedVariants } from "../../customizer/types"
 import { CartFragmentFragment as CartFragment } from "./storefront.generated"
 import { IGatsbyImageData } from "gatsby-plugin-image"
 

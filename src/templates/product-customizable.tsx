@@ -22,7 +22,7 @@ import {
   addedCustomizedToCartGTMEvent,
   viewedProductGTMEvent,
 } from "../helpers/gtm"
-import { CustomizeContext } from "../contexts/customize"
+import { useCustomizer } from "../contexts/customizer"
 import FreeShipping from "../components/free-shipping"
 import Spinner from "../components/spinner"
 import CaseGridSunglasses from "../components/case-grid-sunglasses"
@@ -455,11 +455,12 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
   const clearanceSKUs = createClearanceSKUs(clearanceItemsData)
 
   const {
+    setType,
     setSelectedVariantsToDefault,
     setCurrentStep,
     setHasSavedCustomized,
     setProductUrl,
-  } = useContext(CustomizeContext)
+  } = useCustomizer()
 
   // remove hidden variants
   contentfulProduct.variants = useFilterHiddenCustomizableVariants(
@@ -494,9 +495,12 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
   })
   const caseCollection = useCaseCollection()
 
-  const [selectedCase, setSelectedCase] = useState<any>(
-    caseCollection[0].variants[0]
-  )
+  const DEFAULT_CASE =
+    shopifyProduct.productType === "Glasses"
+      ? caseCollection[0].variants[0]
+      : caseCollection[1].variants[0]
+
+  const [selectedCase, setSelectedCase] = useState<any>(DEFAULT_CASE)
 
   const [showPolarizedModal, setShowPolarizedModal] = useState<boolean>(false)
 
@@ -938,16 +942,23 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
     }
   }, [])
 
+  // set customizer type Glasses or Safety Glasses on mount
+  useEffect(() => {
+    const productType =
+      shopifyProduct.productType === "Safety Glasses"
+        ? "Safety Glasses"
+        : "Glasses"
+    setType(productType)
+  }, [shopifyProduct])
+
   useEffect(() => {
     setProductUrl(
       `/products/${contentfulProduct.handle}/?variant=${shopifyProduct.variants[0].sku}`
     )
-    setCurrentStep(1)
+    setCurrentStep(0)
     setHasSavedCustomized({
       step1: false,
       step2: false,
-      step3: false,
-      step4: false,
       case: false,
     })
     setSelectedVariantsToDefault()
@@ -1316,6 +1327,14 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                             : ""
                         }`}
                         id="polarized-toggle"
+                        style={{
+                          // hide polarization option for safety glasses
+                          display: `${
+                            shopifyProduct.productType === "Safety Glasses"
+                              ? "none"
+                              : "block"
+                          }`,
+                        }}
                       >
                         <div className="polarized-switch">
                           <input

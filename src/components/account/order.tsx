@@ -80,6 +80,9 @@ const Order = ({ orderData }: Props) => {
     orderData.lineItems.edges.map(({ node }) => node)
   )
 
+  console.log("Rendering Order component with data:", orderData)
+  console.log("Rebuilt line items:", lineItems)
+
   const goBack = () => {
     navigate("/account/orders")
   }

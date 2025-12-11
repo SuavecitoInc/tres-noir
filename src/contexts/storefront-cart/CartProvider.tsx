@@ -36,7 +36,7 @@ import {
   removeFromImageStorage,
 } from "./helpers"
 import { IGatsbyImageData } from "gatsby-plugin-image"
-import { SelectedVariants } from "../../types/global"
+import { SelectedVariants } from "../../contexts/customizer/types"
 
 type Props = {
   children: React.ReactNode | React.ReactNode[]
@@ -614,6 +614,7 @@ export function CartProvider({ children }: Props) {
         })
 
         if (!preShipInsure.data?.cartLinesAdd?.cart) {
+          console.error("No cart returned", preShipInsure, lineItems)
           throw new Error("Failed to add item to cart")
         }
 

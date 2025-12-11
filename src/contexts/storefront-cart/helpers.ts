@@ -2,7 +2,8 @@ import Cookies from "js-cookie"
 
 import { IGatsbyImageData } from "gatsby-plugin-image"
 import { tnItem, ImageHashTable, ImageStorage } from "./types/storefront-cart"
-import { SelectedVariants, SelectedVariantStorage } from "../../types/global"
+import { SelectedVariantStorage } from "../../types/global"
+import type { SelectedVariants } from "../../contexts/customizer/types"
 import type { Cart } from "./types/storefront-cart"
 
 const isBrowser = typeof window !== "undefined"

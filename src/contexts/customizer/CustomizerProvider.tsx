@@ -224,8 +224,10 @@ export function CustomizerProvider({ children }: Props) {
   const [type, setType] = useState<GlassesType>("Glasses")
 
   const [availablePaths, setAvailablePaths] = useState<AvailablePath[]>(
-    CONFIG["Glasses"].availablePaths
+    CONFIG["Glasses"]?.availablePaths || []
   )
+
+  console.log("availablePaths", availablePaths)
   const [selectedCollectionPath, setSelectedCollectionPath] =
     useState<AvailablePath>(nonPrescription)
 
@@ -257,6 +259,10 @@ export function CustomizerProvider({ children }: Props) {
       // reset selected collection path when type changes
       setAvailablePaths(CONFIG[type].availablePaths)
       setSelectedCollectionPath(CONFIG[type].availablePaths[0] as AvailablePath)
+      // if (CONFIG[type].availablePaths.length > 0)
+      //   setSelectedCollectionPath(
+      //     CONFIG[type].availablePaths[0] as AvailablePath
+      //   )
     }
   }, [type])
 

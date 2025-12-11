@@ -15,12 +15,6 @@ type Props = {
   type: "Glasses" | "Safety Glasses"
 }
 
-// function toCamelCase(str: string) {
-//   return str
-//     .toLowerCase()
-//     .replace(/[^a-zA-Z0-9]+(.)/g, (_, chr) => chr.toUpperCase())
-// }
-
 const PathSelector: React.FC<Props> = ({ handle, type }) => {
   const {
     setType,
@@ -97,8 +91,6 @@ const PathSelector: React.FC<Props> = ({ handle, type }) => {
           setHasSavedCustomized({
             step1: true,
             step2: true,
-            // step3: true,
-            // step4: true,
             case: true,
           })
           setCurrentStep(3)

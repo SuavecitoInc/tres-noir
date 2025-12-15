@@ -398,16 +398,18 @@ export default async function getCollectionDiscountedPricing(
             })
           }
 
-          return res
-            .setHeader(
-              "Cache-Control",
-              "public, max-age=300, s-maxage=600, stale-while-revalidate=60"
-            )
-            .status(200)
-            .json({
-              prices: newPrices,
-              type: applicableDiscountType,
-            })
+          // 1. Define your caching headers
+          const CACHE_CONTROL_BROWSER = "public, max-age=0, must-revalidate"
+          // Cache on Netlify CDN for 1 hour (3600s), but serve stale content for an additional 7 days (604800s)
+          const CACHE_CONTROL_NETLIFY =
+            "public, max-age=3600, stale-while-revalidate=3600"
+          res.setHeader("Cache-Control", CACHE_CONTROL_BROWSER)
+          res.setHeader("Netlify-CDN-Cache-Control", CACHE_CONTROL_NETLIFY)
+
+          return res.status(200).json({
+            prices: newPrices,
+            type: applicableDiscountType,
+          })
         }
         break
     }

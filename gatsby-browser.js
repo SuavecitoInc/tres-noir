@@ -1,7 +1,6 @@
 import React from "react"
 import ReactDOM from "react-dom/client"
 import { CustomizerProvider } from "./src/contexts/customizer"
-import { CustomizeSafetyGlassesProvider } from "./src/contexts/customize-safety-glasses"
 import { CartProvider } from "./src/contexts/storefront-cart"
 import { RxInfoContextProvider } from "./src/contexts/rxInfo"
 import { ErrorModalProvider } from "./src/contexts/error"
@@ -45,11 +44,9 @@ export const wrapRootElement = ({ element }) => {
     <ErrorModalProvider>
       <CartProvider>
         <CustomizerProvider>
-          <CustomizeSafetyGlassesProvider>
-            <RxInfoContextProvider>
-              <ErrorBoundary>{element}</ErrorBoundary>
-            </RxInfoContextProvider>
-          </CustomizeSafetyGlassesProvider>
+          <RxInfoContextProvider>
+            <ErrorBoundary>{element}</ErrorBoundary>
+          </RxInfoContextProvider>
         </CustomizerProvider>
       </CartProvider>
     </ErrorModalProvider>

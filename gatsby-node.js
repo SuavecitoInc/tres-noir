@@ -124,7 +124,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       if (productType === "Glasses" && contentfulHandles.includes(handle)) {
         createPage({
           path: `/products/${handle}/customize`,
-          component: path.resolve(`./src/templates/customize-v2.tsx`),
+          component: path.resolve(`./src/templates/customize.tsx`),
           context: {
             id,
             handle,
@@ -145,7 +145,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       ) {
         createPage({
           path: `/products/${handle}/customize`,
-          component: path.resolve(`./src/templates/customize-v2.tsx`),
+          component: path.resolve(`./src/templates/customize.tsx`),
           context: {
             id,
             handle,

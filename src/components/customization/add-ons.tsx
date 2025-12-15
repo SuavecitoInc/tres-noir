@@ -83,6 +83,9 @@ const AddOns = ({ handle }: Props) => {
     setHasSavedCustomized,
   } = useCustomizer()
 
+  // delete
+  console.log("ADDONS MOUNT", selectedVariants)
+
   const [currentCollection, setCurrentCollection] =
     useState<AvailablePath>(antiReflective)
 
@@ -116,13 +119,6 @@ const AddOns = ({ handle }: Props) => {
     variant: Variant,
     isSetFromEvent: boolean = true
   ) => {
-    console.log("handleChange", evt)
-    console.log("variant selected:", variant)
-    const variantToUse =
-      variant.storefrontId ===
-      selectedVariants[`step${currentStep}`].storefrontId
-        ? (DEFAULT_ITEM as unknown as Variant)
-        : variant
     setHasSavedCustomized({
       ...hasSavedCustomized,
       [`step${currentStep}`]: isSetFromEvent,
@@ -130,7 +126,7 @@ const AddOns = ({ handle }: Props) => {
 
     setSelectedVariants({
       ...selectedVariants,
-      [`step${currentStep}`]: variantToUse,
+      [`step${currentStep}`]: variant,
     })
   }
 
@@ -168,6 +164,13 @@ const AddOns = ({ handle }: Props) => {
       }))
     }
   }, [antiReflective, offer, isApplicable, discountedPrices])
+
+  useEffect(() => {
+    if (hasSavedCustomized[`step${currentStep}`] === true) {
+      // setting variant to saved one if set
+      handleChange(null, selectedVariants[`step${currentStep}`], true)
+    }
+  }, [currentCollection?.products])
 
   return (
     <Component>
@@ -227,7 +230,14 @@ const AddOns = ({ handle }: Props) => {
                   name={`step${currentStep}`}
                   id={product.id}
                   aria-label={product.title}
-                  onChange={evt => handleChange(evt, product.variants[0])}
+                  onChange={evt => {
+                    const v =
+                      product.variants[0].storefrontId ===
+                      selectedVariants[`step${currentStep}`].storefrontId
+                        ? (DEFAULT_ITEM as unknown as Variant)
+                        : product.variants[0]
+                    handleChange(evt, v)
+                  }}
                   checked={
                     product.variants[0].storefrontId ===
                     selectedVariants[`step${currentStep}`].storefrontId

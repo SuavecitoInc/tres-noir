@@ -339,7 +339,9 @@ const Form = ({ handle }: Props) => {
       hasSavedCustomized[`step${currentStep}`] === false &&
       currentCollection?.products[0]?.variants[0]
     ) {
-      handleChange(null, currentCollection.products[0].variants[0], false)
+      handleChange(null, currentCollection.products[0].variants[0], true)
+    } else if (hasSavedCustomized[`step${currentStep}`] === true) {
+      handleChange(null, selectedVariants[`step${currentStep}`], true)
     }
   }, [currentCollection?.products]) // this is the only dependency that should be here currentCollection?.products[0]?.variants[0]]
 

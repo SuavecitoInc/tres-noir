@@ -343,17 +343,7 @@ const Form = ({ handle }: Props) => {
     } else if (hasSavedCustomized[`step${currentStep}`] === true) {
       handleChange(null, selectedVariants[`step${currentStep}`], true)
     }
-  }, [currentCollection?.products]) // this is the only dependency that should be here currentCollection?.products[0]?.variants[0]]
-
-  // useEffect to fix bug where Non Prescription Lens selection will still error out
-  // useEffect(() => {
-  //   if (
-  //     currentStep === 1 &&
-  //     selectedVariants.step1.product.title === "Non-Prescription Lens"
-  //   ) {
-  //     enableContinue()
-  //   }
-  // }, [currentStep, selectedVariants])
+  }, []) // this is the only dependency that should be here currentCollection?.products[0]?.variants[0]]
 
   // restore on refresh
   useEffect(() => {
@@ -395,8 +385,6 @@ const Form = ({ handle }: Props) => {
           setHasSavedCustomized({
             step1: true,
             step2: true,
-            // step3: true,
-            // step4: true,
             case: true,
           })
           setCurrentStep(1)
@@ -406,11 +394,11 @@ const Form = ({ handle }: Props) => {
   }, [])
 
   // if selectedVariants step 1 is not set (set from handleChange), set it to first variant
-  useEffect(() => {
-    if (!selectedVariants[`step${currentStep}`]?.storefrontId) {
-      handleChange(null, currentCollection.products[0].variants[0], false)
-    }
-  }, [currentCollection])
+  // useEffect(() => {
+  //   if (!selectedVariants[`step${currentStep}`]?.storefrontId) {
+  //     handleChange(null, currentCollection.products[0].variants[0], false)
+  //   }
+  // }, [currentCollection])
 
   return (
     <Component>

@@ -170,7 +170,7 @@ const AddOns = ({ handle }: Props) => {
       // setting variant to saved one if set
       handleChange(null, selectedVariants[`step${currentStep}`], true)
     }
-  }, [currentCollection?.products])
+  }, []) // currentCollection?.products
 
   return (
     <Component>

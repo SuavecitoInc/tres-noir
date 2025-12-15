@@ -139,7 +139,6 @@ export function CustomizerProvider({ children }: Props) {
     CONFIG["Glasses"]?.availablePaths || []
   )
 
-  console.log("availablePaths", availablePaths)
   const [selectedCollectionPath, setSelectedCollectionPath] =
     useState<AvailablePath>(nonPrescription)
 

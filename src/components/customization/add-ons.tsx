@@ -83,9 +83,6 @@ const AddOns = ({ handle }: Props) => {
     setHasSavedCustomized,
   } = useCustomizer()
 
-  // delete
-  console.log("ADDONS MOUNT", selectedVariants)
-
   const [currentCollection, setCurrentCollection] =
     useState<AvailablePath>(antiReflective)
 
@@ -140,7 +137,6 @@ const AddOns = ({ handle }: Props) => {
   // discount swap hook
   useEffect(() => {
     if (isApplicable && discountedPrices) {
-      console.log("discounted pricing", discountedPrices)
       const tempCollection = JSON.parse(JSON.stringify(antiReflective))
 
       const patchedCollection = tempCollection.products.map(p => {

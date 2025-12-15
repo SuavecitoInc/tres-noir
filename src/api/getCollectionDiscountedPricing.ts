@@ -397,10 +397,17 @@ export default async function getCollectionDiscountedPricing(
               error: "Product price discount unable to be created",
             })
           }
-          return res.status(200).json({
-            prices: newPrices,
-            type: applicableDiscountType,
-          })
+
+          return res
+            .setHeader(
+              "Cache-Control",
+              "public, max-age=300, s-maxage=600, stale-while-revalidate=60"
+            )
+            .status(200)
+            .json({
+              prices: newPrices,
+              type: applicableDiscountType,
+            })
         }
         break
     }

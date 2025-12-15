@@ -309,7 +309,6 @@ const Form = ({ handle }: Props) => {
   // discount swap hook
   useEffect(() => {
     if (isApplicable && discountedPrices) {
-      console.log("discounted pricing", discountedPrices)
       const tempCollection = JSON.parse(JSON.stringify(selectedCollectionPath))
 
       const patchedCollection = tempCollection.products.map(p => {

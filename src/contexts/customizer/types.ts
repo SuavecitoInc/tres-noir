@@ -35,6 +35,7 @@ export type Variant = {
 
 export type Product = {
   id: string
+  handle: string
   description: string
   image: {
     originalSrc: string

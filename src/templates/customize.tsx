@@ -296,7 +296,7 @@ const Customize = ({
               {currentStep === 1 && (
                 <CollectionPath handle={shopifyProduct.handle} />
               )}
-              {currentStep === 2 && <AddOns />}
+              {currentStep === 2 && <AddOns handle={shopifyProduct.handle} />}
               {currentStep === 3 && (
                 <Summary
                   productTitle={shopifyProduct.title}

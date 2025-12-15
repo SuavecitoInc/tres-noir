@@ -4,6 +4,7 @@ import React, {
   ChangeEvent,
   useState,
   useEffect,
+  useMemo,
 } from "react"
 import { Link } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
@@ -18,6 +19,7 @@ import type {
 } from "../../contexts/storefront-cart/types/storefront-cart"
 import { isDiscounted, formatPrice } from "../../helpers/shopify"
 import ReadersTable from "../readers-table"
+import useCollectionDiscountedPricing from "../../hooks/useCollectionDiscountedPricing"
 
 import type {
   AvailablePath,
@@ -25,7 +27,11 @@ import type {
   Variant,
 } from "../../contexts/customizer/types"
 
-const Form = ({}) => {
+type Props = {
+  handle: string
+}
+
+const Form = ({ handle }: Props) => {
   const {
     // availablePaths,
     selectedCollectionPath,
@@ -38,9 +44,13 @@ const Form = ({}) => {
     setHasSavedCustomized,
   } = useCustomizer()
 
-  const isNonPrescription = selectedCollectionPath.title === "Non-Prescription"
-  const isSingleVision = selectedCollectionPath.title === "Single Vision"
-  const isReaders = selectedCollectionPath.title === "Readers"
+  const [currentCollection, setCurrentCollection] = useState<AvailablePath>(
+    selectedCollectionPath
+  )
+
+  const isNonPrescription = currentCollection.title === "Non-Prescription"
+  const isSingleVision = currentCollection.title === "Single Vision"
+  const isReaders = currentCollection.title === "Readers"
 
   const { isRxAble, setRxAble, rxInfo, rxInfoDispatch } =
     useContext(RxInfoContext)
@@ -50,8 +60,29 @@ const Form = ({}) => {
   const errorRefs = useRef({})
   const continueBtn = useRef<HTMLButtonElement>(null)
   const topRef = useRef<HTMLDivElement>(null)
-  const [filteredCollection, setFilteredCollection] = useState<string[]>([])
   const [editHasError, setEditHasError] = useState(false)
+
+  // start discounted prices
+  const prices = useMemo(
+    () =>
+      selectedCollectionPath?.products
+        ? selectedCollectionPath?.products
+            ?.map(p =>
+              p?.variants?.map(v => {
+                return {
+                  id: v.legacyResourceId,
+                  price: v.price,
+                  handle: p.handle,
+                }
+              })
+            )
+            .flat()
+        : [],
+    [selectedCollectionPath]
+  )
+
+  const { offer, isApplicable, discountedPrices } =
+    useCollectionDiscountedPricing({ prices, handle })
 
   const handleChange = (
     evt: React.ChangeEvent<HTMLInputElement> | null,
@@ -275,16 +306,44 @@ const Form = ({}) => {
     }
   }
 
+  // discount swap hook
+  useEffect(() => {
+    if (isApplicable && discountedPrices) {
+      console.log("discounted pricing", discountedPrices)
+      const tempCollection = JSON.parse(JSON.stringify(selectedCollectionPath))
+
+      const patchedCollection = tempCollection.products.map(p => {
+        const patchedVariants = p.variants.map(v => {
+          const patchedPrice = discountedPrices.find(
+            el => el.id === v.legacyResourceId
+          )
+          if (patchedPrice) {
+            v.compareAtPrice = v.price
+            v.price = patchedPrice.discountedPrice
+          }
+          return v
+        })
+        p.variants = patchedVariants
+        return p
+      })
+      setCurrentCollection(col => ({
+        ...col,
+        title: tempCollection.title,
+        products: patchedCollection,
+      }))
+    }
+  }, [selectedCollectionPath, offer, isApplicable, discountedPrices])
+
   useEffect(() => {
     if (
       hasSavedCustomized[`step${currentStep}`] === false &&
-      selectedCollectionPath?.products[0]?.variants[0]
+      currentCollection?.products[0]?.variants[0]
     ) {
-      handleChange(null, selectedCollectionPath.products[0].variants[0], false)
+      handleChange(null, currentCollection.products[0].variants[0], false)
     }
-  }, [selectedCollectionPath?.products]) // this is the only dependency that should be here selectedCollectionPath?.products[0]?.variants[0]]
+  }, [currentCollection?.products]) // this is the only dependency that should be here currentCollection?.products[0]?.variants[0]]
 
-  // useEffect to fix bug where Non Precription Lens selection will still error out
+  // useEffect to fix bug where Non Prescription Lens selection will still error out
   // useEffect(() => {
   //   if (
   //     currentStep === 1 &&
@@ -347,17 +406,17 @@ const Form = ({}) => {
   // if selectedVariants step 1 is not set (set from handleChange), set it to first variant
   useEffect(() => {
     if (!selectedVariants[`step${currentStep}`]?.storefrontId) {
-      handleChange(null, selectedCollectionPath.products[0].variants[0], false)
+      handleChange(null, currentCollection.products[0].variants[0], false)
     }
-  }, [selectedCollectionPath])
+  }, [currentCollection])
 
   return (
     <Component>
       <div className="step-header" ref={topRef}>
-        <p>Choose your {selectedCollectionPath.title} option:</p>
+        <p>Choose your {currentCollection.title} option:</p>
       </div>
-      {selectedCollectionPath?.products &&
-        selectedCollectionPath.products.map((product: Product) => {
+      {currentCollection?.products &&
+        currentCollection.products.map((product: Product) => {
           // fix variant.image is null
           if (product.variants[0].image === null && product.media[0]?.image) {
             product.variants[0].image = {
@@ -370,11 +429,7 @@ const Form = ({}) => {
             <React.Fragment key={product.id}>
               {product.variants.length === 1 &&
               product.variants[0].title.includes("Default") ? (
-                <div
-                  className={`product-option ${
-                    filteredCollection.includes(product.title) ? "inactive" : ""
-                  }`}
-                >
+                <div className={`product-option`}>
                   <GatsbyImage
                     image={
                       product.image && product.image.localFile
@@ -388,7 +443,7 @@ const Form = ({}) => {
                   <div className="product-description">
                     <h4>
                       {product.title.replace(
-                        `${selectedCollectionPath.title} - `,
+                        `${currentCollection.title} - `,
                         ""
                       )}{" "}
                       <span className="price">
@@ -424,19 +479,10 @@ const Form = ({}) => {
                       selectedVariants[`step${currentStep}`].storefrontId
                     }
                   />
-
-                  {!filteredCollection.includes(product.title) ? (
-                    <div className="checkmark" />
-                  ) : (
-                    <div className="checkmark disabled" />
-                  )}
+                  <div className="checkmark" />
                 </div>
               ) : (
-                <div
-                  className={`product-option with-variants ${
-                    filteredCollection.includes(product.title) ? "inactive" : ""
-                  }`}
-                >
+                <div className={`product-option with-variants`}>
                   <GatsbyImage
                     image={
                       product.image && product.image.localFile
@@ -450,7 +496,7 @@ const Form = ({}) => {
                   <div className="product-description">
                     <h4>
                       {product.title.replace(
-                        `${selectedCollectionPath.title} - `,
+                        `${currentCollection.title} - `,
                         ""
                       )}
                     </h4>
@@ -458,16 +504,7 @@ const Form = ({}) => {
                   </div>
                   <ul className="variants">
                     {product.variants.map((variant: Variant) => (
-                      <li
-                        key={variant.storefrontId}
-                        className={`${
-                          filteredCollection.includes(
-                            `${product.title}-${variant.title}`
-                          ) || filteredCollection.includes(product.title)
-                            ? "inactive"
-                            : ""
-                        }`}
-                      >
+                      <li key={variant.storefrontId}>
                         <GatsbyImage
                           image={
                             variant.image.localFile.childImageSharp
@@ -506,13 +543,7 @@ const Form = ({}) => {
                             selectedVariants[`step${currentStep}`].storefrontId
                           }
                         />
-                        {!filteredCollection.includes(
-                          `${product.title}-${variant.title}`
-                        ) || !filteredCollection.includes(product.title) ? (
-                          <div className="checkmark" />
-                        ) : (
-                          <div className="checkmark disabled" />
-                        )}
+                        <div className="checkmark" />
                       </li>
                     ))}
                   </ul>

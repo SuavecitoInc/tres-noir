@@ -1,11 +1,16 @@
-import React, { useRef } from "react"
-import { graphql, useStaticQuery, Link } from "gatsby"
+import React, { useRef, useState, useMemo, useEffect } from "react"
+import { graphql, useStaticQuery } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
 import { Component } from "./styles"
 import { useCustomizer } from "../../contexts/customizer"
 import { isDiscounted, formatPrice } from "../../helpers/shopify"
 
-import type { Product, Variant } from "../../contexts/customizer/types"
+import type {
+  AvailablePath,
+  Product,
+  Variant,
+} from "../../contexts/customizer/types"
+import useCollectionDiscountedPricing from "../../hooks/useCollectionDiscountedPricing"
 
 const DEFAULT_ITEM = {
   image: {
@@ -42,7 +47,11 @@ const DEFAULT_ITEM = {
   title: "",
 }
 
-const AddOns = ({}) => {
+type Props = {
+  handle: string
+}
+
+const AddOns = ({ handle }: Props) => {
   const { antiReflective } = useStaticQuery(graphql`
     query AddOnsQuery {
       antiReflective: shopifyCollection(handle: { eq: "anti-reflective" }) {
@@ -74,8 +83,33 @@ const AddOns = ({}) => {
     setHasSavedCustomized,
   } = useCustomizer()
 
+  const [currentCollection, setCurrentCollection] =
+    useState<AvailablePath>(antiReflective)
+
   const continueBtn = useRef<HTMLButtonElement>(null)
   const topRef = useRef<HTMLDivElement>(null)
+
+  // start discounted prices
+  const prices = useMemo(
+    () =>
+      antiReflective?.products
+        ? antiReflective?.products
+            ?.map(p =>
+              p?.variants?.map(v => {
+                return {
+                  id: v.legacyResourceId,
+                  price: v.price,
+                  handle: p.handle,
+                }
+              })
+            )
+            .flat()
+        : [],
+    [antiReflective]
+  )
+
+  const { offer, isApplicable, discountedPrices } =
+    useCollectionDiscountedPricing({ prices, handle })
 
   const handleChange = (
     evt: React.ChangeEvent<HTMLInputElement> | null,
@@ -107,12 +141,40 @@ const AddOns = ({}) => {
     setCurrentStep(currentStep + num)
   }
 
+  // discount swap hook
+  useEffect(() => {
+    if (isApplicable && discountedPrices) {
+      console.log("discounted pricing", discountedPrices)
+      const tempCollection = JSON.parse(JSON.stringify(antiReflective))
+
+      const patchedCollection = tempCollection.products.map(p => {
+        const patchedVariants = p.variants.map(v => {
+          const patchedPrice = discountedPrices.find(
+            el => el.id === v.legacyResourceId
+          )
+          if (patchedPrice) {
+            v.compareAtPrice = v.price
+            v.price = patchedPrice.discountedPrice
+          }
+          return v
+        })
+        p.variants = patchedVariants
+        return p
+      })
+      setCurrentCollection(col => ({
+        ...col,
+        title: tempCollection.title,
+        products: patchedCollection,
+      }))
+    }
+  }, [antiReflective, offer, isApplicable, discountedPrices])
+
   return (
     <Component>
       <div className="step-header" ref={topRef}>
-        <p>{antiReflective.title}</p>
+        <p>{currentCollection.title}</p>
       </div>
-      {antiReflective.products.map((product: Product, index) => {
+      {currentCollection.products.map((product: Product) => {
         // fix variant.image is null
         if (product.variants[0].image === null && product.media[0]?.image) {
           product.variants[0].image = {
@@ -137,7 +199,7 @@ const AddOns = ({}) => {
                 />
                 <div className="product-description">
                   <h4>
-                    {product.title.replace(`${antiReflective.title} - `, "")}{" "}
+                    {product.title.replace(`${currentCollection.title} - `, "")}{" "}
                     <span className="price">
                       {` + $${formatPrice(product.variants[0].price)}`}
                       {!!product.variants[0]?.compareAtPrice &&
@@ -187,7 +249,7 @@ const AddOns = ({}) => {
                 />
                 <div className="product-description">
                   <h4>
-                    {product.title.replace(`${antiReflective.title} - `, "")}
+                    {product.title.replace(`${currentCollection.title} - `, "")}
                   </h4>
                   <p>{product.description}</p>
                 </div>

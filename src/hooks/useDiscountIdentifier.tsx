@@ -42,13 +42,13 @@ export const useDiscountIdentifier = () => {
     }
   )
 
-  // return discounts as DiscountConfig[]
+  return discounts as DiscountConfig[]
   // delete
   // temporary disable discounts
-  return discounts.map(disc => ({
-    ...disc,
-    enableDiscountIdentifier: false,
-  }))
+  // return discounts.map(disc => ({
+  //   ...disc,
+  //   enableDiscountIdentifier: false,
+  // }))
 }
 
 export default useDiscountIdentifier

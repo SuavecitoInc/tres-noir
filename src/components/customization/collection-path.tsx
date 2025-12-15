@@ -6,7 +6,7 @@ type Props = {
 }
 
 const CollectionPath: React.FC<Props> = ({ handle }) => {
-  return <Form />
+  return <Form handle={handle} />
 }
 
 export default CollectionPath

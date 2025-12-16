@@ -77,9 +77,10 @@ export default async function getDiscountedPricing(
         offer: overwriteLabel ? offer : "Sale",
       }
     }
-    return res
-      .status(400)
-      .json({ error: "Error while fetching from admin api" })
+    throw new Error("Error calculating discount")
+    // return res
+    //   .status(400)
+    //   .json({ error: "Error while fetching from admin api" })
   }
 
   const getLegacyId = (id: string): string => {
@@ -246,7 +247,7 @@ export default async function getDiscountedPricing(
     })
     const responseJson: any = await response.json()
     if (responseJson.errors) {
-      return res.status(400).json({
+      return res.status(500).json({
         error:
           responseJson.errors[0].message ??
           "Error while fetching from admin api",
@@ -265,7 +266,10 @@ export default async function getDiscountedPricing(
     )
 
     if (!filteredDiscounts.length)
-      return res.status(400).json("Discount found, but not supported")
+      return res.status(200).json({
+        isApplicable: false,
+        reason: "Discount found, but not supported",
+      })
 
     const discountNode = filteredDiscounts[0]
     const applicableDiscount = discountNode.discount as ShopifyDiscount
@@ -276,9 +280,10 @@ export default async function getDiscountedPricing(
         applicableDiscount.customerSelection.allCustomers
       : true
     if (!isApplicableToAllCustomers) {
-      return res
-        .status(400)
-        .json({ error: "Discount not applicable to all customers" })
+      return res.status(200).json({
+        isApplicable: false,
+        reason: "Discount not applicable to all customers",
+      })
     }
     const applicableItems = applicableDiscount.customerGets.items
 
@@ -292,7 +297,7 @@ export default async function getDiscountedPricing(
         )
         if (!newPrices || !newPrices.length) {
           return res
-            .status(400)
+            .status(500)
             .json({ error: "Error while calculating order discount" })
         }
         return res.status(200).json({
@@ -315,7 +320,7 @@ export default async function getDiscountedPricing(
           )
           if (!newPrices || newPrices.length === 0) {
             return res
-              .status(400)
+              .status(500)
               .json({ error: "Product price discount unable to be created" })
           }
           return res.status(200).json({
@@ -347,7 +352,7 @@ export default async function getDiscountedPricing(
             overwriteLabel
           )
           if (!newPrices || newPrices.length === 0) {
-            return res.status(400).json({
+            return res.status(500).json({
               error: "Product price discount unable to be created",
             })
           }
@@ -363,7 +368,7 @@ export default async function getDiscountedPricing(
             offer
           )
           if (!newPrices || newPrices.length === 0) {
-            return res.status(400).json({
+            return res.status(500).json({
               error: "Variant price discount unable to be created",
             })
           }

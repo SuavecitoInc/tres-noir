@@ -160,7 +160,7 @@ export function CustomizerProvider({ children }: Props) {
   }
 
   const setSelectedCollectionPath = (path: AvailablePath) => {
-    const patchedProducts = selectedCollectionPath?.products?.map(p => {
+    const patchedProducts = path?.products?.map(p => {
       const variants = p.variants
       const isSamePrice = variants.every(
         v => v.price === variants[0].price && MERGE_SAME_PRICE

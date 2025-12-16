@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react"
 import CustomizerContext from "./context"
-import type { AvailablePath, GlassesType } from "./types"
+import type { AvailablePath, GlassesType, Product } from "./types"
 import useCustomizerCollections from "../../hooks/useCustomizerCollections"
+
+const MERGE_SAME_PRICE = true
 
 type Props = {
   children: React.ReactNode
@@ -139,7 +141,7 @@ export function CustomizerProvider({ children }: Props) {
     CONFIG["Glasses"]?.availablePaths || []
   )
 
-  const [selectedCollectionPath, setSelectedCollectionPath] =
+  const [selectedCollectionPath, setSelectedPath] =
     useState<AvailablePath>(nonPrescription)
 
   const [currentStep, setCurrentStep] = useState(0)
@@ -155,6 +157,17 @@ export function CustomizerProvider({ children }: Props) {
 
   const setSelectedVariantsToDefault = () => {
     setSelectedVariants(DEFAULT_STEPS)
+  }
+
+  const setSelectedCollectionPath = (path: AvailablePath) => {
+    const patchedProducts = selectedCollectionPath?.products?.map(p => {
+      const variants = p.variants
+      const isSamePrice = variants.every(
+        v => v.price === variants[0].price && MERGE_SAME_PRICE
+      )
+      return { ...p, isSamePrice } as Product
+    })
+    setSelectedPath({ ...path, products: patchedProducts })
   }
 
   useEffect(() => {

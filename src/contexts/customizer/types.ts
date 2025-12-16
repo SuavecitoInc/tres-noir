@@ -1,6 +1,6 @@
 // TODO: create types for availablePaths and pathOptions
 export type Variant = {
-  compareAtPrice: string | null
+  compareAtPrice: number | null
   image: {
     originalSrc: string
     altText: string

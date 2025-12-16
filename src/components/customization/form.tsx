@@ -63,28 +63,29 @@ const Form = ({ handle }: Props) => {
   const continueBtn = useRef<HTMLButtonElement>(null)
   const topRef = useRef<HTMLDivElement>(null)
   const [editHasError, setEditHasError] = useState(false)
+  const [isPricingPatched, setIsPricingPatched] = useState(false)
 
   // start discounted prices
-  // const prices = useMemo(
-  //   () =>
-  //     selectedCollectionPath?.products
-  //       ? selectedCollectionPath?.products
-  //           ?.map(p =>
-  //             p?.variants?.map(v => {
-  //               return {
-  //                 id: v.legacyResourceId,
-  //                 price: v.price,
-  //                 handle: p.handle,
-  //               }
-  //             })
-  //           )
-  //           .flat()
-  //       : [],
-  //   [selectedCollectionPath]
-  // )
+  const prices = useMemo(
+    () =>
+      selectedCollectionPath?.products
+        ? selectedCollectionPath?.products
+            ?.map(p =>
+              p?.variants?.map(v => {
+                return {
+                  id: v.legacyResourceId,
+                  price: v.price,
+                  handle: p.handle,
+                }
+              })
+            )
+            .flat()
+        : [],
+    [selectedCollectionPath]
+  )
 
-  // const { offer, isApplicable, discountedPrices } =
-  //   useCollectionDiscountedPricing({ prices, handle })
+  const { offer, isApplicable, discountedPrices } =
+    useCollectionDiscountedPricing({ prices, handle })
 
   const handleChange = (
     evt: React.ChangeEvent<HTMLInputElement> | null,
@@ -308,7 +309,7 @@ const Form = ({ handle }: Props) => {
     }
   }
 
-  // discount swap hook
+  // // discount swap hook
   // useEffect(() => {
   //   if (isApplicable && discountedPrices) {
   //     const tempCollection = JSON.parse(JSON.stringify(selectedCollectionPath))
@@ -333,25 +334,90 @@ const Form = ({ handle }: Props) => {
   //       products: patchedCollection,
   //     }))
   //   }
+  //   setIsPricingPatched(true)
   // }, [selectedCollectionPath, offer, isApplicable, discountedPrices])
 
+  // useEffect(() => {
+  //   console.log("useEffect", hasSavedCustomized[`step${currentStep}`])
+  //   console.log("useEffect", currentCollection?.products[0]?.variants[0])
+  //   if (
+  //     hasSavedCustomized[`step${currentStep}`] === false &&
+  //     currentCollection?.products[0]?.variants[0]
+  //   ) {
+  //     console.log(
+  //       "setting default variant",
+  //       currentCollection?.products[0]?.variants[0]
+  //     )
+  //     handleChange(null, currentCollection.products[0].variants[0], true)
+  //   } else if (hasSavedCustomized[`step${currentStep}`] === true) {
+  //     console.log("using saved variant", selectedVariants[`step${currentStep}`])
+  //     handleChange(null, selectedVariants[`step${currentStep}`], true)
+  //   }
+  // }, [isPricingPatched, currentCollection]) // this is the only dependency that should be here currentCollection?.products[0]?.variants[0]]
+
   useEffect(() => {
-    console.log("useEffect", hasSavedCustomized[`step${currentStep}`])
-    console.log("useEffect", currentCollection?.products[0]?.variants[0])
+    if (isApplicable && discountedPrices && !isPricingPatched) {
+      // patch pricing first
+      const tempCollection = JSON.parse(JSON.stringify(selectedCollectionPath))
+      const patchedCollection = tempCollection.products.map(p => {
+        const patchedVariants = p.variants.map(v => {
+          const patchedPrice = discountedPrices.find(
+            el => el.id === v.legacyResourceId
+          )
+          if (patchedPrice) {
+            v.compareAtPrice = v.price
+            v.price = patchedPrice.discountedPrice
+          }
+          return v
+        })
+        p.variants = patchedVariants
+        return p
+      })
+
+      const newCollection = {
+        ...tempCollection,
+        products: patchedCollection,
+      }
+
+      setCurrentCollection(newCollection)
+      setIsPricingPatched(true)
+
+      // Then immediately handle the variant selection with the patched data
+      if (
+        hasSavedCustomized[`step${currentStep}`] === false &&
+        newCollection?.products[0]?.variants[0]
+      ) {
+        handleChange(null, newCollection.products[0].variants[0], true)
+      } else if (hasSavedCustomized[`step${currentStep}`] === true) {
+        handleChange(null, selectedVariants[`step${currentStep}`], true)
+      }
+    }
+  }, [
+    selectedCollectionPath,
+    offer,
+    isApplicable,
+    discountedPrices,
+    isPricingPatched,
+    currentStep,
+  ])
+
+  useEffect(() => {
+    // Only proceed if either:
+    // 1. Pricing is not applicable (no patching needed), OR
+    // 2. Pricing has been patched (isPricingPatched is true)
+    const isReady = !isApplicable || isPricingPatched
+
+    if (!isReady) return
+
     if (
       hasSavedCustomized[`step${currentStep}`] === false &&
       currentCollection?.products[0]?.variants[0]
     ) {
-      console.log(
-        "setting default variant",
-        currentCollection?.products[0]?.variants[0]
-      )
       handleChange(null, currentCollection.products[0].variants[0], true)
     } else if (hasSavedCustomized[`step${currentStep}`] === true) {
-      console.log("using saved variant", selectedVariants[`step${currentStep}`])
       handleChange(null, selectedVariants[`step${currentStep}`], true)
     }
-  }, [currentCollection]) // this is the only dependency that should be here currentCollection?.products[0]?.variants[0]]
+  }, [currentCollection, isPricingPatched, isApplicable, currentStep])
 
   // restore on refresh
   useEffect(() => {

@@ -392,13 +392,6 @@ const Form = ({ handle }: Props) => {
     }
   }, [])
 
-  // if selectedVariants step 1 is not set (set from handleChange), set it to first variant
-  // useEffect(() => {
-  //   if (!selectedVariants[`step${currentStep}`]?.storefrontId) {
-  //     handleChange(null, currentCollection.products[0].variants[0], false)
-  //   }
-  // }, [currentCollection])
-
   return (
     <Component>
       <div className="step-header" ref={topRef}>
@@ -487,7 +480,30 @@ const Form = ({ handle }: Props) => {
                       {product.title.replace(
                         `${currentCollection.title} - `,
                         ""
-                      )}
+                      )}{" "}
+                      {
+                        // @ts-expect-error - update type
+                        product.isSamePrice && (
+                          <span className="price">
+                            {` + $${formatPrice(product.variants[0].price)}`}
+                            {!!product.variants[0]?.compareAtPrice &&
+                              isDiscounted(
+                                product.variants[0].price,
+                                product.variants[0].compareAtPrice
+                              ) && (
+                                <span>
+                                  {" "}
+                                  <span className="strikethrough-grey">
+                                    $
+                                    {formatPrice(
+                                      product.variants[0].compareAtPrice as any
+                                    )}
+                                  </span>
+                                </span>
+                              )}
+                          </span>
+                        )
+                      }
                     </h4>
                     <p>{product.description}</p>
                   </div>
@@ -505,20 +521,25 @@ const Form = ({ handle }: Props) => {
                         <div className="variant-description">
                           <h6>
                             {variant.title}
-                            <span className="price">
-                              {` + $${variant.price}`}
-                              {isDiscounted(
-                                variant.price,
-                                variant.compareAtPrice
-                              ) && (
-                                <span>
-                                  {" "}
-                                  <span className="strikethrough-grey">
-                                    ${variant.compareAtPrice}
-                                  </span>
+                            {
+                              // @ts-expect-error - update type
+                              !product.isSamePrice && (
+                                <span className="price">
+                                  {` + $${variant.price}`}
+                                  {isDiscounted(
+                                    variant.price,
+                                    variant.compareAtPrice
+                                  ) && (
+                                    <span>
+                                      {" "}
+                                      <span className="strikethrough-grey">
+                                        ${variant.compareAtPrice}
+                                      </span>
+                                    </span>
+                                  )}
                                 </span>
-                              )}
-                            </span>
+                              )
+                            }
                           </h6>
                         </div>
                         <input

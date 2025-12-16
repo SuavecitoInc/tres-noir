@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react"
 import CustomizerContext from "./context"
 import type { AvailablePath, GlassesType, Product } from "./types"
 import useCustomizerCollections from "../../hooks/useCustomizerCollections"
+import { set } from "js-cookie"
 
 const MERGE_SAME_PRICE = true
 
@@ -141,7 +142,7 @@ export function CustomizerProvider({ children }: Props) {
     CONFIG["Glasses"]?.availablePaths || []
   )
 
-  const [selectedCollectionPath, setSelectedPath] =
+  const [selectedCollectionPath, setSelectedCollectionPath] =
     useState<AvailablePath>(nonPrescription)
 
   const [currentStep, setCurrentStep] = useState(0)
@@ -159,16 +160,16 @@ export function CustomizerProvider({ children }: Props) {
     setSelectedVariants(DEFAULT_STEPS)
   }
 
-  const setSelectedCollectionPath = (path: AvailablePath) => {
-    const patchedProducts = path?.products?.map(p => {
-      const variants = p.variants
-      const isSamePrice = variants.every(
-        v => v.price === variants[0].price && MERGE_SAME_PRICE
-      )
-      return { ...p, isSamePrice } as Product
-    })
-    setSelectedPath({ ...path, products: patchedProducts })
-  }
+  // const setSelectedCollectionPath = (path: AvailablePath) => {
+  //   const patchedProducts = path?.products?.map(p => {
+  //     const variants = p.variants
+  //     const isSamePrice = variants.every(
+  //       v => v.price === variants[0].price && MERGE_SAME_PRICE
+  //     )
+  //     return { ...p, isSamePrice } as Product
+  //   })
+  //   setSelectedPath({ ...path, products: patchedProducts })
+  // }
 
   useEffect(() => {
     // change selected variants when the selected collection path changes, but keep the existing case selection
@@ -176,6 +177,7 @@ export function CustomizerProvider({ children }: Props) {
       ...DEFAULT_STEPS,
       case: selectedVariants.case,
     }))
+    setHasSavedCustomized({ step1: false, step2: false, case: false })
   }, [selectedCollectionPath])
 
   useEffect(() => {

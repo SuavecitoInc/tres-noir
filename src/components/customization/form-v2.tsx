@@ -2,7 +2,7 @@ import React, { useContext, useRef, useState, useEffect, useMemo } from "react"
 import { Component } from "./styles"
 import { SelectedVariantStorage } from "../../types/global"
 import { useCustomizer } from "../../contexts/customizer"
-import { RxInfoContext } from "../../contexts/rxInfo"
+import { RxInfoContext } from "../../contexts/rx-info"
 import type {
   LocalCart,
   rxType,

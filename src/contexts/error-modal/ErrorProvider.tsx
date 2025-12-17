@@ -1,24 +1,5 @@
 import React, { createContext, ReactNode, useState, useMemo } from "react"
-
-interface DefaultContext {
-  errorModalIsOpen: boolean
-  renderErrorModal: (error?: string, callback?: any) => void
-  closeErrorModal: () => void
-  onAfterOpen: (cb: any) => void
-  onAfterClose: (cb: any) => void
-  errorMsg: string
-}
-
-const defaultContext: DefaultContext = {
-  errorModalIsOpen: false,
-  renderErrorModal: () => {},
-  closeErrorModal: () => {},
-  onAfterOpen: cb => cb,
-  onAfterClose: cb => cb,
-  errorMsg: "",
-}
-
-export const ErrorModalContext = createContext(defaultContext)
+import ErrorModalContext from "./context"
 
 export const ErrorModalProvider = ({ children }: { children: ReactNode }) => {
   const [errorModalIsOpen, setErrorModalIsOpen] = useState<boolean>(false)

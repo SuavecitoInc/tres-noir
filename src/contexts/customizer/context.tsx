@@ -1,4 +1,3 @@
-import { set } from "js-cookie"
 import { createContext } from "react"
 import type {
   CustomizerContextType,

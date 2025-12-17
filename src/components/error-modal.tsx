@@ -1,8 +1,8 @@
-import React, { useContext } from "react"
+import React from "react"
 import Modal from "react-modal"
 import styled from "styled-components"
 import { StaticImage } from "gatsby-plugin-image"
-import { ErrorModalContext } from "../contexts/error"
+import { useErrorModal } from "../contexts/error-modal"
 
 Modal.setAppElement(`#___gatsby`)
 Modal.defaultStyles.overlay.zIndex = 9999
@@ -69,7 +69,7 @@ const ErrorModal: React.FC = () => {
     onAfterOpen,
     onAfterClose,
     errorMsg,
-  } = useContext(ErrorModalContext)
+  } = useErrorModal()
 
   const handleClose = () => {
     closeErrorModal()

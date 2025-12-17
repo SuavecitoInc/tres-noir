@@ -1,6 +1,6 @@
 import React, { useContext } from "react"
 import styled from "styled-components"
-import { RxInfoContext } from "../../../contexts/rxInfo"
+import { RxInfoContext } from "../../../contexts/rx-info"
 
 const Component = styled.div`
   margin-top: 20px;

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from "react"
 import { Link } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
 import useCustomizer from "../../contexts/customizer/hooks"
-import { RxInfoContext } from "../../contexts/rxInfo"
+import { RxInfoContext } from "../../contexts/rx-info"
 import { Component } from "./styles"
 
 import type {

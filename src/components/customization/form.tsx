@@ -10,7 +10,7 @@ import { GatsbyImage } from "gatsby-plugin-image"
 import { Component } from "./styles"
 import { SelectedVariantStorage } from "../../types/global"
 import { useCustomizer } from "../../contexts/customizer"
-import { RxInfoContext } from "../../contexts/rxInfo"
+import { RxInfoContext } from "../../contexts/rx-info"
 import { FaQuestionCircle } from "react-icons/fa"
 import type {
   LocalCart,

@@ -23,7 +23,7 @@ import UpsellCart from "../components/upsell-cart"
 import UpsellCartPopUp from "../components/upsell-cart-popup"
 import { SelectedVariantStorage } from "../types/global"
 import { useCustomizer } from "../contexts/customizer"
-import { RxInfoContext } from "../contexts/rxInfo"
+import { RxInfoContext } from "../contexts/rx-info"
 import { isDiscounted } from "../helpers/shopify"
 import EnableShipInsure from "../components/enable-shipinsure"
 

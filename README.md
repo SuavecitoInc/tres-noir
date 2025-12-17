@@ -133,3 +133,67 @@ The day before the release is meant to go live, prepare the production preview a
 - Make sure all the assets / product images are ready prior to starting this process.
 - Get a head start on this new release process at least a week before the releases are due to go live on the site, especially if multiple SKUs are going live in one day. The process of updating assets to Contentful is particularly time-consuming, so start early.
 - Have the production deployment tested and ready to go the day before the release is meant to go live.
+
+---
+
+## Lens Customizations
+
+The Glasses Customizer allows users to customize their glasses with different lens options ex: Rx lenses, blue light lenses, etc. This requires setting up lens customization products / variants and collections in Shopify.
+
+Shopify Products and variants Needed:
+
+- Non-Prescription - Sunglasses
+  - Smoke
+  - Brown
+  - Green
+  - Yellow
+  - Blue
+  - G15
+  - Orange
+- Single Vision - Clear
+- Single Vision - Sunglasses
+  - Smoke
+  - Brown
+  - Green
+  - Yellow
+  - Blue
+  - G15
+  - Orange
+- Single Vision - Blue Light
+- Single Vision - Polarized
+- Single Vision - Transitions
+- Readers - Clear
+- Readers - Blue Light
+- Bifocal - Clear
+- Bifocal - Sunglasses
+  - Smoke
+  - Brown
+  - Green
+  - Yellow
+  - Blue
+  - G15
+  - Orange
+- Bifocal - Polarized
+- Bifocal - Transitions
+- Progressive - Clear
+- Progressive - Sunglasses
+  - Smoke
+  - Brown
+  - Green
+  - Yellow
+  - Blue
+  - G15
+  - Orange
+- Progressive - Blue Light
+- Progressive - Polarized
+- Progressive - Transitions
+
+Collections Needed:
+
+- Non-Prescription
+- Single Vision
+- Readers
+- Bifocal
+- Progressive
+
+Each product should have the Rx Type in the name, ex: "Single Vision - Blue Light". This will help differentiate the products in Shopify. Gatsby will drop the Rx Type from the name when displaying it in the customizer.

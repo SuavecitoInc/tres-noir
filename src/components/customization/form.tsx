@@ -6,7 +6,6 @@ import React, {
   useEffect,
   useMemo,
 } from "react"
-import { Link } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
 import { Component } from "./styles"
 import { SelectedVariantStorage } from "../../types/global"
@@ -58,8 +57,6 @@ const Form = ({ handle }: Props) => {
   const errorRefs = useRef({})
   const continueBtn = useRef<HTMLButtonElement>(null)
   const topRef = useRef<HTMLDivElement>(null)
-  // const [editHasError, setEditHasError] = useState(false)
-  const [isPricingPatched, setIsPricingPatched] = useState(false)
 
   // start discounted prices
   const prices = useMemo(
@@ -125,10 +122,6 @@ const Form = ({ handle }: Props) => {
       ...hasSavedCustomized,
       [`step${currentStep}`]: isSetFromEvent,
     })
-
-    // if (editHasError) {
-    //   enableContinue()
-    // }
 
     setSelectedVariants({
       ...selectedVariants,

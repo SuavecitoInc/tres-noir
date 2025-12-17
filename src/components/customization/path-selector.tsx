@@ -43,7 +43,6 @@ const PathSelector: React.FC<Props> = ({ handle, type }) => {
   }
 
   useEffect(() => {
-    console.log("Setting type in context to:", type)
     setType(type)
   }, [type, setType])
 

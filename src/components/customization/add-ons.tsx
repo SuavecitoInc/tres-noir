@@ -52,9 +52,9 @@ type Props = {
 }
 
 const AddOns = ({ handle }: Props) => {
-  const { antiReflective } = useStaticQuery(graphql`
-    query AddOnsQuery {
-      antiReflective: shopifyCollection(handle: { eq: "anti-reflective" }) {
+  const { lensCoating } = useStaticQuery(graphql`
+    query lensCoatingQuery {
+      lensCoating: shopifyCollection(handle: { eq: "anti-reflective" }) {
         title
         description
         image {
@@ -84,7 +84,7 @@ const AddOns = ({ handle }: Props) => {
   } = useCustomizer()
 
   const [currentCollection, setCurrentCollection] =
-    useState<AvailablePath>(antiReflective)
+    useState<AvailablePath>(lensCoating)
 
   const continueBtn = useRef<HTMLButtonElement>(null)
   const topRef = useRef<HTMLDivElement>(null)
@@ -92,8 +92,8 @@ const AddOns = ({ handle }: Props) => {
   // start discounted prices
   const prices = useMemo(
     () =>
-      antiReflective?.products
-        ? antiReflective?.products
+      lensCoating?.products
+        ? lensCoating?.products
             ?.map(p =>
               p?.variants?.map(v => {
                 return {
@@ -105,7 +105,7 @@ const AddOns = ({ handle }: Props) => {
             )
             .flat()
         : [],
-    [antiReflective]
+    [lensCoating]
   )
 
   const { offer, isApplicable, discountedPrices } =
@@ -137,7 +137,7 @@ const AddOns = ({ handle }: Props) => {
   // discount swap hook
   useEffect(() => {
     if (isApplicable && discountedPrices) {
-      const tempCollection = JSON.parse(JSON.stringify(antiReflective))
+      const tempCollection = JSON.parse(JSON.stringify(lensCoating))
 
       const patchedCollection = tempCollection.products.map(p => {
         const patchedVariants = p.variants.map(v => {
@@ -159,7 +159,7 @@ const AddOns = ({ handle }: Props) => {
         products: patchedCollection,
       }))
     }
-  }, [antiReflective, offer, isApplicable, discountedPrices])
+  }, [lensCoating, offer, isApplicable, discountedPrices])
 
   useEffect(() => {
     if (hasSavedCustomized[`step${currentStep}`] === true) {

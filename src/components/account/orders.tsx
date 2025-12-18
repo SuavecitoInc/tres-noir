@@ -63,8 +63,6 @@ const Order = ({ order }: { order: OrderType }) => {
     orderLines.map(({ node }: { node: LineItemType }) => node)
   )
 
-  console.log("Rebuilt line items:", rebuiltLineItems)
-
   const lineItems =
     rebuiltLineItems.length > IMAGES_TO_SHOW
       ? rebuiltLineItems.slice(0, IMAGES_TO_SHOW - 1)
@@ -73,7 +71,6 @@ const Order = ({ order }: { order: OrderType }) => {
   const navigateToOrderDetails = (orderId: string) => {
     // Implement navigation to order details page
     const legacyOrderId = getLegacyOrderId(orderId)
-    console.log("Navigate to order details for order ID:", legacyOrderId)
     navigate(`/account/orders/order?id=${legacyOrderId}`)
   }
 
@@ -120,15 +117,15 @@ const Order = ({ order }: { order: OrderType }) => {
   )
 }
 
-const Component = styled.div<{ orders: Props["orders"] }>`
+const Component = styled.div<{ $orders: Props["orders"] }>`
   .orders-grid {
     display: grid;
     gap: 20px;
     margin-bottom: 40px;
-    grid-template-columns: ${({ orders }) =>
-      orders.length === 1
+    grid-template-columns: ${({ $orders }) =>
+      $orders.length === 1
         ? "33%"
-        : orders.length === 2
+        : $orders.length === 2
         ? "repeat(2, 1fr)"
         : "repeat(3, 1fr)"};
     @media only screen and (max-width: 768px) {
@@ -141,9 +138,8 @@ const Component = styled.div<{ orders: Props["orders"] }>`
 `
 
 const Orders = ({ orders }: Props) => {
-  console.log("Orders component received orders:", orders)
   return (
-    <Component orders={orders}>
+    <Component $orders={orders}>
       <h2>Orders</h2>
       {orders.length === 0 ? (
         <p>No orders found.</p>

@@ -1,5 +1,6 @@
+const API_VERSION = "2025-10"
 const SHOP_ID = process.env.GATSBY_CUSTOMER_ACCOUNTS_SHOP_ID!
-const CUSTOMER_ACCOUNT_API_URL = `https://shopify.com/${SHOP_ID}/account/customer/api/2024-10/graphql`
+const CUSTOMER_ACCOUNT_API_URL = `https://shopify.com/${SHOP_ID}/account/customer/api/${API_VERSION}/graphql`
 
 export async function queryCustomerAccount(
   accessToken: string,
@@ -19,11 +20,12 @@ export async function queryCustomerAccount(
   })
 
   if (!response.ok) {
-    throw new Error("Customer Account API request failed")
+    throw new Error(
+      "Customer Account API request failed, please sign in again."
+    )
   }
 
   const jsonResponse = await response.json()
-  console.log("Customer Account API response:", jsonResponse)
   return jsonResponse
 }
 

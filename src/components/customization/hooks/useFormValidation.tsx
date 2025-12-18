@@ -1,4 +1,4 @@
-import { useRef, ChangeEvent } from "react"
+import { ChangeEvent } from "react"
 
 type RxInfo = {
   right: {

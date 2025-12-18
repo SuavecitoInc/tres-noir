@@ -171,7 +171,7 @@ const AddOns = ({ handle }: Props) => {
   return (
     <Component>
       <div className="step-header" ref={topRef}>
-        <p>{currentCollection.title}</p>
+        <p>Choose your {currentCollection.title} option:</p>
       </div>
       {currentCollection.products.map((product: Product) => {
         // fix variant.image is null

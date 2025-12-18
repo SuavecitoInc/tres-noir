@@ -43,7 +43,6 @@ const OrdersPage = ({ location }) => {
         const ordersResponse = await getCustomerOrders(accessToken)
         if (ordersResponse?.data?.customer?.orders?.edges) {
           const orders = ordersResponse.data.customer.orders.edges
-          console.log("Parsed orders:", orders)
           setOrdersData(orders)
         }
       } else if (!isAuthenticated && isLoading) {

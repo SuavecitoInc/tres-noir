@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react"
 import { navigate } from "gatsby"
-import styled from "styled-components"
 
 import { useCustomerAuth } from "../../../hooks/useCustomerAuth"
 import { getCustomerOrder } from "../../../api/customerAccountClient"
@@ -9,14 +8,16 @@ import Layout from "../../../components/layout"
 import Order from "../../../components/account/order"
 import type { Order as OrderType } from "../../../types/customer-orders"
 
+const DEBUG = false
+
 const getGlobalIDFromLegacyID = (legacyId: string) => {
   return `gid://shopify/Order/${legacyId}`
 }
 
 const OrderPage = ({ location }) => {
-  console.log("OrderPage location:", location)
+  DEBUG && console.log("OrderPage location:", location)
   const params = new URLSearchParams(location.search)
-  console.log("OrderPage params:", params)
+  DEBUG && console.log("OrderPage params:", params)
 
   const orderId = params.get("id")
 
@@ -28,12 +29,12 @@ const OrderPage = ({ location }) => {
     try {
       if (isAuthenticated && accessToken && orderId) {
         const globalOrderId = getGlobalIDFromLegacyID(orderId)
-        console.log("Fetching order with global ID:", globalOrderId)
+        DEBUG && console.log("Fetching order with global ID:", globalOrderId)
         const orderResponse = await getCustomerOrder(accessToken, globalOrderId)
-        console.log("Customer orders fetched:", orderResponse.data)
+        DEBUG && console.log("Customer orders fetched:", orderResponse.data)
         if (orderResponse?.data?.order) {
           const order = orderResponse.data.order
-          console.log("Parsed order:", order)
+          DEBUG && console.log("Parsed order:", order)
           setOrderData(order)
           setLoadingOrder(false)
         }
@@ -43,7 +44,7 @@ const OrderPage = ({ location }) => {
           isAuthenticated
         )
       } else {
-        console.log("User not authenticated, redirecting to /account")
+        DEBUG && console.log("User not authenticated, redirecting to /account")
         navigate("/account")
       }
     } catch (error) {

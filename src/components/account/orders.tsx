@@ -7,6 +7,7 @@ import type {
   Order as OrderType,
 } from "../../types/customer-orders"
 import { rebuildLineItems } from "../../utils/customerOrders"
+import { formatDate } from "../../utils/customerOrders"
 
 const IMAGES_TO_SHOW = 4
 
@@ -17,13 +18,20 @@ interface Props {
 }
 
 const GridItem = styled.div`
-  border: 1px solid #ccc;
-  padding: 10px;
+  border: 1px solid #f5f5f5;
+  padding: 20px;
   border-radius: 5px;
+  background-color: #f5f5f5;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   .image-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     gap: 5px;
+    background-color: #fff;
+    margin-top: 10px;
+    margin-bottom: 10px;
   }
   .image-grid-item {
     width: 100%;
@@ -47,6 +55,29 @@ const GridItem = styled.div`
     width: 100%;
     cursor: pointer;
     color: #000;
+    background-color: #fff;
+    margin-top: auto;
+  }
+  .view-details-button:hover {
+    background-color: #f5f5f5;
+  }
+  .order-number {
+    color: #333;
+  }
+  .order-status {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .block-stack {
+    display: flex;
+    flex-direction: column;
+  }
+  .order-details {
+    margin-top: 20px;
+    margin-bottom: 20px;
   }
 `
 
@@ -77,7 +108,11 @@ const Order = ({ order }: { order: OrderType }) => {
   return (
     <GridItem>
       <div className="order-status">
-        <p>Status: {order.financialStatus}</p>
+        <div>&#10003;</div>
+        <div className="block-stack">
+          <div className="status-label">Confirmed</div>
+          <div className="status-date">{formatDate(order.createdAt)}</div>
+        </div>
       </div>
       <div className="image-grid">
         {lineItems.map(el => {
@@ -98,13 +133,12 @@ const Order = ({ order }: { order: OrderType }) => {
           </div>
         )}
       </div>
-      <div className="bold">{rebuiltLineItems.length} Items</div>
-      <div className="order-number">Order {order.name}</div>
-      <div className="order-date">
-        Date: {new Date(order.createdAt).toLocaleDateString()}
-      </div>
-      <div className="order-total">
-        Total: ${order.totalPrice.amount} {order.totalPrice.currencyCode}
+      <div className="order-details">
+        <div className="bold">{rebuiltLineItems.length} Items</div>
+        <div className="order-number">Order {order.name}</div>
+        <div className="order-total">
+          ${order.totalPrice.amount} {order.totalPrice.currencyCode}
+        </div>
       </div>
       <button
         type="button"

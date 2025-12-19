@@ -255,6 +255,34 @@ export async function getCustomerOrder(accessToken: string, id: string) {
           amount
           currencyCode
         }
+        fulfillments(first: 10) {
+          edges {
+            node {
+              status
+              latestShipmentStatus
+              updatedAt
+              trackingInformation {
+                company
+                number
+                url
+              }
+              fulfillmentLineItems(first: 250) {
+                edges {
+                  node {
+                    id
+                    lineItem {
+                      productType
+                      requiresShipping
+                      quantity
+                      sku
+                    }
+                    quantity
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   `

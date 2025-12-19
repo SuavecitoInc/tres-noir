@@ -69,3 +69,12 @@ export const rebuildLineItems = (lineItems: LineItemType[]) => {
 export const formatAmount = (amount: string) => {
   return parseFloat(amount).toFixed(2)
 }
+
+export const formatDate = (dateString: string) => {
+  const isCurrentYear =
+    new Date(dateString).getFullYear() === new Date().getFullYear()
+  const options: Intl.DateTimeFormatOptions = isCurrentYear
+    ? { month: "short", day: "numeric" }
+    : { month: "short", day: "numeric", year: "numeric" }
+  return new Date(dateString).toLocaleDateString(undefined, options)
+}

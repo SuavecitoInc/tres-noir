@@ -12,6 +12,36 @@ export interface Order {
   shippingLine: any | null
   subtotal: Money
   totalPrice: Money
+  fulfillments: Fulfillments
+}
+
+export interface Fulfillment {
+  latestShipmentStatus: string
+  trackingInformation: {
+    company: string
+    number: string
+    url: string
+  }[]
+  updatedAt: string
+  fulfillmentLineItems: {
+    edges: {
+      node: {
+        id: string
+        lineItem: {
+          productType: string
+          requiresShipping: boolean
+          quantity: number
+          sku: string
+        }
+      }
+    }[]
+  }
+}
+
+export interface Fulfillments {
+  edges: {
+    node: Fulfillment
+  }[]
 }
 
 export interface Address {

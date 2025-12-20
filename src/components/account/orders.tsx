@@ -12,9 +12,11 @@ import { formatDate } from "../../utils/customerOrders"
 const IMAGES_TO_SHOW = 4
 
 interface Props {
-  orders: {
-    node: OrderType
-  }[]
+  orders:
+    | {
+        node: OrderType
+      }[]
+    | null
 }
 
 const GridItem = styled.div`
@@ -157,9 +159,9 @@ const Component = styled.div<{ $orders: Props["orders"] }>`
     gap: 20px;
     margin-bottom: 40px;
     grid-template-columns: ${({ $orders }) =>
-      $orders.length === 1
+      $orders && $orders.length === 1
         ? "33%"
-        : $orders.length === 2
+        : $orders && $orders.length === 2
         ? "repeat(2, 1fr)"
         : "repeat(3, 1fr)"};
     @media only screen and (max-width: 768px) {
@@ -175,13 +177,12 @@ const Orders = ({ orders }: Props) => {
   return (
     <Component $orders={orders}>
       <h2>Orders</h2>
-      {orders.length === 0 ? (
+      {orders && orders.length === 0 ? (
         <p>No orders found.</p>
       ) : (
         <div className="orders-grid">
-          {orders.map(({ node }) => (
-            <Order key={node.id} order={node} />
-          ))}
+          {orders &&
+            orders.map(({ node }) => <Order key={node.id} order={node} />)}
         </div>
       )}
     </Component>

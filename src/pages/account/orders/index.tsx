@@ -27,16 +27,7 @@ const OrdersPage = ({ location }) => {
   const loggedOut = params.get("logged_out") === "true"
   const { logout, clear, isLoading: isLoadingAuth } = useCustomerAuth()
 
-  const {
-    loadData,
-    ordersData,
-    customerData,
-    isLoading: isLoadingData,
-  } = useCustomer()
-
-  useEffect(() => {
-    loadData()
-  }, [loadData])
+  const { ordersData, customerData, isLoading: isLoadingData } = useCustomer()
 
   useEffect(() => {
     if (loggedOut) {

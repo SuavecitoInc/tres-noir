@@ -33,7 +33,7 @@ export const CustomerProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
   const [customerData, setCustomerData] = useState<CustomerInfo | null>(null)
-  const [ordersData, setOrdersData] = useState<{ node: Order }[]>([])
+  const [ordersData, setOrdersData] = useState<{ node: Order }[] | null>(null)
 
   const loadData = useCallback(async () => {
     try {
@@ -68,26 +68,36 @@ export const CustomerProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [isAuthenticated, accessToken, isLoadingAuth])
 
-  // useEffect(() => {
-  //   loadData()
-  // }, [loadData])
+  useEffect(() => {
+    if (!isAuthenticated && !accessToken) return
+    if (!customerData) {
+      DEBUG && console.log("Customer data missing, loading data")
+      loadData()
+    }
+  }, [loadData, isAuthenticated, accessToken, customerData])
 
   const value = useMemo(
     () => ({
       isLoading,
+      setIsLoading,
       loadData,
       error,
       setError,
       ordersData,
+      setOrdersData,
       customerData,
+      setCustomerData,
     }),
     [
       isLoading,
+      setIsLoading,
       loadData,
       error,
       setError,
       ordersData,
       customerData,
+      setOrdersData,
+      setCustomerData,
       isAuthenticated,
       isLoadingAuth,
       accessToken,

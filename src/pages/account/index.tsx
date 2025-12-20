@@ -2,11 +2,18 @@ import React, { useCallback, useEffect } from "react"
 import styled from "styled-components"
 
 import { useCustomerAuth } from "../../hooks/useCustomerAuth"
-import { getCustomerInfo } from "../../api/customerAccountClient"
+import {
+  getCustomerInfo,
+  getCustomerOrders,
+} from "../../api/customerAccountClient"
+import { useCustomer } from "../../contexts/customer"
 
 import Layout from "../../components/layout"
 import Loader from "../../components/loader"
 import { navigate } from "gatsby"
+import { set } from "js-cookie"
+
+const DEBUG = false
 
 // TODO: move to config
 const REDIRECT_TO_SHOPIFY_ACCOUNT = false
@@ -41,13 +48,37 @@ const LoginView = styled.div`
 `
 
 const AccountPage = () => {
-  const { isAuthenticated, accessToken, login, logout, clear, isLoading } =
-    useCustomerAuth()
+  const {
+    isAuthenticated,
+    accessToken,
+    login,
+    logout,
+    clear,
+    isLoading: isLoadingAuth,
+    setIsLoading: setIsLoadingAuth,
+  } = useCustomerAuth()
+
+  const {
+    setCustomerData,
+    setOrdersData,
+    isLoading: isLoadingData,
+    setIsLoading: setIsLoadingData,
+  } = useCustomer()
 
   const loadData = useCallback(async () => {
     try {
       if (isAuthenticated && accessToken) {
         const customerInfo = await getCustomerInfo(accessToken)
+
+        setCustomerData(customerInfo)
+
+        const ordersResponse = await getCustomerOrders(accessToken)
+        if (ordersResponse?.data?.customer?.orders?.edges) {
+          const orders = ordersResponse.data.customer.orders.edges
+          DEBUG && console.log("Fetched orders:", orders)
+          setOrdersData(orders)
+          setIsLoadingData(false)
+        }
 
         if (!REDIRECT_TO_SHOPIFY_ACCOUNT) {
           navigate("/account/orders")
@@ -58,6 +89,8 @@ const AccountPage = () => {
       }
     } catch (error) {
       console.error("Error loading data:", error)
+      setIsLoadingData(false)
+      setIsLoadingAuth(false)
       clear()
     }
   }, [isAuthenticated, accessToken])
@@ -66,7 +99,8 @@ const AccountPage = () => {
     loadData()
   }, [loadData])
 
-  if (isLoading) {
+  if (isLoadingAuth || isLoadingData) {
+    console.log("Loading authentication or data...")
     return (
       <Layout>
         <Loader />
@@ -75,6 +109,7 @@ const AccountPage = () => {
   }
 
   if (!isAuthenticated) {
+    console.log("User not authenticated, displaying login view")
     return (
       <Layout>
         <LoginView>
@@ -89,11 +124,11 @@ const AccountPage = () => {
     )
   }
 
-  return (
-    <Layout>
-      <Loader />
-    </Layout>
-  )
+  // return (
+  //   <Layout>
+  //     <Loader />
+  //   </Layout>
+  // )
 }
 
 export default AccountPage

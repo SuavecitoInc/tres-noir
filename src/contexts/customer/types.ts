@@ -3,6 +3,7 @@ import { Order } from "../../types/customer-orders"
 
 export interface DefaultContext {
   isLoading: boolean
+  loadData: () => Promise<void>
   error: string | null
   setError: (error: string | null) => void
   ordersData: { node: Order }[]

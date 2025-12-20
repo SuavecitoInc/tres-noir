@@ -3,6 +3,7 @@ import type { DefaultContext } from "./types"
 
 const defaultContext: DefaultContext = {
   isLoading: false,
+  loadData: async () => {},
   error: null,
   setError: () => {},
   ordersData: [],

@@ -68,13 +68,14 @@ export const CustomerProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [isAuthenticated, accessToken, isLoadingAuth])
 
-  useEffect(() => {
-    loadData()
-  }, [loadData])
+  // useEffect(() => {
+  //   loadData()
+  // }, [loadData])
 
   const value = useMemo(
     () => ({
       isLoading,
+      loadData,
       error,
       setError,
       ordersData,
@@ -82,6 +83,7 @@ export const CustomerProvider = ({ children }: { children: ReactNode }) => {
     }),
     [
       isLoading,
+      loadData,
       error,
       setError,
       ordersData,

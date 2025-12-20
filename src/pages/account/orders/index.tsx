@@ -1,16 +1,13 @@
-import React, { useCallback, useEffect, useState } from "react"
-import { navigate } from "gatsby"
+import React, { useEffect } from "react"
 import styled from "styled-components"
 
 import { useCustomerAuth } from "../../../hooks/useCustomerAuth"
-import {
-  getCustomerInfo,
-  getCustomerOrders,
-} from "../../../api/customerAccountClient"
 
 import Layout from "../../../components/layout"
 import Orders from "../../../components/account/orders"
 import Loader from "../../../components/loader"
+
+import { useCustomer } from "../../../contexts/customer"
 
 const Page = styled.div`
   .logout-button {
@@ -28,37 +25,9 @@ const Page = styled.div`
 const OrdersPage = ({ location }) => {
   const params = new URLSearchParams(location.search)
   const loggedOut = params.get("logged_out") === "true"
-  const { isAuthenticated, accessToken, login, logout, clear, isLoading } =
-    useCustomerAuth()
-  const [customerData, setCustomerData] = useState(null)
-  const [ordersData, setOrdersData] = useState([])
+  const { logout, clear, isLoading: isLoadingAuth } = useCustomerAuth()
 
-  const loadData = useCallback(async () => {
-    try {
-      if (isAuthenticated && accessToken) {
-        const customerInfo = await getCustomerInfo(accessToken)
-
-        setCustomerData(customerInfo)
-
-        const ordersResponse = await getCustomerOrders(accessToken)
-        if (ordersResponse?.data?.customer?.orders?.edges) {
-          const orders = ordersResponse.data.customer.orders.edges
-          setOrdersData(orders)
-        }
-      } else if (!isAuthenticated && isLoading) {
-        console.log(
-          "Loading ...User not authenticated, redirecting to /account",
-          isAuthenticated
-        )
-      } else {
-        console.log("User not authenticated, redirecting to /account")
-        navigate("/account")
-      }
-    } catch (error) {
-      console.error("Error loading data:", error)
-      clear()
-    }
-  }, [isAuthenticated, accessToken])
+  const { ordersData, customerData, isLoading: isLoadingData } = useCustomer()
 
   useEffect(() => {
     if (loggedOut) {
@@ -67,13 +36,9 @@ const OrdersPage = ({ location }) => {
     }
   }, [loggedOut])
 
-  useEffect(() => {
-    loadData()
-  }, [loadData])
-
   return (
     <Layout>
-      {isLoading ? (
+      {isLoadingAuth || isLoadingData ? (
         <Loader />
       ) : (
         <Page>
@@ -83,7 +48,7 @@ const OrdersPage = ({ location }) => {
             Logout
           </button>
           {/* Display customer data */}
-          <Orders orders={ordersData} />
+          {isLoadingData ? <Loader /> : <Orders orders={ordersData} />}
         </Page>
       )}
     </Layout>

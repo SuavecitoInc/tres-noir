@@ -4,6 +4,7 @@ import { CustomizerProvider } from "./src/contexts/customizer"
 import { CartProvider } from "./src/contexts/storefront-cart"
 import { RxInfoContextProvider } from "./src/contexts/rx-info"
 import { ErrorModalProvider } from "./src/contexts/error-modal"
+import { CustomerProvider } from "./src/contexts/customer"
 import ErrorBoundary from "./src/components/error-boundary"
 import * as Sentry from "@sentry/gatsby"
 
@@ -42,13 +43,15 @@ export const replaceHydrateFunction = () => {
 export const wrapRootElement = ({ element }) => {
   return (
     <ErrorModalProvider>
-      <CartProvider>
-        <CustomizerProvider>
-          <RxInfoContextProvider>
-            <ErrorBoundary>{element}</ErrorBoundary>
-          </RxInfoContextProvider>
-        </CustomizerProvider>
-      </CartProvider>
+      <CustomerProvider>
+        <CartProvider>
+          <CustomizerProvider>
+            <RxInfoContextProvider>
+              <ErrorBoundary>{element}</ErrorBoundary>
+            </RxInfoContextProvider>
+          </CustomizerProvider>
+        </CartProvider>
+      </CustomerProvider>
     </ErrorModalProvider>
   )
 }

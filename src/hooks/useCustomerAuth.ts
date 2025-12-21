@@ -115,7 +115,6 @@ export function useCustomerAuth() {
     isAuthenticated,
     accessToken,
     isLoading,
-    setIsLoading,
     login,
     handleCallback,
     logout,

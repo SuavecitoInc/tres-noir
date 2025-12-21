@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react"
 import { navigate } from "gatsby"
 import { useCustomerAuth } from "../../hooks/useCustomerAuth"
+import Loader from "../../components/loader"
 
 const CallbackPage = () => {
   const { handleCallback } = useCustomerAuth()
@@ -59,11 +60,13 @@ const CallbackPage = () => {
           <h1>Authentication Error</h1>
           <p style={{ color: "red" }}>{error}</p>
           <p>Redirecting...</p>
+          <Loader />
         </>
       ) : (
         <>
           <h1>Authenticating...</h1>
           <p>Please wait while we log you in.</p>
+          <Loader />
         </>
       )}
     </div>

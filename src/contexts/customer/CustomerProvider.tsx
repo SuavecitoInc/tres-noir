@@ -70,11 +70,11 @@ export const CustomerProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (!isAuthenticated && !accessToken) return
-    if (!customerData) {
+    if (!customerData || !ordersData) {
       DEBUG && console.log("Customer data missing, loading data")
       loadData()
     }
-  }, [loadData, isAuthenticated, accessToken, customerData])
+  }, [loadData, isAuthenticated, accessToken, customerData, ordersData])
 
   const value = useMemo(
     () => ({

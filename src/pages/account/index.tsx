@@ -11,7 +11,6 @@ import { useCustomer } from "../../contexts/customer"
 import Layout from "../../components/layout"
 import Loader from "../../components/loader"
 import { navigate } from "gatsby"
-import { set } from "js-cookie"
 
 const DEBUG = false
 
@@ -52,10 +51,8 @@ const AccountPage = () => {
     isAuthenticated,
     accessToken,
     login,
-    logout,
     clear,
     isLoading: isLoadingAuth,
-    setIsLoading: setIsLoadingAuth,
   } = useCustomerAuth()
 
   const {
@@ -90,7 +87,6 @@ const AccountPage = () => {
     } catch (error) {
       console.error("Error loading data:", error)
       setIsLoadingData(false)
-      setIsLoadingAuth(false)
       clear()
     }
   }, [isAuthenticated, accessToken])
@@ -100,7 +96,6 @@ const AccountPage = () => {
   }, [loadData])
 
   if (isLoadingAuth || isLoadingData) {
-    console.log("Loading authentication or data...")
     return (
       <Layout>
         <Loader />
@@ -109,7 +104,6 @@ const AccountPage = () => {
   }
 
   if (!isAuthenticated) {
-    console.log("User not authenticated, displaying login view")
     return (
       <Layout>
         <LoginView>
@@ -123,12 +117,6 @@ const AccountPage = () => {
       </Layout>
     )
   }
-
-  // return (
-  //   <Layout>
-  //     <Loader />
-  //   </Layout>
-  // )
 }
 
 export default AccountPage

@@ -6,7 +6,9 @@ import { getCustomerOrder } from "../../../api/customerAccountClient"
 
 import Layout from "../../../components/layout"
 import Order from "../../../components/account/order"
+import Loader from "../../../components/loader"
 import type { Order as OrderType } from "../../../types/customer-orders"
+import { ENABLE_NEW_CUSTOMER_ACCOUNTS } from "../../../flags"
 
 const DEBUG = false
 
@@ -54,13 +56,19 @@ const OrderPage = ({ location }) => {
   }, [isAuthenticated, accessToken])
 
   useEffect(() => {
+    if (!ENABLE_NEW_CUSTOMER_ACCOUNTS) {
+      window.location.href = "https://account.tresnoir.com/account/"
+    }
+  }, [])
+
+  useEffect(() => {
     loadData()
   }, [loadData])
 
-  if (isLoading || loadingOrder) {
+  if (!ENABLE_NEW_CUSTOMER_ACCOUNTS || isLoading || loadingOrder) {
     return (
       <Layout>
-        <div>Loading...</div>
+        <Loader />
       </Layout>
     )
   }

@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect } from "react"
+import { navigate } from "gatsby"
 import styled from "styled-components"
 
 import { useCustomerAuth } from "../../hooks/useCustomerAuth"
@@ -7,15 +8,14 @@ import {
   getCustomerOrders,
 } from "../../api/customerAccountClient"
 import { useCustomer } from "../../contexts/customer"
-
 import Layout from "../../components/layout"
 import Loader from "../../components/loader"
-import { navigate } from "gatsby"
+import {
+  ENABLE_NEW_CUSTOMER_ACCOUNTS,
+  FORWARD_TO_NEW_CUSTOMER_ACCOUNTS,
+} from "../../flags"
 
 const DEBUG = false
-
-// TODO: move to config
-const REDIRECT_TO_SHOPIFY_ACCOUNT = false
 
 const LoginView = styled.div`
   display: flex;
@@ -77,7 +77,7 @@ const AccountPage = () => {
           setIsLoadingData(false)
         }
 
-        if (!REDIRECT_TO_SHOPIFY_ACCOUNT) {
+        if (!FORWARD_TO_NEW_CUSTOMER_ACCOUNTS) {
           navigate("/account/orders")
         } else {
           window.location.href =
@@ -92,10 +92,17 @@ const AccountPage = () => {
   }, [isAuthenticated, accessToken])
 
   useEffect(() => {
+    if (!ENABLE_NEW_CUSTOMER_ACCOUNTS) {
+      window.location.href = "https://account.tresnoir.com/account"
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!ENABLE_NEW_CUSTOMER_ACCOUNTS) return
     loadData()
   }, [loadData])
 
-  if (isLoadingAuth || isLoadingData) {
+  if (!ENABLE_NEW_CUSTOMER_ACCOUNTS || isLoadingAuth || isLoadingData) {
     return (
       <Layout>
         <Loader />

@@ -2,12 +2,11 @@ import React, { useEffect } from "react"
 import styled from "styled-components"
 
 import { useCustomerAuth } from "../../../hooks/useCustomerAuth"
-
 import Layout from "../../../components/layout"
 import Orders from "../../../components/account/orders"
 import Loader from "../../../components/loader"
-
 import { useCustomer } from "../../../contexts/customer"
+import { ENABLE_NEW_CUSTOMER_ACCOUNTS } from "../../../flags"
 
 const Page = styled.div`
   .logout-button {
@@ -30,6 +29,12 @@ const OrdersPage = ({ location }) => {
   const { ordersData, customerData, isLoading: isLoadingData } = useCustomer()
 
   useEffect(() => {
+    if (!ENABLE_NEW_CUSTOMER_ACCOUNTS) {
+      window.location.href = "https://account.tresnoir.com/account/"
+    }
+  }, [])
+
+  useEffect(() => {
     if (loggedOut) {
       console.log("User logged out, clearing session")
       clear()
@@ -38,7 +43,7 @@ const OrdersPage = ({ location }) => {
 
   return (
     <Layout>
-      {isLoadingAuth || isLoadingData ? (
+      {!ENABLE_NEW_CUSTOMER_ACCOUNTS || isLoadingAuth || isLoadingData ? (
         <Loader />
       ) : (
         <Page>

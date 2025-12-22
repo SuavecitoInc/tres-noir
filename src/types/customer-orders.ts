@@ -36,11 +36,24 @@ export interface Fulfillment {
       }
     }[]
   }
+  events: Events
 }
 
 export interface Fulfillments {
   edges: {
     node: Fulfillment
+  }[]
+}
+
+export interface Event {
+  id: string
+  happenedAt: string
+  status: string
+}
+
+export interface Events {
+  edges: {
+    node: Event
   }[]
 }
 

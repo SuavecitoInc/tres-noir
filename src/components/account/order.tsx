@@ -102,6 +102,23 @@ const OrderContainer = styled.div`
   }
 `
 
+const eligibleStatuses = [
+  "IN_TRANSIT",
+  "DELAYED",
+  "OUT_FOR_DELIVERY",
+  "ATTEMPTED_DELIVERY",
+  "DELIVERED",
+]
+
+const formatStatus = (status: string) => {
+  // remove underscores and capitalize words
+  return status
+    .toLowerCase()
+    .split("_")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ")
+}
+
 const Order = ({ orderData }: Props) => {
   const lineItems = rebuildLineItems(
     orderData.lineItems.edges.map(({ node }) => node)
@@ -116,11 +133,40 @@ const Order = ({ orderData }: Props) => {
       )
   )
 
+  const events = shippableFulfillments[0]?.node.events.edges || []
+
+  const displayEvents = eligibleStatuses
+    .map(status => events.find(({ node }) => node.status === status) || null)
+    .filter(evt => evt !== null)
+    .sort((a, b) => {
+      if (a && b) {
+        return (
+          new Date(b.node.happenedAt).getTime() -
+          new Date(a.node.happenedAt).getTime()
+        )
+      }
+      return 0
+    })
+
   const shipmentStatus =
     shippableFulfillments &&
     shippableFulfillments.length > 0 &&
     shippableFulfillments[0].node.trackingInformation.length > 0 ? (
       <ul>
+        {displayEvents.map(el =>
+          el ? (
+            <li>
+              <span className="status-container">
+                <span className="status-label">
+                  {formatStatus(el.node.status)}
+                </span>
+                <span className="status-date">
+                  {formatDate(el.node.happenedAt)}
+                </span>
+              </span>
+            </li>
+          ) : null
+        )}
         <li>
           <span className="status-container">
             <span className="status-label">On its way</span>
@@ -150,8 +196,6 @@ const Order = ({ orderData }: Props) => {
         </li>
       </ul>
     )
-
-  console.log("shippableFulfillments", shippableFulfillments)
 
   DEBUG && console.log("Rendering Order component with data:", orderData)
   DEBUG && console.log("Rebuilt line items:", lineItems)

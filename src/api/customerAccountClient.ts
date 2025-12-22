@@ -280,6 +280,15 @@ export async function getCustomerOrder(accessToken: string, id: string) {
                   }
                 }
               }
+              events(first: 25) {
+                edges {
+                  node {
+                    id
+                    happenedAt
+                    status
+                  }
+                }
+              }
             }
           }
         }

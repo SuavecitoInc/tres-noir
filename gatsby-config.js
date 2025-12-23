@@ -46,6 +46,9 @@ module.exports = {
     DEV_SSR: true,
     PRESERVE_FILE_DOWNLOAD_CACHE: true,
   },
+  // Disable adapter to force static-only build (no SSR functions)
+  adapter: null,
+  trailingSlash: 'always',
   siteMetadata: {
     title: `Tres Noir`,
     description: `Tres Noir is an independent eyewear company located in Santa Ana, Calif.`,

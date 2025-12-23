@@ -80,21 +80,45 @@ const PathSelector: React.FC<Props> = ({ handle, type }) => {
               )
 
             if (rxAttr && rxAttr.value !== "Non-Prescription") {
-              const prescription = JSON.parse(rxAttr.value)
-              if (prescription?.uploadedFile?.url) {
+              const uploadedFileUrlAttr =
+                customInCart.lineItems[1].shopifyItem.attributes.find(
+                  el => el.key === "_file_url"
+                )
+              const uploadedFileIdAttr =
+                customInCart.lineItems[1].shopifyItem.attributes.find(
+                  el => el.key === "_file_id"
+                )
+
+              if (uploadedFileIdAttr && uploadedFileUrlAttr) {
                 rxInfoDispatch({
                   type: "uploaded-file",
                   payload: {
-                    id: prescription.uploadedFile.id,
-                    url: prescription.uploadedFile.url,
+                    id: uploadedFileIdAttr.value,
+                    url: uploadedFileUrlAttr.value,
                   },
                 })
               } else {
+                const prescription = JSON.parse(rxAttr.value)
                 rxInfoDispatch({
                   type: `full`,
                   payload: prescription,
                 })
               }
+              // const prescription = JSON.parse(rxAttr.value)
+              // if (prescription?.uploadedFile?.url) {
+              //   rxInfoDispatch({
+              //     type: "uploaded-file",
+              //     payload: {
+              //       id: prescription.uploadedFile.id,
+              //       url: prescription.uploadedFile.url,
+              //     },
+              //   })
+              // } else {
+              //   rxInfoDispatch({
+              //     type: `full`,
+              //     payload: prescription,
+              //   })
+              // }
             }
 
             // Extract path from step1

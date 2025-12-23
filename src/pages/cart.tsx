@@ -343,22 +343,48 @@ const Cart = ({
           el => el.key === "Prescription"
         )
         if (rxAttr && rxAttr.value !== "Non-Prescription") {
-          const prescription = JSON.parse(rxAttr.value)
-          if (prescription?.uploadedFile?.url) {
+          const uploadedFileUrlAttr =
+            item.lineItems[1].shopifyItem.attributes.find(
+              el => el.key === "_file_url"
+            )
+          const uploadedFileIdAttr =
+            item.lineItems[1].shopifyItem.attributes.find(
+              el => el.key === "_file_id"
+            )
+
+          if (uploadedFileIdAttr && uploadedFileUrlAttr) {
             rxInfoDispatch({
               type: "uploaded-file",
               payload: {
-                id: prescription.uploadedFile.id,
-                url: prescription.uploadedFile.url,
+                id: uploadedFileIdAttr.value,
+                url: uploadedFileUrlAttr.value,
               },
             })
           } else {
+            const prescription = JSON.parse(rxAttr.value)
             rxInfoDispatch({
               type: `full`,
               payload: prescription,
             })
           }
         }
+        // if (rxAttr && rxAttr.value !== "Non-Prescription") {
+        //   const prescription = JSON.parse(rxAttr.value)
+        //   if (prescription?.uploadedFile?.url) {
+        //     rxInfoDispatch({
+        //       type: "uploaded-file",
+        //       payload: {
+        //         id: prescription.uploadedFile.id,
+        //         url: prescription.uploadedFile.url,
+        //       },
+        //     })
+        //   } else {
+        //     rxInfoDispatch({
+        //       type: `full`,
+        //       payload: prescription,
+        //     })
+        //   }
+        // }
         // prepare context for editing
         // setting context
         const step1Title = resumedSelectedVariants.step1.product.title

@@ -241,7 +241,7 @@ const FormV2 = ({ handle }: Props) => {
         handleChange={handleChange}
       />
 
-      {isRxAble && (
+      {isRxAble && !isReaders && (
         <div className="prescription-entry-method">
           <span>How would you like to provide your prescription?</span>
           <input

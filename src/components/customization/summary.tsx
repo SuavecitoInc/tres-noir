@@ -130,15 +130,12 @@ const Step5 = (props: {
   const {
     currentStep,
     setCurrentStep,
-    productUrl,
     selectedVariants,
-    setSelectedVariants,
     setSelectedVariantsToDefault,
   } = useCustomizer()
 
   const hasStep2Item = selectedVariants.step2.storefrontId !== ""
 
-  // const { bundledCustoms, bundledDispatch } = useContext(CustomProductsContext)
   const {
     addProductCustomToCart,
     removeCustomProductWithId,
@@ -146,7 +143,7 @@ const Step5 = (props: {
     setIsAddingToCart,
     isRemovingFromCart,
   } = useCart()
-  const { isRxAble, setRxAble, rxInfo, rxInfoDispatch } = useRxInfo()
+  const { rxInfo, rxInfoDispatch } = useRxInfo()
   const [addedToCart, setAddedToCart] = useState(false)
 
   useEffect(() => {
@@ -176,6 +173,50 @@ const Step5 = (props: {
     const matchingKey: string = today.valueOf().toString()
     const colorName = variant.title.split("-")[0]
 
+    // const stepItems = [
+    //   {
+    //     variantId: step1.storefrontId,
+    //     quantity: 1,
+    //     attributes: [
+    //       {
+    //         key: "customizationId",
+    //         value: matchingKey,
+    //       },
+    //       {
+    //         key: "customizationStep",
+    //         value: "1",
+    //       },
+    //       {
+    //         key: "Prescription",
+    //         value: step1.product.title.includes("Non-Prescription")
+    //           ? "Non-Prescription"
+    //           : step1.product.title === "Reader's"
+    //           ? JSON.stringify({ lensPower: rxInfo.lensPower })
+    //           : rxInfo?.uploadedFile
+    //           ? JSON.stringify({
+    //               uploadedFile: {
+    //                 id: rxInfo.uploadedFile.id,
+    //                 url: rxInfo.uploadedFile.url,
+    //               },
+    //             })
+    //           : JSON.stringify({
+    //               right: rxInfo.right,
+    //               left: rxInfo.left,
+    //             }),
+    //       },
+    //       // delete if this doesnt work
+    //       {
+    //         key: "_file",
+    //         value: rxInfo?.uploadedFile ? rxInfo.uploadedFile.url : "none",
+    //       },
+    //       {
+    //         key: "_frameName",
+    //         value: `${variant.product.title} - ${colorName}`,
+    //       },
+    //     ],
+    //   },
+    // ]
+
     const stepItems = [
       {
         variantId: step1.storefrontId,
@@ -190,30 +231,51 @@ const Step5 = (props: {
             value: "1",
           },
           {
-            key: "Prescription",
-            value: step1.product.title.includes("Non-Prescription")
-              ? "Non-Prescription"
-              : step1.product.title === "Reader's"
-              ? JSON.stringify({ lensPower: rxInfo.lensPower })
-              : rxInfo?.uploadedFile
-              ? JSON.stringify({
-                  uploadedFile: {
-                    id: rxInfo.uploadedFile.id,
-                    url: rxInfo.uploadedFile.url,
-                  },
-                })
-              : JSON.stringify({
-                  right: rxInfo.right,
-                  left: rxInfo.left,
-                }),
-          },
-          {
             key: "_frameName",
             value: `${variant.product.title} - ${colorName}`,
           },
         ],
       },
     ]
+
+    // add custom attributes
+    const step1Item = stepItems[0]
+    const isRxAble = !step1.product.title.includes("Non-Prescription")
+    const isReaders = step1.product.title.includes("Reader's")
+    if (isRxAble) {
+      if (isReaders) {
+        step1Item.attributes.push({
+          key: "Prescription",
+          value: JSON.stringify({ lensPower: rxInfo.lensPower }),
+        })
+      } else if (rxInfo?.uploadedFile) {
+        step1Item.attributes.push({
+          key: "Prescription",
+          value: "Uploaded File",
+        })
+        step1Item.attributes.push({
+          key: "_file_id",
+          value: rxInfo.uploadedFile.id,
+        })
+        step1Item.attributes.push({
+          key: "_file_url",
+          value: rxInfo.uploadedFile.url,
+        })
+      } else {
+        step1Item.attributes.push({
+          key: "Prescription",
+          value: JSON.stringify({
+            right: rxInfo.right,
+            left: rxInfo.left,
+          }),
+        })
+      }
+    } else {
+      step1Item.attributes.push({
+        key: "Prescription",
+        value: "Non-Prescription",
+      })
+    }
 
     // if step2 item selected add it
     if (hasStep2Item) {
@@ -275,6 +337,7 @@ const Step5 = (props: {
         },
       ],
     }
+
     stepItems.unshift(frameVariant)
     if (resumedItem) {
       await removeCustomProductWithId(resumedItem)

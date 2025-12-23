@@ -1,14 +1,14 @@
+import { useMemo } from "react"
 import { useStaticQuery, graphql } from "gatsby"
 import type { AvailablePath, Product } from "../contexts/customizer/types"
-import useCollectionDiscountedPricing from "../hooks/useCollectionDiscountedPricing"
 
 const MERGE_SAME_PRICE = true
 
-type DiscountedPrice = {
-  id: string
-  discountedPrice: number
-  offer: string
-}
+// type DiscountedPrice = {
+//   id: string
+//   discountedPrice: number
+//   offer: string
+// }
 
 const patchSamePrice = (path: AvailablePath) => {
   const patchedProducts = path?.products?.map(p => {
@@ -113,20 +113,23 @@ export const useCustomizerCollections = () => {
       }
     `)
 
-  return {
-    nonPrescription: patchSamePrice(nonPrescription),
-    singleVision: patchSamePrice(singleVision),
-    readers: patchSamePrice(readers),
-    bifocal: patchSamePrice(bifocal),
-    progressive: patchSamePrice(progressive),
-  }
-
   // return {
-  //   nonPrescription,
-  //   singleVision,
-  //   readers,
-  //   bifocal,
-  //   progressive,
+  //   nonPrescription: patchSamePrice(nonPrescription),
+  //   singleVision: patchSamePrice(singleVision),
+  //   readers: patchSamePrice(readers),
+  //   bifocal: patchSamePrice(bifocal),
+  //   progressive: patchSamePrice(progressive),
   // }
+
+  return useMemo(
+    () => ({
+      nonPrescription: patchSamePrice(nonPrescription),
+      singleVision: patchSamePrice(singleVision),
+      readers: patchSamePrice(readers),
+      bifocal: patchSamePrice(bifocal),
+      progressive: patchSamePrice(progressive),
+    }),
+    [nonPrescription, singleVision, readers, bifocal, progressive]
+  )
 }
 export default useCustomizerCollections

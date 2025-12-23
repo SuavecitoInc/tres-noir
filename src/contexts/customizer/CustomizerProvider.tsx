@@ -2,8 +2,6 @@ import React, { useCallback, useEffect, useMemo, useState } from "react"
 import CustomizerContext from "./context"
 import type { AvailablePath, GlassesType } from "./types"
 import useCustomizerCollections from "../../hooks/useCustomizerCollections"
-import { useLocation } from "react-use"
-import { get } from "js-cookie"
 
 type Props = {
   children: React.ReactNode
@@ -122,20 +120,23 @@ export function CustomizerProvider({ children }: Props) {
   const { nonPrescription, singleVision, readers, bifocal, progressive } =
     useCustomizerCollections()
 
-  const CONFIG = {
-    Glasses: {
-      availablePaths: [
-        nonPrescription,
-        singleVision,
-        readers,
-        bifocal,
-        progressive,
-      ],
-    },
-    "Safety Glasses": {
-      availablePaths: [singleVision, progressive],
-    },
-  }
+  const CONFIG = useMemo(
+    () => ({
+      Glasses: {
+        availablePaths: [
+          nonPrescription,
+          singleVision,
+          readers,
+          bifocal,
+          progressive,
+        ],
+      },
+      "Safety Glasses": {
+        availablePaths: [singleVision, progressive],
+      },
+    }),
+    [nonPrescription, singleVision, readers, bifocal, progressive]
+  )
 
   const getInitialMode = (): boolean => {
     if (isBrowser) {
@@ -194,13 +195,14 @@ export function CustomizerProvider({ children }: Props) {
     },
     [CONFIG]
   )
+
   useEffect(() => {
     if (type && !editMode) {
       // reset selected collection path when type changes
       setAvailablePaths(CONFIG[type].availablePaths)
       setSelectedCollectionPath(CONFIG[type].availablePaths[0] as AvailablePath)
     }
-  }, [type])
+  }, [type, CONFIG, editMode])
 
   // const availablePaths = CONFIG[type].availablePaths
 
@@ -231,6 +233,8 @@ export function CustomizerProvider({ children }: Props) {
       availablePaths,
       selectedVariants,
       hasSavedCustomized,
+      // setSelectedVariantsToDefault, // Add
+      // setEditData,
     ]
   )
 

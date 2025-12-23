@@ -1509,8 +1509,11 @@ export const query = graphql`
             childImageSharp {
               data: gatsbyImageData(
                 layout: CONSTRAINED
-                width: 2048
-                height: 1365
+                # width: 2048
+                # height: 1365
+                width: 1024
+                quality: 50
+                placeholder: BLURRED
               )
             }
           }
@@ -1521,8 +1524,11 @@ export const query = graphql`
             childImageSharp {
               data: gatsbyImageData(
                 layout: CONSTRAINED
-                width: 2048
-                height: 1365
+                # width: 2048
+                # height: 1365
+                width: 1024
+                quality: 50
+                placeholder: BLURRED
               )
             }
           }

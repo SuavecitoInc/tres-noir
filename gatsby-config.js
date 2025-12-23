@@ -124,17 +124,19 @@ module.exports = {
           process.env.CONTENTFUL_DELIVERY_TOKEN,
         environment: "master",
         downloadLocal: true,
-        assetDownloadWorkers: 25,
+        assetDownloadWorkers: 5, // 25
       },
     },
     {
       resolve: `gatsby-plugin-sharp`,
       options: {
         defaults: {
-          formats: [`webp`, `auto`],
+          formats: [`webp`],
           quality: 40,
-          placeholder: `dominantColor`,
+          placeholder: `blurred`,
         },
+        // Limit concurrent Sharp operations
+        concurrency: 2,
       },
     },
     `gatsby-plugin-image`,

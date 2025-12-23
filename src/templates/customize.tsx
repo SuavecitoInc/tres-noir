@@ -612,7 +612,14 @@ export const query = graphql`
         featuredImage {
           localFile {
             childImageSharp {
-              data: gatsbyImageData
+              data: gatsbyImageData(
+                layout: CONSTRAINED
+                placeholder: BLURRED
+                width: 1024
+                quality: 50
+                # width: 2048
+                # height: 1365
+              )
             }
           }
           title
@@ -623,8 +630,10 @@ export const query = graphql`
               data: gatsbyImageData(
                 layout: CONSTRAINED
                 placeholder: BLURRED
-                width: 2048
-                height: 1365
+                width: 1024
+                quality: 50
+                # width: 2048
+                # height: 1365
               )
             }
           }

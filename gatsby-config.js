@@ -47,8 +47,8 @@ module.exports = {
     PRESERVE_FILE_DOWNLOAD_CACHE: true,
   },
   // Disable adapter to force static-only build (no SSR functions)
-  adapter: null,
-  trailingSlash: 'always',
+  // adapter: null,
+  // trailingSlash: "always",
   siteMetadata: {
     title: `Tres Noir`,
     description: `Tres Noir is an independent eyewear company located in Santa Ana, Calif.`,
@@ -138,8 +138,6 @@ module.exports = {
           quality: 40,
           placeholder: `blurred`,
         },
-        // Limit concurrent Sharp operations
-        concurrency: 2,
       },
     },
     `gatsby-plugin-image`,

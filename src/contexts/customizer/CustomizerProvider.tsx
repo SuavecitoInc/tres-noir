@@ -1,10 +1,9 @@
-import React, { useEffect, useMemo, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import CustomizerContext from "./context"
-import type { AvailablePath, GlassesType, Product } from "./types"
+import type { AvailablePath, GlassesType } from "./types"
 import useCustomizerCollections from "../../hooks/useCustomizerCollections"
-import { set } from "js-cookie"
-
-const MERGE_SAME_PRICE = true
+import { useLocation } from "react-use"
+import { get } from "js-cookie"
 
 type Props = {
   children: React.ReactNode
@@ -115,6 +114,8 @@ const DEFAULT_STEPS = {
   },
 }
 
+const isBrowser: boolean = typeof window !== "undefined"
+
 export function CustomizerProvider({ children }: Props) {
   // get collections and collection featured images
 
@@ -136,6 +137,18 @@ export function CustomizerProvider({ children }: Props) {
     },
   }
 
+  const getInitialMode = (): boolean => {
+    if (isBrowser) {
+      const urlParams = new URLSearchParams(window.location.search)
+      const custom_id = urlParams.get("custom_id")
+      if (custom_id) {
+        return true
+      }
+    }
+    return false
+  }
+
+  const [editMode, setEditMode] = useState(getInitialMode())
   const [type, setType] = useState<GlassesType>("Glasses")
 
   const [availablePaths, setAvailablePaths] = useState<AvailablePath[]>(
@@ -156,39 +169,36 @@ export function CustomizerProvider({ children }: Props) {
     case: false,
   })
 
-  const setSelectedVariantsToDefault = () => {
+  const setSelectedVariantsToDefault = useCallback(() => {
     setSelectedVariants(DEFAULT_STEPS)
-  }
+  }, [])
 
-  // const setSelectedCollectionPath = (path: AvailablePath) => {
-  //   const patchedProducts = path?.products?.map(p => {
-  //     const variants = p.variants
-  //     const isSamePrice = variants.every(
-  //       v => v.price === variants[0].price && MERGE_SAME_PRICE
-  //     )
-  //     return { ...p, isSamePrice } as Product
-  //   })
-  //   setSelectedPath({ ...path, products: patchedProducts })
-  // }
-
+  const setEditData = useCallback(
+    (
+      variants: typeof DEFAULT_STEPS,
+      glassesType: GlassesType,
+      pathName: string
+    ) => {
+      setEditMode(true)
+      setSelectedVariants(variants)
+      setType(glassesType)
+      const pathSelected = CONFIG[glassesType].availablePaths.find(
+        path => path.title === pathName
+      )
+      if (pathSelected) {
+        setAvailablePaths(CONFIG[glassesType].availablePaths)
+        setSelectedCollectionPath(pathSelected)
+      }
+      setHasSavedCustomized({ step1: true, step2: true, case: true })
+      setCurrentStep(3)
+    },
+    [CONFIG]
+  )
   useEffect(() => {
-    // change selected variants when the selected collection path changes, but keep the existing case selection
-    setSelectedVariants(selectedVariants => ({
-      ...DEFAULT_STEPS,
-      case: selectedVariants.case,
-    }))
-    setHasSavedCustomized({ step1: false, step2: false, case: false })
-  }, [selectedCollectionPath])
-
-  useEffect(() => {
-    if (type) {
+    if (type && !editMode) {
       // reset selected collection path when type changes
       setAvailablePaths(CONFIG[type].availablePaths)
       setSelectedCollectionPath(CONFIG[type].availablePaths[0] as AvailablePath)
-      // if (CONFIG[type].availablePaths.length > 0)
-      //   setSelectedCollectionPath(
-      //     CONFIG[type].availablePaths[0] as AvailablePath
-      //   )
     }
   }, [type])
 
@@ -210,21 +220,17 @@ export function CustomizerProvider({ children }: Props) {
       setSelectedVariantsToDefault,
       hasSavedCustomized,
       setHasSavedCustomized,
+      setEditData,
+      setEditMode,
     }),
     [
       type,
-      setType,
       currentStep,
-      setCurrentStep,
       productUrl,
-      setProductUrl,
       selectedCollectionPath,
-      setSelectedCollectionPath,
       availablePaths,
       selectedVariants,
-      setSelectedVariants,
       hasSavedCustomized,
-      setHasSavedCustomized,
     ]
   )
 

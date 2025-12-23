@@ -39,6 +39,7 @@ export interface LineItem {
     product: {
       handle: string
       title: string
+      productType: string
     }
     sku: string
     price: {

@@ -1,12 +1,7 @@
-import React, { useContext, useRef, useState, useEffect, useMemo } from "react"
+import React, { useRef, useState, useEffect, useMemo } from "react"
 import { Component } from "./styles"
-import { SelectedVariantStorage } from "../../types/global"
 import { useCustomizer } from "../../contexts/customizer"
-import { RxInfoContext } from "../../contexts/rx-info"
-import type {
-  LocalCart,
-  rxType,
-} from "../../contexts/storefront-cart/types/storefront-cart"
+import { useRxInfo } from "../../contexts/rx-info"
 import ReadersTable from "./components/readers-table"
 import useCollectionDiscountedPricing from "../../hooks/useCollectionDiscountedPricing"
 import FormNavigation from "./components/form-navigation"
@@ -16,6 +11,7 @@ import { useFormValidation } from "./hooks/useFormValidation"
 import { usePrescriptionLogic } from "./hooks/usePrescriptionLogic"
 
 import type { AvailablePath, Variant } from "../../contexts/customizer/types"
+import PrescriptionUpload from "./components/prescription-upload"
 
 type Props = {
   handle: string
@@ -40,8 +36,12 @@ const FormV2 = ({ handle }: Props) => {
   const isSingleVision = currentCollection?.title === "Single Vision"
   const isReaders = currentCollection?.title === "Readers"
 
-  const { isRxAble, setRxAble, rxInfo, rxInfoDispatch } =
-    useContext(RxInfoContext)
+  const { isRxAble, setRxAble, rxInfo, rxInfoDispatch } = useRxInfo()
+
+  const [prescriptionEntry, setPrescriptionEntry] = useState<
+    "TYPED" | "UPLOADED"
+  >(rxInfo?.uploadedFile?.url ? "UPLOADED" : "TYPED")
+
   const messageRef = useRef<any>(null)
 
   const [isFormValid, setIsFormValid] = useState(true)
@@ -72,15 +72,20 @@ const FormV2 = ({ handle }: Props) => {
     useCollectionDiscountedPricing({ prices, handle })
 
   // Use validation and prescription hooks
-  const { verifyForm, isNowValid, clearErrors, removeChildNodes } =
-    useFormValidation({
-      isNonPrescription,
-      isReaders,
-      rxInfo,
-      messageRef,
-      continueBtn,
-      errorRefs,
-    })
+  const {
+    verifyForm,
+    verifyUpload,
+    isNowValid,
+    clearErrors,
+    removeChildNodes,
+  } = useFormValidation({
+    isNonPrescription,
+    isReaders,
+    rxInfo,
+    messageRef,
+    continueBtn,
+    errorRefs,
+  })
 
   const { handleRx, range } = usePrescriptionLogic({
     rxInfoDispatch,
@@ -144,10 +149,18 @@ const FormV2 = ({ handle }: Props) => {
     if (currentStep === 1 && num === -1) {
       setCurrentStep(currentStep + num)
     }
-    if (verifyForm()) {
+    if (prescriptionEntry === "TYPED" && verifyForm()) {
       setIsFormValid(true)
       setCurrentStep(currentStep + num)
       return
+    }
+    // uploaded prescription
+    if (prescriptionEntry === "UPLOADED" && verifyUpload()) {
+      if (rxInfo.uploadedFile) {
+        setIsFormValid(true)
+        setCurrentStep(currentStep + num)
+        return
+      }
     }
   }
 
@@ -180,7 +193,7 @@ const FormV2 = ({ handle }: Props) => {
   // get all product variants in a flat array
   const allVariants = useMemo(
     () => currentCollection?.products?.flatMap(p => p.variants) ?? [],
-    [currentCollection?.products]
+    [currentCollection]
   )
 
   useEffect(() => {
@@ -197,7 +210,9 @@ const FormV2 = ({ handle }: Props) => {
       const foundVariant = allVariants.find(
         v => v.legacyResourceId === selectedVariantId
       )
-      variantToSet = selectedVariants[`step${currentStep}`]
+      if (foundVariant) {
+        variantToSet = selectedVariants[`step${currentStep}`]
+      }
       // check if price has changed due to discount
       if (
         foundVariant &&
@@ -207,62 +222,17 @@ const FormV2 = ({ handle }: Props) => {
       }
     }
     handleChange(null, variantToSet, true)
-  }, [allVariants, currentCollection?.products])
+  }, [allVariants, currentCollection])
 
-  // restore on refresh
   useEffect(() => {
-    if (!hasSavedCustomized.step1) {
-      const isBrowser: boolean = typeof window !== "undefined"
-      if (isBrowser) {
-        const urlParams = new URLSearchParams(window.location.search)
-        const custom_id = urlParams.get("custom_id")
-        if (!custom_id) return
-        const customsResume = localStorage.getItem("customs-resume")
-        const checkoutString = localStorage.getItem("checkout")
-        if (customsResume && custom_id && checkoutString) {
-          const customsStorage = JSON.parse(
-            customsResume
-          ) as SelectedVariantStorage
-          const cartStorage = JSON.parse(checkoutString) as LocalCart
-          const customInCart = cartStorage.value?.tnLineItems?.find(
-            el => el.id === custom_id
-          )
-          const rxAttr = customInCart?.lineItems[1].shopifyItem.attributes.find(
-            el => el.key === "Prescription"
-          )
-          if (rxAttr && rxAttr.value !== "Non-Prescription") {
-            // set Rx
-            const prescription = JSON.parse(rxAttr.value) as rxType
-            rxInfoDispatch({
-              type: `full`,
-              payload: prescription,
-            })
-          }
-          const parsedCustoms = customsStorage.value.customs
-          const resumedSelectedVariants =
-            parsedCustoms[Number(custom_id)].selectedVariants
-          // prepare context for editing
-          // setting context
-          setSelectedVariants(resumedSelectedVariants)
-          // set rx context
-          // setting savedCustomized context so radio won't default to top option
-          setHasSavedCustomized({
-            step1: true,
-            step2: true,
-            case: true,
-          })
-          setCurrentStep(1)
-        }
-      }
-    }
-  }, [])
+    setCurrentCollection(selectedCollectionPath)
+  }, [selectedCollectionPath])
 
   return (
     <Component>
       <div className="step-header" ref={topRef}>
         <p>Choose your {currentCollection.title} option:</p>
       </div>
-
       <ProductList
         products={currentCollection?.products}
         currentCollection={currentCollection}
@@ -271,7 +241,35 @@ const FormV2 = ({ handle }: Props) => {
         handleChange={handleChange}
       />
 
-      {isRxAble && !isReaders ? (
+      {isRxAble && (
+        <div className="prescription-entry-method">
+          <span>How would you like to provide your prescription?</span>
+          <input
+            type="radio"
+            name="prescriptionEntry"
+            value="TYPED"
+            checked={prescriptionEntry === "TYPED"}
+            onChange={() => setPrescriptionEntry("TYPED")}
+          />{" "}
+          Enter Manually
+          <input
+            type="radio"
+            name="prescriptionEntry"
+            value="UPLOADED"
+            checked={prescriptionEntry === "UPLOADED"}
+            onChange={() => setPrescriptionEntry("UPLOADED")}
+          />{" "}
+          Upload Prescription
+        </div>
+      )}
+
+      {prescriptionEntry === "UPLOADED" && isRxAble && !isReaders && (
+        <PrescriptionUpload
+          uploadedFile={rxInfo.uploadedFile}
+          isNowValid={() => isNowValid(true)}
+        />
+      )}
+      {prescriptionEntry === "TYPED" && isRxAble && !isReaders ? (
         <RxInfoForm
           rxInfo={rxInfo}
           handleRx={handleRx}
@@ -285,9 +283,7 @@ const FormV2 = ({ handle }: Props) => {
           isNowValid={() => isNowValid(isFormValid)}
         />
       ) : null}
-
       <FormNavigation handleSteps={handleSteps} continueBtn={continueBtn} />
-
       <ul className="form-error" ref={messageRef}></ul>
     </Component>
   )

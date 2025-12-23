@@ -1,14 +1,10 @@
-import React, { useEffect, useState, useContext } from "react"
+import React, { useEffect, useContext } from "react"
 import { Link } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
 import useCustomizer from "../../contexts/customizer/hooks"
 import { RxInfoContext } from "../../contexts/rx-info"
 import { Component } from "./styles"
-
-import type {
-  LocalCart,
-  rxType,
-} from "../../contexts/storefront-cart/types/storefront-cart"
+import { rebuildTnLineItems } from "../../contexts/storefront-cart/helpers"
 
 type Props = {
   handle: string
@@ -25,9 +21,8 @@ const PathSelector: React.FC<Props> = ({ handle, type }) => {
     setSelectedCollectionPath,
     currentStep,
     setCurrentStep,
-    setSelectedVariants,
     hasSavedCustomized,
-    setHasSavedCustomized,
+    setEditData,
   } = useCustomizer()
 
   const { isRxAble, setRxAble, rxInfo, rxInfoDispatch } =
@@ -51,48 +46,73 @@ const PathSelector: React.FC<Props> = ({ handle, type }) => {
     setProductUrl(`/products/${handle}`)
   }, [handle, setProductUrl])
 
-  // TODO: restore on refresh or mount if previously selected
-  // restore on refresh
+  // TODO: Refactor this to reload saved customization data properly
   useEffect(() => {
-    if (!hasSavedCustomized.step1) {
+    console.log("Checking to resume customization...", hasSavedCustomized)
+
+    // Only attempt resume if not already resumed and availablePaths are loaded
+    if (!hasSavedCustomized.step1 && availablePaths.length > 0) {
       const isBrowser: boolean = typeof window !== "undefined"
       if (isBrowser) {
         const urlParams = new URLSearchParams(window.location.search)
         const custom_id = urlParams.get("custom_id")
         if (!custom_id) return
+
         const customsResume = localStorage.getItem("customs-resume")
         const checkoutString = localStorage.getItem("checkout")
-        if (customsResume && custom_id && checkoutString) {
-          const customsStorage = JSON.parse(customsResume) as any //SelectedVariantStorage
-          const cartStorage = JSON.parse(checkoutString) as any // LocalCart
-          const customInCart = cartStorage.value?.tnLineItems?.find(
-            el => el.id === custom_id
-          )
-          const rxAttr = customInCart?.lineItems[1].shopifyItem.attributes.find(
-            el => el.key === "Prescription"
-          )
-          if (rxAttr && rxAttr.value !== "Non-Prescription") {
-            // set Rx
-            const prescription = JSON.parse(rxAttr.value) as rxType
-            rxInfoDispatch({
-              type: `full`,
-              payload: prescription,
-            })
+
+        if (customsResume && checkoutString) {
+          const customsStorage = JSON.parse(customsResume) as any
+          const cartStorage = JSON.parse(checkoutString) as any
+
+          const tnLineItems = rebuildTnLineItems(cartStorage.value)
+          const customInCart = tnLineItems.find(el => el.id === custom_id)
+
+          if (customInCart) {
+            console.log("Found customInCart for resuming:", customInCart)
+            const parsedCustoms = customsStorage.value.customs
+            const resumedSelectedVariants =
+              parsedCustoms[Number(custom_id)].selectedVariants
+            // Extract prescription from resumed data
+            const rxAttr =
+              customInCart.lineItems[1].shopifyItem.attributes.find(
+                el => el.key === "Prescription"
+              )
+
+            if (rxAttr && rxAttr.value !== "Non-Prescription") {
+              const prescription = JSON.parse(rxAttr.value)
+              if (prescription?.uploadedFile?.url) {
+                rxInfoDispatch({
+                  type: "uploaded-file",
+                  payload: {
+                    id: prescription.uploadedFile.id,
+                    url: prescription.uploadedFile.url,
+                  },
+                })
+              } else {
+                rxInfoDispatch({
+                  type: `full`,
+                  payload: prescription,
+                })
+              }
+            }
+
+            // Extract path from step1
+            const step1 = resumedSelectedVariants.step1
+            console.log("Resumed step1 data:", step1)
+            if (step1?.product?.title) {
+              const pathTitle = step1.product.title.split(" - ")[0]
+              const glassesType = customInCart.lineItems[0].shopifyItem
+                .merchandise.product.productType as "Glasses" | "Safety Glasses"
+              console.log(
+                "setting edit data with",
+                resumedSelectedVariants,
+                glassesType,
+                pathTitle
+              )
+              setEditData(resumedSelectedVariants, glassesType, pathTitle)
+            }
           }
-          const parsedCustoms = customsStorage.value.customs
-          const resumedSelectedVariants =
-            parsedCustoms[Number(custom_id)].selectedVariants
-          // prepare context for editing
-          // setting context
-          setSelectedVariants(resumedSelectedVariants)
-          // set rx context
-          // setting savedCustomized context so radio won't default to top option
-          setHasSavedCustomized({
-            step1: true,
-            step2: true,
-            case: true,
-          })
-          setCurrentStep(3)
         }
       }
     }

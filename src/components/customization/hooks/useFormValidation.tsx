@@ -16,6 +16,10 @@ type RxInfo = {
     pd: string
   }
   lensPower?: string
+  uploadedFile?: null | {
+    id: string
+    url: string
+  }
 }
 
 type UseFormValidationProps = {
@@ -116,9 +120,40 @@ export const useFormValidation = ({
     return isValid
   }
 
-  const isNowValid = (isFormValid: boolean) => {
-    // will re enable the button once all form errors are cleared
-    // if (isFormValid) return // why is this here?
+  const verifyUpload = (): boolean => {
+    let isValid = true
+    let messages: HTMLElement[] = []
+    if (messageRef.current) removeChildNodes(messageRef.current)
+
+    if (!rxInfo.uploadedFile) {
+      let node = document.createElement("li")
+      node.textContent = "Please upload a prescription file"
+      node.setAttribute("id", "upload-error")
+      messages.push(node)
+      isValid = false
+    }
+
+    if (!isValid && messageRef.current) {
+      for (let i = 0; i < messages.length; ++i) {
+        messageRef.current?.appendChild(messages[i])
+      }
+    }
+
+    if (!isValid) {
+      continueBtn.current?.classList.add("disable")
+    }
+
+    return isValid
+  }
+
+  const isNowValid = (clear: boolean = false) => {
+    // used to force clear errors when upload is successful
+    if (clear) {
+      removeChildNodes(messageRef.current)
+      continueBtn.current?.classList.remove("disable")
+      return
+    }
+
     if (!messageRef.current.hasChildNodes()) {
       continueBtn.current?.classList.remove("disable")
     }
@@ -174,6 +209,7 @@ export const useFormValidation = ({
 
   return {
     verifyForm,
+    verifyUpload,
     isNowValid,
     clearErrors,
     removeChildNodes,

@@ -29,6 +29,8 @@ const defaultContext: CustomizerContextType = {
     // step2: boolean
     case: boolean
   }) => {},
+  setEditData: () => {},
+  setEditMode: (editMode: boolean) => {},
 }
 
 export const CustomizerContext = createContext(defaultContext)

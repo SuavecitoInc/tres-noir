@@ -3,7 +3,7 @@ import styled from "styled-components"
 import { GatsbyImage, StaticImage, IGatsbyImageData } from "gatsby-plugin-image"
 import { useCustomizer } from "../../contexts/customizer"
 import { useCart } from "../../contexts/storefront-cart"
-import { RxInfoContext } from "../../contexts/rx-info"
+import { useRxInfo } from "../../contexts/rx-info"
 import { addedCustomizedToCartGTMEvent } from "../../helpers/gtm"
 import { ShopifyProductVariant } from "../../types/customize"
 import CaseGridCustomize from "../case-grid-customize"
@@ -146,8 +146,7 @@ const Step5 = (props: {
     setIsAddingToCart,
     isRemovingFromCart,
   } = useCart()
-  const { isRxAble, setRxAble, rxInfo, rxInfoDispatch } =
-    useContext(RxInfoContext)
+  const { isRxAble, setRxAble, rxInfo, rxInfoDispatch } = useRxInfo()
   const [addedToCart, setAddedToCart] = useState(false)
 
   useEffect(() => {
@@ -176,6 +175,7 @@ const Step5 = (props: {
     const today = new Date()
     const matchingKey: string = today.valueOf().toString()
     const colorName = variant.title.split("-")[0]
+
     const stepItems = [
       {
         variantId: step1.storefrontId,
@@ -195,6 +195,13 @@ const Step5 = (props: {
               ? "Non-Prescription"
               : step1.product.title === "Reader's"
               ? JSON.stringify({ lensPower: rxInfo.lensPower })
+              : rxInfo?.uploadedFile
+              ? JSON.stringify({
+                  uploadedFile: {
+                    id: rxInfo.uploadedFile.id,
+                    url: rxInfo.uploadedFile.url,
+                  },
+                })
               : JSON.stringify({
                   right: rxInfo.right,
                   left: rxInfo.left,

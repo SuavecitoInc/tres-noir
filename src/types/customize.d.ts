@@ -193,6 +193,14 @@ export interface ContentfulProductVariant {
       title: string
     }
   }
+  featuredImage: {
+    localFile: {
+      childImageSharp: {
+        data: IGatsbyImageData
+      }
+    }
+    title: string
+  }
 }
 
 export interface ShopifyProduct {

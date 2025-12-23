@@ -1,5 +1,5 @@
 import { createContext } from "react"
-import type { rxType } from "./types"
+import type { rxType, DefaultContextType } from "./types"
 
 const rxInit: rxType = {
   right: {
@@ -17,9 +17,10 @@ const rxInit: rxType = {
     pd: "63.0",
   },
   lensPower: "",
+  uploadedFile: null,
 }
 
-export const defaultContext = {
+export const defaultContext: DefaultContextType = {
   isRxAble: false,
   rxInfo: rxInit,
   rxInfoDispatch: Dispatch => {},

@@ -26,6 +26,7 @@ const rxInit: rxType = {
     pd: "63.0",
   },
   lensPower: "",
+  uploadedFile: null,
 }
 
 export const handleRxFromAttribute = (input: rxType) => {
@@ -41,6 +42,7 @@ export const handleRxFromAttribute = (input: rxType) => {
       right: { ...defaultPrescription },
       left: { ...defaultPrescription },
       lensPower: "",
+      uploadedFile: null,
     }
     let context = { ...defaultContext }
     if (input.hasOwnProperty("lensPower")) {
@@ -70,6 +72,7 @@ const actionList = {
   FULL: "full",
   RESET: "reset",
   POWER: "lens-power",
+  URL: "uploaded-file",
 }
 
 const reducer = (state, action) => {
@@ -100,6 +103,8 @@ const reducer = (state, action) => {
       return handleRxFromAttribute(action.payload)
     case actionList.RESET:
       return rxInit
+    case actionList.URL:
+      return { ...rxInit, uploadedFile: action.payload }
     default:
       return state
   }

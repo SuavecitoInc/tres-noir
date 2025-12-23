@@ -232,3 +232,82 @@ export const rebuildBundles = (cart: Cart) => {
   createBadgeCount(cart)
   return cart
 }
+
+// rebuild tnLineItems
+export const rebuildTnLineItems = (cart: Cart) => {
+  let itemsToAdd: tnItem[] = []
+  let itemsMap = new Map()
+  cart.lines.edges.forEach(({ node }) => {
+    const item = node
+    // non-custom item
+    if (item.attributes.length === 0) {
+      // gift card does not have a sku, using id instead
+      if (item.merchandise.product.handle === "gift-card") {
+        itemsMap.set(item.merchandise.id, [{ shopifyItem: item }])
+      } else {
+        itemsMap.set(item.merchandise.sku, [{ shopifyItem: item }])
+      }
+    } else {
+      // custom item
+      const foundProperties = item.attributes
+        .filter(
+          el => el.key === "customizationId" || el.key === "customizationStep"
+        )
+        .map(el => el.value)
+      if (foundProperties.length === 2) {
+        const key = foundProperties[0]
+        const step = foundProperties[1]
+        if (itemsMap.has(key)) {
+          let currentArr = itemsMap.get(key)
+          currentArr.push({
+            stepNumber: step,
+            shopifyItem: item,
+          })
+          itemsMap.set(key, currentArr)
+        } else {
+          itemsMap.set(key, [
+            {
+              stepNumber: step,
+              shopifyItem: item,
+            },
+          ])
+        }
+      }
+    }
+  })
+  itemsMap.forEach((value, key) => {
+    // normal item
+    if (value.length === 1) {
+      itemsToAdd.push({
+        id: key,
+        lineItems: value,
+        image: getImageFromLocalStorage(key),
+        isCustom: false,
+      })
+    }
+    // sunglasses + case
+    else if (value.length === 2) {
+      itemsToAdd.push({
+        id: key,
+        lineItems: value.sort((a, b) => {
+          return a.stepNumber - b.stepNumber
+        }),
+        image: getImageFromLocalStorage(key),
+        isCustom: false,
+      })
+    }
+    // customized lenses
+    else {
+      itemsToAdd.push({
+        id: key,
+        lineItems: value.sort((a, b) => {
+          return a.stepNumber - b.stepNumber
+        }),
+        image: getImageFromLocalStorage(key),
+        isCustom: true,
+      })
+    }
+  })
+  // cart["tnLineItems"] = itemsToAdd
+  return itemsToAdd
+}

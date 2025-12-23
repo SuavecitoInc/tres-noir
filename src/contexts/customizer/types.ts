@@ -114,4 +114,10 @@ export type CustomizerContextType = {
     step2: boolean
     case: boolean
   }) => void
+  setEditData: (
+    variants: SelectedVariants,
+    glassesType: GlassesType,
+    pathName: string
+  ) => void
+  setEditMode: (editMode: boolean) => void
 }

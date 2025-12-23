@@ -456,6 +456,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
 
   const {
     setType,
+    setEditMode,
     setSelectedVariantsToDefault,
     setCurrentStep,
     setHasSavedCustomized,
@@ -949,6 +950,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
         ? "Safety Glasses"
         : "Glasses"
     setType(productType)
+    setEditMode(false)
   }, [shopifyProduct])
 
   useEffect(() => {

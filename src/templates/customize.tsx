@@ -145,13 +145,21 @@ const Customize = ({
   const [currentPrice, setCurrentPrice] = useState<number>(
     shopifyProduct.variants[0].price
   )
+
+  const defaultImage =
+    variant?.contentful &&
+    variant.contentful.customizations?.clear?.localFile?.childImageSharp?.data
+      ? variant.contentful.customizations?.clear?.localFile?.childImageSharp
+          ?.data
+      : variant.contentful.featuredImage?.localFile?.childImageSharp?.data
+  const defaultTitle =
+    variant?.contentful && variant.contentful.customizations?.clear?.title
+      ? variant.contentful.customizations?.clear?.title
+      : variant.contentful.featuredImage.title
+
   const [currentImage, setCurrentImage] = useState({
-    data:
-      variant?.contentful &&
-      variant.contentful.customizations?.clear?.localFile?.childImageSharp
-        ?.data,
-    altText:
-      variant?.contentful && variant.contentful.customizations?.clear?.title,
+    data: defaultImage,
+    altText: defaultTitle,
   })
   const previewRef = useRef<HTMLDivElement>(null)
 
@@ -255,8 +263,8 @@ const Customize = ({
         <div className="row product-customize">
           <div className="desktop col preview" ref={previewRef}>
             <GatsbyImage
-              image={currentImage.data}
-              alt={currentImage.altText}
+              image={currentImage?.data}
+              alt={currentImage?.altText}
               loading="eager"
             />
           </div>

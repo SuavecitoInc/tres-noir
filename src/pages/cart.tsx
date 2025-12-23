@@ -304,25 +304,16 @@ const Cart = ({
     updateShipInsureAttribute,
   } = useCart()
 
-  const { rxInfo, rxInfoDispatch } = useContext(RxInfoContext)
+  console.log("Rendering Cart with cart data:", cart)
 
-  const { setSelectedVariants, setCurrentStep, setHasSavedCustomized } =
-    useCustomizer()
+  const { rxInfoDispatch } = useContext(RxInfoContext)
 
-  // const {
-  //   setSelectedVariants: setSelectedSafetyVariants,
-  //   setCurrentStep: setCurrentSafetyStep,
-  //   setHasSavedCustomized: setHasSavedSafetyCustomized,
-  // } = useContext(SafetyCustomizeContext)
+  const { setEditData } = useCustomizer()
 
   const stepMap = new Map()
   stepMap.set(1, "RX TYPE")
   stepMap.set(2, "LENS COATING")
   stepMap.set(3, "CASE")
-
-  // const stepMapSafetyGlasses = new Map()
-  // stepMapSafetyGlasses.set(1, "RX TYPE")
-  // stepMapSafetyGlasses.set(2, "CASE")
 
   const loadingOverlay = useRef<HTMLDivElement>(null)
   useEffect(() => {
@@ -334,6 +325,7 @@ const Cart = ({
   }, [cart])
 
   const editGlasses = (item: tnItem) => {
+    console.log("Editing glasses item:", item)
     const isBrowser: boolean = typeof window !== "undefined"
     if (isBrowser) {
       const customsResume = localStorage.getItem("customs-resume")
@@ -351,29 +343,36 @@ const Cart = ({
           el => el.key === "Prescription"
         )
         if (rxAttr && rxAttr.value !== "Non-Prescription") {
-          const prescription = JSON.parse(rxAttr.value) as rxType
-          rxInfoDispatch({
-            type: `full`,
-            payload: prescription,
-          })
+          const prescription = JSON.parse(rxAttr.value)
+          if (prescription?.uploadedFile?.url) {
+            rxInfoDispatch({
+              type: "uploaded-file",
+              payload: {
+                id: prescription.uploadedFile.id,
+                url: prescription.uploadedFile.url,
+              },
+            })
+          } else {
+            rxInfoDispatch({
+              type: `full`,
+              payload: prescription,
+            })
+          }
         }
-
-        const currentStep = 1
-
         // prepare context for editing
         // setting context
-        setSelectedVariants(resumedSelectedVariants)
-        // setting savedCustomized context so radio won't default to top option
-        setHasSavedCustomized({
-          step1: true,
-          step2: true,
-          // step3: true,
-          // step4: true,
-          case: true,
-        })
-        setCurrentStep(currentStep)
+        const step1Title = resumedSelectedVariants.step1.product.title
+        const pathSelected = step1Title.split(" - ")[0]
+        if (pathSelected) {
+          console.log("Path selected for editing:", pathSelected)
+          // setSelectedCollectionPath(pathSelected as AvailablePath)
+          const glassesType = item.lineItems[0].shopifyItem.merchandise.product
+            .productType as "Glasses" | "Safety Glasses"
+          console.log("Glasses type for editing:", glassesType)
+          setEditData(resumedSelectedVariants, glassesType, pathSelected)
+        }
 
-        // navigate to step 5 of customize page
+        // navigate to summary
         navigate(
           // @ts-ignore
           `/products/${handle}/customize?variant=${sku}&custom_id=${item.id.toString()}`

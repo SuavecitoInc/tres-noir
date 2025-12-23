@@ -626,6 +626,17 @@ export function CartProvider({ children }: Props) {
           throw new Error("Failed to add ship insure to cart")
         }
 
+        if (isBrowser) {
+          const now = new Date()
+          localStorage.setItem(
+            "checkout",
+            JSON.stringify({
+              value: response,
+              expiry: now.getTime() + 2592000,
+            })
+          )
+        }
+
         addToImageStorage(key, image, cart.id)
         const updatedCart = rebuildBundles(response)
         setCart(updatedCart)

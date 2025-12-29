@@ -16,6 +16,11 @@
   - The uploaded prescriptions are uploaded directly to Shopify Files and linked to the corresponding order via a custom line item attribute / property.
   - This feature enhances user convenience and streamlines the order fulfillment workflow.
 - Customer Accounts, have been updated to use the new Shopify Customer Accounts API, which provides a more secure and streamlined experience for users.
+  - New environmental variables required:
+    - GATSBY_CUSTOMER_ACCOUNTS_CLIENT_ID: example - `1abcd234-56ef-78gh-90ij-123klmno4567`
+    - GATSBY_CUSTOMER_ACCOUNTS_SHOP_ID: example - `12345678910`
+    - GATSBY_CUSTOMER_ACCOUNTS_SHOP_URL: example - `https://tresnoir.com`
+    - GATSBY_CUSTOMER_ACCOUNTS_SHOPIFY_URL: example - `https://shopify.com/12345678910/account`
   - Theres 2 new flags (src/flags) to enable this feature in production and staging environments, new Shopify Accounts must also be enabled in the Shopify admin.
     - ENABLE_NEW_CUSTOMER_ACCOUNTS: Enables the new customer accounts feature.
     - FORWARD_TO_NEW_CUSTOMER_ACCOUNTS: If enabled, this forwards customers to the new Shopify hosted customer accounts pages. When disabled the custom account pages within the site are used. These pages are powered by the new Customer Accounts API.

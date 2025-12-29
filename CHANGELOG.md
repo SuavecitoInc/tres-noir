@@ -1,5 +1,35 @@
 # CHANGELOG
 
+## v.0.13.0 - 2025-12-29
+
+**Breaking Changes**
+
+- Gatsby dependencies have been updated to the latest major versions.
+- The customizer has been updated to improve user experience and performance. Key changes include:
+  - Refactored the state management to use React Context API for better scalability.
+  - Improved loading times by optimizing image assets and lazy loading components.
+  - Updated the UI to enhance accessibility and responsiveness across devices.
+  - Fixed several bugs related to variant selection and pricing updates.
+  - Separate templates for Glasses and Safety Glasses are no longer necessary; a unified template now handles both product types.
+  - See the updated documentation for more details on how to setup and use the new customizer features.
+- A new Prescription Upload feature has been added to the customizer, allowing users to upload their prescription documents directly during the customization process.
+  - The uploaded prescriptions are uploaded directly to Shopify Files and linked to the corresponding order via a custom line item attribute / property.
+  - This feature enhances user convenience and streamlines the order fulfillment workflow.
+- Customer Accounts, have been updated to use the new Shopify Customer Accounts API, which provides a more secure and streamlined experience for users.
+  - Theres 2 new flags (src/flags) to enable this feature in production and staging environments, new Shopify Accounts must also be enabled in the Shopify admin.
+    - ENABLE_NEW_CUSTOMER_ACCOUNTS: Enables the new customer accounts feature.
+    - FORWARD_TO_NEW_CUSTOMER_ACCOUNTS: If enabled, this forwards customers to the new Shopify hosted customer accounts pages. When disabled the custom account pages within the site are used. These pages are powered by the new Customer Accounts API.
+- All React Context has been updated to use the same directory structure for readability, consistency and maintainability.
+  ```
+  contexts/
+  └── some-context/
+      ├── context.tsx
+      ├── Provider.tsx
+      ├── hooks.ts
+      ├── index.ts
+      └── types.ts
+  ```
+
 ## v.0.12.1 - 2025-08-05
 
 **Breaking Changes**

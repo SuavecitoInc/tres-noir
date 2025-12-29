@@ -248,22 +248,28 @@ const FormV2 = ({ handle }: Props) => {
       {ENABLE_PRESCRIPTION_FILE_UPLOADS && isRxAble && !isReaders && (
         <div className="prescription-entry-method">
           <span>How would you like to provide your prescription?</span>
-          <input
-            type="radio"
-            name="prescriptionEntry"
-            value="TYPED"
-            checked={prescriptionEntry === "TYPED"}
-            onChange={() => setPrescriptionEntry("TYPED")}
-          />{" "}
-          Enter Manually
-          <input
-            type="radio"
-            name="prescriptionEntry"
-            value="UPLOADED"
-            checked={prescriptionEntry === "UPLOADED"}
-            onChange={() => setPrescriptionEntry("UPLOADED")}
-          />{" "}
-          Upload Prescription
+          <label htmlFor="type-prescription" style={{ cursor: "pointer" }}>
+            <input
+              id="type-prescription"
+              type="radio"
+              name="prescriptionEntry"
+              value="TYPED"
+              checked={prescriptionEntry === "TYPED"}
+              onChange={() => setPrescriptionEntry("TYPED")}
+            />{" "}
+            Enter Manually
+          </label>
+          <label htmlFor="upload-prescription" style={{ cursor: "pointer" }}>
+            <input
+              id="upload-prescription"
+              type="radio"
+              name="prescriptionEntry"
+              value="UPLOADED"
+              checked={prescriptionEntry === "UPLOADED"}
+              onChange={() => setPrescriptionEntry("UPLOADED")}
+            />{" "}
+            Upload Prescription
+          </label>
         </div>
       )}
 

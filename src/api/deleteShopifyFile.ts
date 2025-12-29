@@ -1,4 +1,3 @@
-// api/finalize-file.ts
 import fetch from "node-fetch"
 import type { GatsbyFunctionRequest, GatsbyFunctionResponse } from "gatsby"
 
@@ -17,7 +16,6 @@ export default async function handler(
 
     const endpoint = `https://${process.env.GATSBY_STORE_MY_SHOPIFY}/admin/api/${process.env.GATSBY_SHOPIFY_API_VERSION}/graphql.json`
 
-    // Create the file
     const fileDeleteResponse = await fetch(endpoint, {
       method: "POST",
       headers: {

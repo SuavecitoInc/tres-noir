@@ -244,9 +244,6 @@ const Order = ({ orderData }: Props) => {
             </div>
           </div>
           <div className="card">
-            {/* <div className="order-info">
-            Confirmed {new Date(orderData.createdAt).toLocaleDateString()}
-          </div> */}
             <div className="order-details">
               <div>
                 <div>

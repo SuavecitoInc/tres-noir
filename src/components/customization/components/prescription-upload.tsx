@@ -1,8 +1,6 @@
-// In your prescription upload component
 import React, { useState, useRef } from "react"
 import styled from "styled-components"
 import { useRxInfo } from "../../../contexts/rx-info"
-import { set } from "js-cookie"
 
 const Component = styled.div`
   border-radius: 4px;
@@ -46,7 +44,7 @@ const PrescriptionUpload = ({ uploadedFile, isNowValid }: Props) => {
   const handleUploadPrescription = async (file: File) => {
     try {
       setUploading(true)
-      // Step 1: Get staged upload URL from your backend
+      // step 1: Get staged upload URL from your backend
       const stageResponse = await fetch("/api/createStagedUpload", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -59,15 +57,15 @@ const PrescriptionUpload = ({ uploadedFile, isNowValid }: Props) => {
 
       const { uploadUrl, resourceUrl, parameters } = await stageResponse.json()
 
-      // Step 2: Upload file DIRECTLY to Shopify (no size limit!)
+      // step 2: Upload file DIRECTLY to Shopify (no size limit!)
       const formData = new FormData()
 
-      // Add Shopify's parameters first
+      // add Shopify's parameters first
       parameters.forEach(param => {
         formData.append(param.name, param.value)
       })
 
-      // Add the actual file
+      // add the actual file
       formData.append("file", file)
 
       await fetch(uploadUrl, {
@@ -75,7 +73,7 @@ const PrescriptionUpload = ({ uploadedFile, isNowValid }: Props) => {
         body: formData,
       })
 
-      // Step 3: Finalize the file in Shopify
+      // step 3: Finalize the file in Shopify
       const finalizeResponse = await fetch("/api/finalizeUpload", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -85,7 +83,8 @@ const PrescriptionUpload = ({ uploadedFile, isNowValid }: Props) => {
         }),
       })
 
-      const { fileUrl, fileName, fileId } = await finalizeResponse.json()
+      // fileUrl, fileId, fileName
+      const { fileUrl, fileId } = await finalizeResponse.json()
 
       console.log("File uploaded to Shopify:", fileUrl)
       if (fileUrl) {

@@ -271,12 +271,12 @@ const CartDrawer = () => {
       {cart && cart.tnLineItems && cart.tnLineItems.length !== 0 && (
         <Component ref={clickRef}>
           <div className="header">
-            <button onClick={evt => setIsCartDrawerOpen(false)}>
+            <button onClick={_evt => setIsCartDrawerOpen(false)}>
               <FaChevronRight />
             </button>
             <div className="sub-flex">
               <span>Cart</span>
-              <span onClick={evt => setIsCartDrawerOpen(false)}>
+              <span onClick={_evt => setIsCartDrawerOpen(false)}>
                 <CartIcon />
               </span>
             </div>
@@ -308,15 +308,14 @@ const CartDrawer = () => {
             <div className="button-flex">
               <button
                 className="btn"
-                onClick={evt => setIsCartDrawerOpen(false)}
+                onClick={_evt => setIsCartDrawerOpen(false)}
               >
                 CONTINUE SHOPPING
               </button>
               <a
                 className="btn"
-                // href={cart.checkoutUrl}
                 href={`${cart.checkoutUrl}&logged_in=true`}
-                onClick={evt => setIsCartDrawerOpen(false)}
+                onClick={_evt => setIsCartDrawerOpen(false)}
               >
                 CHECKOUT
               </a>

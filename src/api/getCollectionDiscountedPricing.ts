@@ -6,7 +6,6 @@ export default async function getCollectionDiscountedPricing(
   req: GatsbyFunctionRequest,
   res: GatsbyFunctionResponse
 ) {
-  // START HELPER FUNCTIONS
   const formatNumber = (inputNumber: string) =>
     isNaN(parseFloat(inputNumber))
       ? NaN
@@ -50,11 +49,9 @@ export default async function getCollectionDiscountedPricing(
         discountedPrice: Number(roundedDiscountAmount),
         offer: overwriteLabel ? offer : "Sale",
       }
-    } // FIX: return error or null
+    }
+
     throw new Error("Error calculating discount")
-    // return res
-    //   .status(400)
-    //   .json({ error: "Error while fetching from admin api" })
   }
 
   const roundShopify = (amount: number) => {
@@ -73,7 +70,6 @@ export default async function getCollectionDiscountedPricing(
     }
   }
 
-  // END HELPER FUNCTIONS
   try {
     const API_VERSION = process.env.GATSBY_SHOPIFY_API_VERSION ?? "2025-01"
     const { offer, handle, prices, overwriteLabel } = JSON.parse(req.body) as {
@@ -84,7 +80,7 @@ export default async function getCollectionDiscountedPricing(
     }
 
     const adminToken: string = process.env.GATSBY_STORE_TOKEN ?? ""
-    const storeName = process.env.GATSBY_STORE_MY_SHOPIFY ?? ""
+    const storeName: string = process.env.GATSBY_STORE_MY_SHOPIFY ?? ""
     const url = `https://${storeName}/admin/api/${API_VERSION}/graphql.json`
 
     const variables = {
@@ -403,9 +399,9 @@ export default async function getCollectionDiscountedPricing(
             })
           }
 
-          // 1. Define your caching headers
+          // define your caching headers
           const CACHE_CONTROL_BROWSER = "public, max-age=0, must-revalidate"
-          // Cache on Netlify CDN for 1 hour (3600s), but serve stale content for an additional 7 days (604800s)
+          // cache on Netlify CDN for 1 hour (3600s), but serve stale content for an additional 7 days (604800s)
           const CACHE_CONTROL_NETLIFY =
             "public, max-age=3600, stale-while-revalidate=3600"
           res.setHeader("Cache-Control", CACHE_CONTROL_BROWSER)

@@ -26,7 +26,6 @@ const Component = styled.div`
       font-size: 1.6rem;
       font-weight: bold;
       display: flex;
-      // justify-content: center;
       align-items: center;
     }
     .td {

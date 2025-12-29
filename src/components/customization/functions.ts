@@ -1,5 +1,4 @@
 import { Dispatch, SetStateAction } from "react"
-import { SelectedVariants } from "../../types/global"
 
 export const changeImage = (
   currentStep: number,

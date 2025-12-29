@@ -26,7 +26,7 @@ const defaultContext: CustomizerContextType = {
   },
   setHasSavedCustomized: (hasSavedCustomized: {
     step1: boolean
-    // step2: boolean
+    step2: boolean
     case: boolean
   }) => {},
   setEditData: () => {},

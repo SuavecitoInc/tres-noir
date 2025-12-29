@@ -173,8 +173,6 @@ const CaseGridCustomize: React.FC<Props> = ({ casesAvailable, type }) => {
           : caseCollection[1].variants[0]
 
       handleChange(DEFAULT_CASE, false)
-
-      // handleChange(caseCollection[0].variants[0], false)
     }
   }, [])
 

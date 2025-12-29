@@ -67,7 +67,6 @@ interface Item {
   url: string | null
   name: string
   image: {
-    // gatsbyImageData: IGatsbyImageData
     localFile: {
       childImageSharp: {
         gatsbyImageData: IGatsbyImageData
@@ -103,7 +102,6 @@ const SubNavImage = ({ subListItems }) => {
               <div className="nav-item-img">
                 {_item.image ? (
                   <Img
-                    // image={_item.image.gatsbyImageData}
                     image={
                       _item.image.localFile.childImageSharp.gatsbyImageData
                     }

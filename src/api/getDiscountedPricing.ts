@@ -6,7 +6,6 @@ export default async function getDiscountedPricing(
   req: GatsbyFunctionRequest,
   res: GatsbyFunctionResponse
 ) {
-  // START HELPER FUNCTIONS
   const formatNumber = (inputNumber: string) =>
     isNaN(parseFloat(inputNumber))
       ? NaN
@@ -77,10 +76,8 @@ export default async function getDiscountedPricing(
         offer: overwriteLabel ? offer : "Sale",
       }
     }
+
     throw new Error("Error calculating discount")
-    // return res
-    //   .status(400)
-    //   .json({ error: "Error while fetching from admin api" })
   }
 
   const getLegacyId = (id: string): string => {
@@ -108,7 +105,6 @@ export default async function getDiscountedPricing(
     }
   }
 
-  // END HELPER FUNCTIONS
   try {
     const API_VERSION = process.env.GATSBY_SHOPIFY_API_VERSION ?? "2025-01"
     const { offer, handle, productId, prices, overwriteLabel } = JSON.parse(

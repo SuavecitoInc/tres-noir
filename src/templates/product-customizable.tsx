@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  useContext,
-  useRef,
-  ChangeEvent,
-} from "react"
+import React, { useState, useEffect, useRef, ChangeEvent } from "react"
 import { Link, graphql } from "gatsby"
 import {
   StaticImage,

@@ -204,8 +204,6 @@ export function CustomizerProvider({ children }: Props) {
     }
   }, [type, CONFIG, editMode])
 
-  // const availablePaths = CONFIG[type].availablePaths
-
   const value = useMemo(
     () => ({
       type,
@@ -233,8 +231,6 @@ export function CustomizerProvider({ children }: Props) {
       availablePaths,
       selectedVariants,
       hasSavedCustomized,
-      // setSelectedVariantsToDefault, // Add
-      // setEditData,
     ]
   )
 

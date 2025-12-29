@@ -25,8 +25,7 @@ const PathSelector: React.FC<Props> = ({ handle, type }) => {
     setEditData,
   } = useCustomizer()
 
-  const { isRxAble, setRxAble, rxInfo, rxInfoDispatch } =
-    useContext(RxInfoContext)
+  const { rxInfoDispatch } = useContext(RxInfoContext)
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const foundPath = availablePaths.find(el => el.title === event.target.value)
@@ -46,10 +45,8 @@ const PathSelector: React.FC<Props> = ({ handle, type }) => {
     setProductUrl(`/products/${handle}`)
   }, [handle, setProductUrl])
 
-  // TODO: Refactor this to reload saved customization data properly
+  // reload saved customization data properly
   useEffect(() => {
-    console.log("Checking to resume customization...", hasSavedCustomized)
-
     // Only attempt resume if not already resumed and availablePaths are loaded
     if (!hasSavedCustomized.step1 && availablePaths.length > 0) {
       const isBrowser: boolean = typeof window !== "undefined"
@@ -73,7 +70,7 @@ const PathSelector: React.FC<Props> = ({ handle, type }) => {
             const parsedCustoms = customsStorage.value.customs
             const resumedSelectedVariants =
               parsedCustoms[Number(custom_id)].selectedVariants
-            // Extract prescription from resumed data
+            // extract prescription from resumed data
             const rxAttr =
               customInCart.lineItems[1].shopifyItem.attributes.find(
                 el => el.key === "Prescription"
@@ -104,24 +101,9 @@ const PathSelector: React.FC<Props> = ({ handle, type }) => {
                   payload: prescription,
                 })
               }
-              // const prescription = JSON.parse(rxAttr.value)
-              // if (prescription?.uploadedFile?.url) {
-              //   rxInfoDispatch({
-              //     type: "uploaded-file",
-              //     payload: {
-              //       id: prescription.uploadedFile.id,
-              //       url: prescription.uploadedFile.url,
-              //     },
-              //   })
-              // } else {
-              //   rxInfoDispatch({
-              //     type: `full`,
-              //     payload: prescription,
-              //   })
-              // }
             }
 
-            // Extract path from step1
+            // extract path from step1
             const step1 = resumedSelectedVariants.step1
             console.log("Resumed step1 data:", step1)
             if (step1?.product?.title) {

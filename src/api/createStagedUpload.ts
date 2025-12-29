@@ -1,4 +1,3 @@
-// api/create-staged-upload.ts
 import fetch from "node-fetch"
 import type { GatsbyFunctionRequest, GatsbyFunctionResponse } from "gatsby"
 

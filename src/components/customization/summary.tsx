@@ -173,50 +173,6 @@ const Step5 = (props: {
     const matchingKey: string = today.valueOf().toString()
     const colorName = variant.title.split("-")[0]
 
-    // const stepItems = [
-    //   {
-    //     variantId: step1.storefrontId,
-    //     quantity: 1,
-    //     attributes: [
-    //       {
-    //         key: "customizationId",
-    //         value: matchingKey,
-    //       },
-    //       {
-    //         key: "customizationStep",
-    //         value: "1",
-    //       },
-    //       {
-    //         key: "Prescription",
-    //         value: step1.product.title.includes("Non-Prescription")
-    //           ? "Non-Prescription"
-    //           : step1.product.title === "Reader's"
-    //           ? JSON.stringify({ lensPower: rxInfo.lensPower })
-    //           : rxInfo?.uploadedFile
-    //           ? JSON.stringify({
-    //               uploadedFile: {
-    //                 id: rxInfo.uploadedFile.id,
-    //                 url: rxInfo.uploadedFile.url,
-    //               },
-    //             })
-    //           : JSON.stringify({
-    //               right: rxInfo.right,
-    //               left: rxInfo.left,
-    //             }),
-    //       },
-    //       // delete if this doesnt work
-    //       {
-    //         key: "_file",
-    //         value: rxInfo?.uploadedFile ? rxInfo.uploadedFile.url : "none",
-    //       },
-    //       {
-    //         key: "_frameName",
-    //         value: `${variant.product.title} - ${colorName}`,
-    //       },
-    //     ],
-    //   },
-    // ]
-
     const stepItems = [
       {
         variantId: step1.storefrontId,

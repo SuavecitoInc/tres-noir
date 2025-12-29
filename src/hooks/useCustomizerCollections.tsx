@@ -4,12 +4,6 @@ import type { AvailablePath, Product } from "../contexts/customizer/types"
 
 const MERGE_SAME_PRICE = true
 
-// type DiscountedPrice = {
-//   id: string
-//   discountedPrice: number
-//   offer: string
-// }
-
 const patchSamePrice = (path: AvailablePath) => {
   const patchedProducts = path?.products?.map(p => {
     const variants = p.variants
@@ -112,14 +106,6 @@ export const useCustomizerCollections = () => {
         }
       }
     `)
-
-  // return {
-  //   nonPrescription: patchSamePrice(nonPrescription),
-  //   singleVision: patchSamePrice(singleVision),
-  //   readers: patchSamePrice(readers),
-  //   bifocal: patchSamePrice(bifocal),
-  //   progressive: patchSamePrice(progressive),
-  // }
 
   return useMemo(
     () => ({

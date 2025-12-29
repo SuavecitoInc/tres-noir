@@ -27,8 +27,6 @@ export const useDiscountIdentifier = () => {
     }
   `)
 
-  // TODO: see what happens if no discounts are defined in Contentful
-
   const discounts = data.contentfulHomepage.availableDiscounts.map(
     (discount: ContentfulDiscount) => {
       return {
@@ -43,12 +41,6 @@ export const useDiscountIdentifier = () => {
   )
 
   return discounts as DiscountConfig[]
-  // delete
-  // temporary disable discounts
-  // return discounts.map(disc => ({
-  //   ...disc,
-  //   enableDiscountIdentifier: false,
-  // }))
 }
 
 export default useDiscountIdentifier

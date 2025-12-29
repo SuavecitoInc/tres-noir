@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## v.0.13.0 - 2025-12-29
+## v1.13.0 - 2025-12-29
 
 **Breaking Changes**
 
@@ -15,6 +15,7 @@
 - A new Prescription Upload feature has been added to the customizer, allowing users to upload their prescription documents directly during the customization process.
   - The uploaded prescriptions are uploaded directly to Shopify Files and linked to the corresponding order via a custom line item attribute / property.
   - This feature enhances user convenience and streamlines the order fulfillment workflow.
+  - Enable / disable this feature using the `ENABLE_PRESCRIPTION_FILE_UPLOADS` flag in `src/flags.ts`.
 - Customer Accounts, have been updated to use the new Shopify Customer Accounts API, which provides a more secure and streamlined experience for users.
   - New environmental variables required:
     - GATSBY_CUSTOMER_ACCOUNTS_CLIENT_ID: example - `1abcd234-56ef-78gh-90ij-123klmno4567`
@@ -35,13 +36,13 @@
       └── types.ts
   ```
 
-## v.0.12.1 - 2025-08-05
+## v.1.12.1 - 2025-08-05
 
 **Breaking Changes**
 
 - Fixed the spelling of the Lens Customization product type. The previous misspelling "Lense Customization" has been corrected to "Lens Customization". This will require updates in any related code or configurations that referenced the old spelling.
 
-## v.0.12 - 2025-05-05
+## v1.12 - 2025-05-05
 
 **Features**
 
@@ -51,7 +52,7 @@
   - The header `X-Tres-Noir-Hmac-Sha256` with the digest, is used to verify the request.
   - The AWS Lambda function is responsible for generating a New Dealer Application PDF, uploading it to Google Drive, and sending an email notification.
 
-## v.0.11 - 2025-01-06
+## v1.11.0 - 2025-01-06
 
 **Breaking Changes**
 
@@ -65,7 +66,7 @@
     - shipinsure
     - discounts
 
-## v.0.10 - 2024-12-06
+## v1.10.3 - 2024-12-06
 
 **Breaking Changes**
 
@@ -73,19 +74,19 @@
 - The Gatsby Source Shopify plugin had breaking changes in v7 due to Shopify updating their API. See migration [here](https://www.gatsbyjs.com/plugins/gatsby-source-shopify/#shopifyproduct-imagesmedia).
 - Styled Components also had breaking changes. Pseudo selectors that do not start with & will no longer get the ampersand implicitly added anymore. This was done to correctly mirror browser behavior. See updated nested syntax handling [here](https://styled-components.com/docs/faqs#nested-syntax-handling).
 
-## v.0.10 - 2024-11-21
+## v1.10.2 - 2024-11-21
 
 **Features**
 
 - Updated product discount swap to work on both product pages and colleciton pages
 
-## v.01.10 - 2024-05-20
+## v1.10.1 - 2024-05-20
 
 **Features**
 
 - Added ShipInsure shipping insurance functionality to cart, based on cart attribute
 
-## v.01.10 - 2024-05-20
+## v1.10.0 - 2024-05-20
 
 **Features**
 

@@ -9,9 +9,9 @@ import RxInfoForm from "./components/rx-info-form"
 import ProductList from "./components/product-list"
 import { useFormValidation } from "./hooks/useFormValidation"
 import { usePrescriptionLogic } from "./hooks/usePrescriptionLogic"
-
 import type { AvailablePath, Variant } from "../../contexts/customizer/types"
 import PrescriptionUpload from "./components/prescription-upload"
+import { ENABLE_PRESCRIPTION_FILE_UPLOADS } from "../../flags"
 
 type Props = {
   handle: string
@@ -40,7 +40,11 @@ const FormV2 = ({ handle }: Props) => {
 
   const [prescriptionEntry, setPrescriptionEntry] = useState<
     "TYPED" | "UPLOADED"
-  >(rxInfo?.uploadedFile?.url ? "UPLOADED" : "TYPED")
+  >(
+    ENABLE_PRESCRIPTION_FILE_UPLOADS && rxInfo?.uploadedFile?.url
+      ? "UPLOADED"
+      : "TYPED"
+  )
 
   const messageRef = useRef<any>(null)
 
@@ -241,7 +245,7 @@ const FormV2 = ({ handle }: Props) => {
         handleChange={handleChange}
       />
 
-      {isRxAble && !isReaders && (
+      {ENABLE_PRESCRIPTION_FILE_UPLOADS && isRxAble && !isReaders && (
         <div className="prescription-entry-method">
           <span>How would you like to provide your prescription?</span>
           <input

@@ -35,6 +35,7 @@ import { isDiscounted, formatPrice } from "../helpers/shopify"
 import Divider from "../components/divider"
 import Badge from "../components/badge"
 import ProductBottomline from "../components/product-bottomline"
+import { CUSTOMIZATION_EXCLUSIONS } from "../data/exclusions"
 
 const Page = styled.div`
   .flex {
@@ -1073,6 +1074,10 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
     }
   }, [selectedVariant, lensType])
 
+  const disableCustomize = CUSTOMIZATION_EXCLUSIONS.SAFETY_GLASSES.includes(
+    selectedVariant.shopify.sku
+  )
+
   return (
     <ReviewsProvider
       productTitle={shopifyProduct.title}
@@ -1371,27 +1376,31 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                           >
                             {isAddingToCart ? <Spinner /> : `ADD TO CART`}
                           </button>
-                          <p>- OR -</p>
+                          {!disableCustomize && <p>- OR -</p>}
                         </>
                       )}
 
-                      <Link
-                        className={`btn ${isPolarized ? "disable" : ""}`}
-                        // to={contentfulProduct && customizeUrl}
-                        id="customize-btn"
-                        to={`/products/${
-                          contentfulProduct.handle
-                        }/customize?variant=${selectedVariant.shopify.sku}${
-                          lensType !== LensType.SUNGLASSES
-                            ? `&lens_type=${lensType}`
-                            : ""
-                        }`}
-                      >
-                        CUSTOMIZE
-                      </Link>
-                      <p className="small">
-                        Customize for Polarized, Rx, and more
-                      </p>
+                      {!disableCustomize && (
+                        <>
+                          <Link
+                            className={`btn ${isPolarized ? "disable" : ""}`}
+                            // to={contentfulProduct && customizeUrl}
+                            id="customize-btn"
+                            to={`/products/${
+                              contentfulProduct.handle
+                            }/customize?variant=${selectedVariant.shopify.sku}${
+                              lensType !== LensType.SUNGLASSES
+                                ? `&lens_type=${lensType}`
+                                : ""
+                            }`}
+                          >
+                            CUSTOMIZE
+                          </Link>
+                          <p className="small">
+                            Customize for Polarized, Rx, and more
+                          </p>
+                        </>
+                      )}
                     </div>
                   )}
                 </div>

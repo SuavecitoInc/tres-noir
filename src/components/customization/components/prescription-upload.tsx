@@ -145,7 +145,7 @@ const PrescriptionUpload = ({ uploadedFile, isNowValid }: Props) => {
       <input
         ref={fileInput}
         type="file"
-        accept=".pdf,.jpg,.jpeg,.png"
+        accept=".jpg,.jpeg,.png"
         onChange={handleFileChange}
       />
       {uploadedFile ? (

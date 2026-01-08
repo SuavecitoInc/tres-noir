@@ -30,7 +30,7 @@ Sentry.init({
   // tracePropagationTargets: ["https://tresnoir.com", /^\/api\//],
   release: "tres-noir@" + "2025-01",
   debug: false,
-  enabled: false,
+  enabled: true,
 })
 
 export const replaceHydrateFunction = () => {

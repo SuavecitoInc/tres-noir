@@ -1336,16 +1336,15 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                         id="polarized-toggle"
                         style={{
                           // hide polarization option for safety glasses
-                          display: `${
-                            shopifyProduct.productType === "Safety Glasses"
-                              ? "none"
-                              : "flex"
-                          }`,
+                          display: `${disablePolarizeToggle ? "none" : "flex"}`,
                         }}
                       >
                         <div className="polarized-switch">
                           <input
-                            disabled={isClearanceVariantPolarizable}
+                            disabled={
+                              isClearanceVariantPolarizable ||
+                              disablePolarizeToggle
+                            }
                             type="checkbox"
                             id="switch"
                             checked={isPolarized}

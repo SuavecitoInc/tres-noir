@@ -1074,7 +1074,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
     }
   }, [selectedVariant, lensType])
 
-  const disableCustomize = CUSTOMIZATION_EXCLUSIONS.SAFETY_GLASSES.includes(
+  const disableCustomize = CUSTOMIZATION_EXCLUSIONS.includes(
     selectedVariant.shopify.sku
   )
 

@@ -1078,6 +1078,8 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
     selectedVariant.shopify.sku
   )
 
+  const disableViewAsGlassesToggle =
+    shopifyProduct.productType === "Safety Glasses"
   const disablePolarizeToggle = shopifyProduct.productType === "Safety Glasses"
 
   return (
@@ -1116,7 +1118,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
               />
             </div>
             <div className="col">
-              {!disablePolarizeToggle && (
+              {!disableViewAsGlassesToggle && (
                 <ViewAsType
                   lensType={lensType}
                   swapGlassesType={swapGlassesType}

@@ -1078,6 +1078,8 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
     selectedVariant.shopify.sku
   )
 
+  const disablePolarizeToggle = shopifyProduct.productType === "Safety Glasses"
+
   return (
     <ReviewsProvider
       productTitle={shopifyProduct.title}
@@ -1114,10 +1116,12 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
               />
             </div>
             <div className="col">
-              <ViewAsType
-                lensType={lensType}
-                swapGlassesType={swapGlassesType}
-              />
+              {!disablePolarizeToggle && (
+                <ViewAsType
+                  lensType={lensType}
+                  swapGlassesType={swapGlassesType}
+                />
+              )}
               <div className="heading">
                 <h1>{shopifyProduct.title}</h1>
                 <ProductBottomline reviewListRef={reviewListRef as any} />
@@ -1333,7 +1337,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                           display: `${
                             shopifyProduct.productType === "Safety Glasses"
                               ? "none"
-                              : "block"
+                              : "flex"
                           }`,
                         }}
                       >

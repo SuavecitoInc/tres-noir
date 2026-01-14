@@ -58,7 +58,7 @@ export const useDiscountedPricing = ({
           signal: abortController.signal,
         })
         const json = await res.json()
-        if (res.ok) {
+        if (res.ok && json.prices && json.prices.length > 0) {
           setDiscountedPrices(discountedPrices => [
             ...discountedPrices,
             ...json.prices,

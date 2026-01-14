@@ -1,8 +1,8 @@
-import { useState, useEffect, useContext } from "react"
-import { ErrorModalContext } from "../contexts/error"
+import { useState, useEffect } from "react"
+import { useErrorModal } from "../contexts/error-modal"
 
 export function useQuantityQuery(handle: string, size: number) {
-  const { renderErrorModal } = useContext(ErrorModalContext)
+  const { renderErrorModal } = useErrorModal()
 
   const [productQuantities, setProductQuantities] = useState<{} | undefined>({})
 

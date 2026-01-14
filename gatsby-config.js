@@ -42,6 +42,13 @@ const gtmEnv = {
 }
 
 module.exports = {
+  flags: {
+    DEV_SSR: true,
+    PRESERVE_FILE_DOWNLOAD_CACHE: true,
+  },
+  // Disable adapter to force static-only build (no SSR functions)
+  // adapter: null,
+  // trailingSlash: "always",
   siteMetadata: {
     title: `Tres Noir`,
     description: `Tres Noir is an independent eyewear company located in Santa Ana, Calif.`,
@@ -120,16 +127,16 @@ module.exports = {
           process.env.CONTENTFUL_DELIVERY_TOKEN,
         environment: "master",
         downloadLocal: true,
-        assetDownloadWorkers: 25,
+        assetDownloadWorkers: 5, // 25
       },
     },
     {
       resolve: `gatsby-plugin-sharp`,
       options: {
         defaults: {
-          formats: [`webp`, `auto`],
+          formats: [`webp`],
           quality: 40,
-          placeholder: `dominantColor`,
+          placeholder: `blurred`,
         },
       },
     },

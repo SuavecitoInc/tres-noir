@@ -50,7 +50,7 @@ export const useCollectionDiscountedPricing = ({ prices, handle }: Params) => {
           cache: "force-cache",
         })
         const json = await res.json()
-        if (res.ok) {
+        if (res.ok && json.prices && json.prices.length > 0) {
           setDiscountedPrices(discountedPrices => [
             ...discountedPrices,
             ...json.prices,

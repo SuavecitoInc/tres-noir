@@ -1,16 +1,11 @@
-import React, { useContext, useEffect, useState, useRef } from "react"
+import React, { useEffect, useState, useRef } from "react"
 import { graphql } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
 import styled from "styled-components"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import CustomizationProgress from "../components/customization/progress"
-import Step1 from "../components/customization/step1"
-import Step2 from "../components/customization/step2"
-import Step3 from "../components/customization/step3"
-import Step4 from "../components/customization/step4"
-import Step5 from "../components/customization/step5"
-import { CustomizeContext } from "../contexts/customize"
+import Summary from "../components/customization/summary"
 import { changeImage } from "../components/customization/functions"
 import {
   ContentfulProduct,
@@ -20,6 +15,11 @@ import {
 } from "../types/customize"
 import { ImageStorage } from "../contexts/storefront-cart/types/storefront-cart"
 import { useDiscountedPricing } from "../hooks/useDiscountedPricing"
+
+import { useCustomizer } from "../contexts/customizer"
+import PathSelector from "../components/customization/path-selector"
+import CollectionPath from "../components/customization/collection-path"
+import AddOns from "../components/customization/add-ons"
 
 const Page = styled.div`
   .row {
@@ -132,8 +132,12 @@ const Customize = ({
     }
   }
 
-  const { currentStep, setProductUrl, selectedVariants } =
-    useContext(CustomizeContext)
+  const {
+    currentStep,
+    setProductUrl,
+    selectedVariants,
+    selectedCollectionPath,
+  } = useCustomizer()
   const [variant, setVariant] = useState({
     contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
     shopify: shopifyProduct.variants[0],
@@ -141,13 +145,21 @@ const Customize = ({
   const [currentPrice, setCurrentPrice] = useState<number>(
     shopifyProduct.variants[0].price
   )
+
+  const defaultImage =
+    variant?.contentful &&
+    variant.contentful.customizations?.clear?.localFile?.childImageSharp?.data
+      ? variant.contentful.customizations?.clear?.localFile?.childImageSharp
+          ?.data
+      : variant.contentful.featuredImage?.localFile?.childImageSharp?.data
+  const defaultTitle =
+    variant?.contentful && variant.contentful.customizations?.clear?.title
+      ? variant.contentful.customizations?.clear?.title
+      : variant.contentful.featuredImage.title
+
   const [currentImage, setCurrentImage] = useState({
-    data:
-      variant?.contentful &&
-      variant.contentful.customizations?.clear?.localFile?.childImageSharp
-        ?.data,
-    altText:
-      variant?.contentful && variant.contentful.customizations?.clear?.title,
+    data: defaultImage,
+    altText: defaultTitle,
   })
   const previewRef = useRef<HTMLDivElement>(null)
 
@@ -186,7 +198,7 @@ const Customize = ({
     shopifyProduct.variants,
   ])
 
-  /* UPDATE PRICING */
+  // /* UPDATE PRICING */
   useEffect(() => {
     // patch price if applicable
     const variantPrice =
@@ -196,28 +208,23 @@ const Customize = ({
     // let totalPrice = Number(variant.shopify.price)
     for (let i = currentStep; i > 0; --i) {
       const el =
-        i === 5 ? selectedVariants[`case`] : selectedVariants[`step${i}`]
-      if (i === 4) {
-        selectedVariants[`step4`].forEach(subEl => {
-          totalPrice += Number(subEl.price)
-        })
-      } else {
-        totalPrice += Number(el.price)
-      }
+        i === 3 ? selectedVariants[`case`] : selectedVariants[`step${i}`]
+      totalPrice += Number(el.price)
     }
     setCurrentPrice(totalPrice)
   }, [selectedVariants, isApplicable, discountedPrice, variant])
 
-  /* UPDATE IMAGE */
+  // /* UPDATE IMAGE */
   useEffect(() => {
     changeImage(
       currentStep,
+      selectedCollectionPath.title,
       selectedVariants,
       // currentImage,
       setCurrentImage,
       variant
     )
-  }, [variant, selectedVariants, currentStep])
+  }, [variant, selectedVariants, currentStep, selectedCollectionPath])
 
   useEffect(() => {
     const isBrowser = typeof window !== "undefined"
@@ -256,8 +263,8 @@ const Customize = ({
         <div className="row product-customize">
           <div className="desktop col preview" ref={previewRef}>
             <GatsbyImage
-              image={currentImage.data}
-              alt={currentImage.altText}
+              image={currentImage?.data}
+              alt={currentImage?.altText}
               loading="eager"
             />
           </div>
@@ -284,13 +291,22 @@ const Customize = ({
             <p className="current-price desktop">
               <span>${currentPrice.toFixed(2)}</span>
             </p>
+
             <div className="current-step">
-              {currentStep === 1 && <Step1 handle={shopifyProduct.handle} />}
-              {currentStep === 2 && <Step2 handle={shopifyProduct.handle} />}
-              {currentStep === 3 && <Step3 handle={shopifyProduct.handle} />}
-              {currentStep === 4 && <Step4 handle={shopifyProduct.handle} />}
-              {currentStep === 5 && (
-                <Step5
+              {currentStep === 0 && (
+                <PathSelector
+                  handle={shopifyProduct.handle}
+                  type={
+                    shopifyProduct.productType as "Glasses" | "Safety Glasses"
+                  }
+                />
+              )}
+              {currentStep === 1 && (
+                <CollectionPath handle={shopifyProduct.handle} />
+              )}
+              {currentStep === 2 && <AddOns handle={shopifyProduct.handle} />}
+              {currentStep === 3 && (
+                <Summary
                   productTitle={shopifyProduct.title}
                   variant={variant.shopify}
                   currentPrice={currentPrice}
@@ -596,7 +612,14 @@ export const query = graphql`
         featuredImage {
           localFile {
             childImageSharp {
-              data: gatsbyImageData
+              data: gatsbyImageData(
+                layout: CONSTRAINED
+                placeholder: BLURRED
+                width: 1024
+                quality: 50
+                # width: 2048
+                # height: 1365
+              )
             }
           }
           title
@@ -607,8 +630,10 @@ export const query = graphql`
               data: gatsbyImageData(
                 layout: CONSTRAINED
                 placeholder: BLURRED
-                width: 2048
-                height: 1365
+                width: 1024
+                quality: 50
+                # width: 2048
+                # height: 1365
               )
             }
           }
@@ -618,6 +643,7 @@ export const query = graphql`
       }
     }
     shopifyProduct(handle: { eq: $handle }) {
+      productType
       priceRangeV2 {
         minVariantPrice {
           amount

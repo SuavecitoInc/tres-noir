@@ -1,4 +1,4 @@
-import { SelectedVariants } from "../../../types/global"
+import type { SelectedVariants } from "../../customizer/types"
 import { CartFragmentFragment as CartFragment } from "./storefront.generated"
 import { IGatsbyImageData } from "gatsby-plugin-image"
 
@@ -38,6 +38,7 @@ export interface LineItem {
     product: {
       handle: string
       title: string
+      productType: string
     }
     sku: string
     price: {

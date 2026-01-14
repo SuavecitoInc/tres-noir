@@ -5,7 +5,7 @@ import styled from "styled-components"
 
 import Layout from "../../components/layout"
 import SEO from "../../components/seo"
-// @ts-ignorets
+// @ts-ignore
 import text from "./text.json"
 
 const Page = styled.div`

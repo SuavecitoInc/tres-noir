@@ -24,7 +24,7 @@ const Content = styled(animated.div)`
   border-left: 1px dashed rgba(255, 255, 255, 0.4);
   overflow: hidden;
 `
-
+// TODO: Determine if these styles are needed
 const toggle = {
   // width: "1em",
   // height: "1em",

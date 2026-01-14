@@ -1,4 +1,4 @@
-import React, { createContext, ReactChild, useState, useMemo } from "react"
+import React, { createContext, ReactNode, useState, useMemo } from "react"
 
 interface DefaultContext {
   errorModalIsOpen: boolean
@@ -20,7 +20,7 @@ const defaultContext: DefaultContext = {
 
 export const ErrorModalContext = createContext(defaultContext)
 
-export const ErrorModalProvider = ({ children }: { children: ReactChild }) => {
+export const ErrorModalProvider = ({ children }: { children: ReactNode }) => {
   const [errorModalIsOpen, setErrorModalIsOpen] = useState<boolean>(false)
   const [errorMsg, setErrorMsg] = useState<string>("")
   const [cb, setCb] = useState<any>(undefined)

@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  useContext,
-  useRef,
-  ChangeEvent,
-} from "react"
+import React, { useState, useEffect, useRef, ChangeEvent } from "react"
 import { Link, graphql } from "gatsby"
 import {
   StaticImage,
@@ -22,7 +16,7 @@ import {
   addedCustomizedToCartGTMEvent,
   viewedProductGTMEvent,
 } from "../helpers/gtm"
-import { CustomizeContext } from "../contexts/customize"
+import { useCustomizer } from "../contexts/customizer"
 import FreeShipping from "../components/free-shipping"
 import Spinner from "../components/spinner"
 import CaseGridSunglasses from "../components/case-grid-sunglasses"
@@ -41,6 +35,7 @@ import { isDiscounted, formatPrice } from "../helpers/shopify"
 import Divider from "../components/divider"
 import Badge from "../components/badge"
 import ProductBottomline from "../components/product-bottomline"
+import { CUSTOMIZATION_EXCLUSIONS } from "../data/exclusions"
 
 const Page = styled.div`
   .flex {
@@ -455,11 +450,13 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
   const clearanceSKUs = createClearanceSKUs(clearanceItemsData)
 
   const {
+    setType,
+    setEditMode,
     setSelectedVariantsToDefault,
     setCurrentStep,
     setHasSavedCustomized,
     setProductUrl,
-  } = useContext(CustomizeContext)
+  } = useCustomizer()
 
   // remove hidden variants
   contentfulProduct.variants = useFilterHiddenCustomizableVariants(
@@ -494,9 +491,12 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
   })
   const caseCollection = useCaseCollection()
 
-  const [selectedCase, setSelectedCase] = useState<any>(
-    caseCollection[0].variants[0]
-  )
+  const DEFAULT_CASE =
+    shopifyProduct.productType === "Glasses"
+      ? caseCollection[0].variants[0]
+      : caseCollection[1].variants[0]
+
+  const [selectedCase, setSelectedCase] = useState<any>(DEFAULT_CASE)
 
   const [showPolarizedModal, setShowPolarizedModal] = useState<boolean>(false)
 
@@ -938,16 +938,24 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
     }
   }, [])
 
+  // set customizer type Glasses or Safety Glasses on mount
+  useEffect(() => {
+    const productType =
+      shopifyProduct.productType === "Safety Glasses"
+        ? "Safety Glasses"
+        : "Glasses"
+    setType(productType)
+    setEditMode(false)
+  }, [shopifyProduct])
+
   useEffect(() => {
     setProductUrl(
       `/products/${contentfulProduct.handle}/?variant=${shopifyProduct.variants[0].sku}`
     )
-    setCurrentStep(1)
+    setCurrentStep(0)
     setHasSavedCustomized({
       step1: false,
       step2: false,
-      step3: false,
-      step4: false,
       case: false,
     })
     setSelectedVariantsToDefault()
@@ -1066,6 +1074,14 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
     }
   }, [selectedVariant, lensType])
 
+  const disableCustomize = CUSTOMIZATION_EXCLUSIONS.includes(
+    selectedVariant.shopify.sku
+  )
+
+  const disableViewAsGlassesToggle =
+    shopifyProduct.productType === "Safety Glasses"
+  const disablePolarizeToggle = shopifyProduct.productType === "Safety Glasses"
+
   return (
     <ReviewsProvider
       productTitle={shopifyProduct.title}
@@ -1102,10 +1118,12 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
               />
             </div>
             <div className="col">
-              <ViewAsType
-                lensType={lensType}
-                swapGlassesType={swapGlassesType}
-              />
+              {!disableViewAsGlassesToggle && (
+                <ViewAsType
+                  lensType={lensType}
+                  swapGlassesType={swapGlassesType}
+                />
+              )}
               <div className="heading">
                 <h1>{shopifyProduct.title}</h1>
                 <ProductBottomline reviewListRef={reviewListRef as any} />
@@ -1316,10 +1334,17 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                             : ""
                         }`}
                         id="polarized-toggle"
+                        style={{
+                          // hide polarization option for safety glasses
+                          display: `${disablePolarizeToggle ? "none" : "flex"}`,
+                        }}
                       >
                         <div className="polarized-switch">
                           <input
-                            disabled={isClearanceVariantPolarizable}
+                            disabled={
+                              isClearanceVariantPolarizable ||
+                              disablePolarizeToggle
+                            }
                             type="checkbox"
                             id="switch"
                             checked={isPolarized}
@@ -1356,27 +1381,31 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                           >
                             {isAddingToCart ? <Spinner /> : `ADD TO CART`}
                           </button>
-                          <p>- OR -</p>
+                          {!disableCustomize && <p>- OR -</p>}
                         </>
                       )}
 
-                      <Link
-                        className={`btn ${isPolarized ? "disable" : ""}`}
-                        // to={contentfulProduct && customizeUrl}
-                        id="customize-btn"
-                        to={`/products/${
-                          contentfulProduct.handle
-                        }/customize?variant=${selectedVariant.shopify.sku}${
-                          lensType !== LensType.SUNGLASSES
-                            ? `&lens_type=${lensType}`
-                            : ""
-                        }`}
-                      >
-                        CUSTOMIZE
-                      </Link>
-                      <p className="small">
-                        Customize for Polarized, Rx, and more
-                      </p>
+                      {!disableCustomize && (
+                        <>
+                          <Link
+                            className={`btn ${isPolarized ? "disable" : ""}`}
+                            // to={contentfulProduct && customizeUrl}
+                            id="customize-btn"
+                            to={`/products/${
+                              contentfulProduct.handle
+                            }/customize?variant=${selectedVariant.shopify.sku}${
+                              lensType !== LensType.SUNGLASSES
+                                ? `&lens_type=${lensType}`
+                                : ""
+                            }`}
+                          >
+                            CUSTOMIZE
+                          </Link>
+                          <p className="small">
+                            Customize for Polarized, Rx, and more
+                          </p>
+                        </>
+                      )}
                     </div>
                   )}
                 </div>
@@ -1488,8 +1517,11 @@ export const query = graphql`
             childImageSharp {
               data: gatsbyImageData(
                 layout: CONSTRAINED
-                width: 2048
-                height: 1365
+                # width: 2048
+                # height: 1365
+                width: 1024
+                quality: 50
+                placeholder: BLURRED
               )
             }
           }
@@ -1500,8 +1532,11 @@ export const query = graphql`
             childImageSharp {
               data: gatsbyImageData(
                 layout: CONSTRAINED
-                width: 2048
-                height: 1365
+                # width: 2048
+                # height: 1365
+                width: 1024
+                quality: 50
+                placeholder: BLURRED
               )
             }
           }

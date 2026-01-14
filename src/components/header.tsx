@@ -18,8 +18,13 @@ import {
 import { useClickAway } from "react-use"
 
 import DesktopNavigation from "./desktopNavigation"
-import BannerMessage from "./banner-message"
+// import BannerMessage from "./banner-message"
 import CartIcon from "./cart-drawer/cart-icon"
+import { useCustomerAuth } from "../hooks/useCustomerAuth"
+import {
+  ENABLE_NEW_CUSTOMER_ACCOUNTS,
+  FORWARD_TO_NEW_CUSTOMER_ACCOUNTS,
+} from "../flags"
 
 const Component = styled.header`
   font-family: var(--sub-heading-font);
@@ -167,14 +172,10 @@ const Header = ({
   setIsDrawerOpen,
   isIndex,
 }: HeaderProps) => {
+  const { isAuthenticated } = useCustomerAuth()
   const [currentPath, setCurrentPath] = useState("/")
   const [visibleAccountSubNav, setVisibileAccountSubNav] =
     useState<boolean>(false)
-  // if (typeof window !== `undefined`) {
-  //   useEffect(() => {
-  //     setCurrentPath(location.pathname)
-  //   }, [location])
-  // }
 
   useEffect(() => {
     if (typeof window !== `undefined`) {
@@ -259,18 +260,58 @@ const Header = ({
               />
             </Link>
 
-            <a
-              href="https://account.tresnoir.com/account"
-              className="border-left"
-            >
-              <StaticImage
-                className="img-btn"
-                src="../images/icon-user.png"
-                alt="User"
-                placeholder="dominantColor"
-                style={{ marginBottom: 0, maxWidth: 26 }}
-              />
-            </a>
+            {/*
+              * New Shopify Customer Accounts integration
+              1. If ENABLE_NEW_CUSTOMER_ACCOUNTS is true, we are using the new Shopify Customer Accounts system.
+              2. If FORWARD_TO_NEW_CUSTOMER_ACCOUNTS is true, we forward users to the Shopify-hosted account pages.
+              3. If the user is authenticated, we show the account icon linking to the appropriate page.
+              4. If ENABLE_NEW_CUSTOMER_ACCOUNTS is false, we link to the existing Gatsby account pages.
+            */}
+
+            {ENABLE_NEW_CUSTOMER_ACCOUNTS ? (
+              FORWARD_TO_NEW_CUSTOMER_ACCOUNTS && isAuthenticated ? (
+                <a
+                  href="https://shopify.com/73565339827/account"
+                  className="border-left"
+                >
+                  <StaticImage
+                    className="img-btn"
+                    src="../images/icon-user.png"
+                    alt="User"
+                    placeholder="dominantColor"
+                    style={{ marginBottom: 0, maxWidth: 26 }}
+                  />
+                </a>
+              ) : (
+                <Link
+                  to="/account"
+                  state={{ prevPath: currentPath }}
+                  className="border-left"
+                  title="Account"
+                >
+                  <StaticImage
+                    className="img-btn"
+                    src="../images/icon-user.png"
+                    alt="User"
+                    placeholder="dominantColor"
+                    style={{ marginBottom: 0, maxWidth: 26 }}
+                  />
+                </Link>
+              )
+            ) : (
+              <a
+                href="https://account.tresnoir.com/account"
+                className="border-left"
+              >
+                <StaticImage
+                  className="img-btn"
+                  src="../images/icon-user.png"
+                  alt="User"
+                  placeholder="dominantColor"
+                  style={{ marginBottom: 0, maxWidth: 26 }}
+                />
+              </a>
+            )}
 
             <CartIcon></CartIcon>
             <button

@@ -1,21 +1,17 @@
+// TODO: Remove this file in next major release - replaced by form-v2.tsx
 import React, {
   useContext,
   useRef,
   ChangeEvent,
   useState,
   useEffect,
+  useMemo,
 } from "react"
-import { Link } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
 import { Component } from "./styles"
-import {
-  SelectedVariantStorage,
-  ShopifyCollection,
-  ShopifyProduct,
-  ShopifyVariant,
-} from "../../types/global"
-import { CustomizeContext } from "../../contexts/customize"
-import { RxInfoContext } from "../../contexts/rxInfo"
+import { SelectedVariantStorage } from "../../types/global"
+import { useCustomizer } from "../../contexts/customizer"
+import { RxInfoContext } from "../../contexts/rx-info"
 import { FaQuestionCircle } from "react-icons/fa"
 import type {
   LocalCart,
@@ -23,30 +19,37 @@ import type {
 } from "../../contexts/storefront-cart/types/storefront-cart"
 import { isDiscounted, formatPrice } from "../../helpers/shopify"
 import ReadersTable from "../readers-table"
+import useCollectionDiscountedPricing from "../../hooks/useCollectionDiscountedPricing"
 
-const Form = ({
-  shopifyCollection,
-  handle,
-}: {
-  shopifyCollection: ShopifyCollection
+import type {
+  AvailablePath,
+  Product,
+  Variant,
+} from "../../contexts/customizer/types"
+
+type Props = {
   handle: string
-}) => {
+}
+
+const Form = ({ handle }: Props) => {
   const {
+    selectedCollectionPath,
     currentStep,
     setCurrentStep,
-    productUrl,
     selectedVariants,
     setSelectedVariants,
     hasSavedCustomized,
     setHasSavedCustomized,
-    defaultVariant,
-  } = useContext(CustomizeContext)
+  } = useCustomizer()
 
-  const stepMap = new Map()
-  stepMap.set(1, "RX TYPE")
-  stepMap.set(2, "LENS TYPE")
-  stepMap.set(3, "LENS MATERIAL")
-  stepMap.set(4, "LENS COATING")
+  const [currentCollection, setCurrentCollection] = useState<AvailablePath>(
+    selectedCollectionPath
+  )
+
+  const isNonPrescription = currentCollection?.title === "Non-Prescription"
+  const isSingleVision = currentCollection?.title === "Single Vision"
+  const isReaders = currentCollection?.title === "Readers"
+
   const { isRxAble, setRxAble, rxInfo, rxInfoDispatch } =
     useContext(RxInfoContext)
   const messageRef = useRef<any>(null)
@@ -55,22 +58,38 @@ const Form = ({
   const errorRefs = useRef({})
   const continueBtn = useRef<HTMLButtonElement>(null)
   const topRef = useRef<HTMLDivElement>(null)
-  const [filteredCollection, setFilteredCollection] = useState<string[]>([])
-  const [editHasError, setEditHasError] = useState(false)
-  const isReaders = selectedVariants.step1.product.title === "Reader's"
+
+  // start discounted prices
+  const prices = useMemo(
+    () =>
+      selectedCollectionPath?.products
+        ? selectedCollectionPath?.products
+            ?.map(p =>
+              p?.variants?.map(v => {
+                return {
+                  id: v.legacyResourceId,
+                  price: v.price,
+                  handle: p.handle,
+                }
+              })
+            )
+            .flat()
+        : [],
+    [selectedCollectionPath]
+  )
+
+  const { offer, isApplicable, discountedPrices } =
+    useCollectionDiscountedPricing({ prices, handle })
 
   const handleChange = (
     evt: React.ChangeEvent<HTMLInputElement> | null,
-    variant: ShopifyVariant,
+    variant: Variant,
     isSetFromEvent: boolean = true
   ) => {
-    setRxAble(variant.product?.title !== "Non-Prescription Lens")
-    if (variant.product?.title === "Non-Prescription Lens") {
-      if (messageRef.current) {
-        removeChildNodes(messageRef.current)
-        continueBtn.current?.classList.remove("disable")
-      }
-    } else if (variant.product?.title === "Single Vision") {
+    // set isRxAble via the path selection
+    // check if product title does not contain Non-Prescription Lens
+    setRxAble(variant.product?.title.includes("Non-Prescription") === false)
+    if (variant.product?.title.includes("Single Vision")) {
       if (messageRef.current) {
         if (messageRef.current.querySelector("#readers-error")) {
           removeChildNodes(messageRef.current)
@@ -105,68 +124,10 @@ const Form = ({
       [`step${currentStep}`]: isSetFromEvent,
     })
 
-    if (editHasError) {
-      enableContinue()
-    }
-
-    if (currentStep === 4) {
-      const blockedSelections: string[] = []
-      const checked =
-        isSetFromEvent === false
-          ? true
-          : evt !== null
-          ? evt.target.checked
-          : false
-      const name = evt?.target.getAttribute("name") as string
-      if (checked) {
-        // no coating
-        if (name === "No Coating") {
-          setSelectedVariants({
-            ...selectedVariants,
-            [`step${currentStep}`]: [variant],
-          })
-        } else {
-          const found = selectedVariants.step4.find(
-            el => variant.sku === el.sku
-          )
-          if (!found) {
-            if (
-              selectedVariants.step4.length === 1 &&
-              selectedVariants.step4[0].price === 0
-            ) {
-              setSelectedVariants({
-                ...selectedVariants,
-                [`step${currentStep}`]: [variant],
-              })
-            } else {
-              // remove no coating
-              setSelectedVariants({
-                ...selectedVariants,
-                [`step${currentStep}`]: [...selectedVariants.step4, variant],
-              })
-            }
-          }
-        }
-      } else {
-        // do not let removal of one
-        if (selectedVariants.step4.length === 1) {
-          disableContinue(4)
-        } else {
-          const arr = selectedVariants.step4
-          const index = arr.findIndex(el => variant.sku === el.sku)
-          if (index !== -1) arr.splice(index, 1)
-          setSelectedVariants({
-            ...selectedVariants,
-            [`step${currentStep}`]: arr,
-          })
-        }
-      }
-    } else {
-      setSelectedVariants({
-        ...selectedVariants,
-        [`step${currentStep}`]: variant,
-      })
-    }
+    setSelectedVariants({
+      ...selectedVariants,
+      [`step${currentStep}`]: variant,
+    })
   }
 
   const handleRx = (evt: ChangeEvent<HTMLSelectElement>) => {
@@ -246,7 +207,7 @@ const Form = ({
     let messages: HTMLElement[] = []
     if (messageRef.current) removeChildNodes(messageRef.current)
 
-    if (selectedVariants.step1.product.title === "Non-Prescription Lens") {
+    if (isNonPrescription) {
       setIsFormValid(isValid)
       return isValid
     }
@@ -280,7 +241,7 @@ const Form = ({
     ) {
       let node = document.createElement("li")
       node.textContent =
-        "Please add prescription information or choose non-prescription"
+        "Please add prescription information or go back and choose non-prescription"
       node.setAttribute("id", "error-general")
       messages.push(node)
       isValid = false
@@ -325,9 +286,12 @@ const Form = ({
     // scroll to top
     const customizeDiv = topRef.current?.closest(".product-customize")
     customizeDiv?.scrollIntoView()
-    if (currentStep !== 1 || !isRxAble) {
+    // if (currentStep !== 1 || !isRxAble) {
+    //   setCurrentStep(currentStep + num)
+    //   return
+    // }
+    if (currentStep === 1 && num === -1) {
       setCurrentStep(currentStep + num)
-      return
     }
     if (verifyForm()) {
       setCurrentStep(currentStep + num)
@@ -336,31 +300,62 @@ const Form = ({
   }
 
   useEffect(() => {
-    if (hasSavedCustomized[`step${currentStep}`] === false) {
-      handleChange(null, shopifyCollection.products[0].variants[0], false)
+    if (isApplicable) {
+      const tempCollection = structuredClone(selectedCollectionPath)
+      const patchedProducts = tempCollection.products.map((p: any) => {
+        const patchedVariants = p.variants.map((v: any) => {
+          const discountedPriceObj = discountedPrices.find(
+            dp => dp.id === v.legacyResourceId
+          )
+          if (discountedPriceObj) {
+            return {
+              ...v,
+              compareAtPrice: v.price,
+              price: discountedPriceObj.discountedPrice,
+            }
+          }
+          return v
+        })
+        return { ...p, variants: patchedVariants }
+      })
+      setCurrentCollection({
+        ...tempCollection,
+        products: patchedProducts,
+      })
     }
-  }, [shopifyCollection.products[0].variants[0]]) // this is the only dependency that should be here
+  }, [selectedCollectionPath, isApplicable, discountedPrices])
 
-  // useEffect to fix bug where Non Precription Lens selection will still error out
-  useEffect(() => {
-    if (
-      currentStep === 1 &&
-      selectedVariants.step1.product.title === "Non-Prescription Lens"
-    ) {
-      enableContinue()
-    }
-  }, [currentStep, selectedVariants])
+  // get all product variants in a flat array
+  const allVariants = useMemo(
+    () => currentCollection?.products?.flatMap(p => p.variants) ?? [],
+    [currentCollection?.products]
+  )
 
-  // will disable continue button if none are selected
   useEffect(() => {
+    let variantToSet: Variant = currentCollection?.products[0]?.variants[0]
     if (
-      currentStep === 4 &&
-      hasSavedCustomized.step4 &&
-      selectedVariants.step4[0].product.title === ""
+      hasSavedCustomized[`step${currentStep}`] === false &&
+      currentCollection?.products[0]?.variants[0]
     ) {
-      disableContinue(4)
+      variantToSet = currentCollection.products[0].variants[0]
+    } else if (hasSavedCustomized[`step${currentStep}`] === true) {
+      // find the variant in allVariants to get updated price if discounted
+      const selectedVariantId =
+        selectedVariants[`step${currentStep}`].legacyResourceId
+      const foundVariant = allVariants.find(
+        v => v.legacyResourceId === selectedVariantId
+      )
+      variantToSet = selectedVariants[`step${currentStep}`]
+      // check if price has changed due to discount
+      if (
+        foundVariant &&
+        foundVariant.price !== selectedVariants[`step${currentStep}`].price
+      ) {
+        variantToSet = foundVariant
+      }
     }
-  }, [currentStep])
+    handleChange(null, variantToSet, true)
+  }, [allVariants, currentCollection?.products]) // these are the only dependencies that should trigger this effect
 
   // restore on refresh
   useEffect(() => {
@@ -402,233 +397,72 @@ const Form = ({
           setHasSavedCustomized({
             step1: true,
             step2: true,
-            step3: true,
-            step4: true,
             case: true,
           })
-          setCurrentStep(5)
+          setCurrentStep(1)
         }
       }
     }
   }, [])
 
-  // disables the Continue step for customers that edit a frame and edit an invalid option
-  const disableContinue = (currentStep: number) => {
-    setEditHasError(true)
-    removeChildNodes(messageRef.current)
-    let node = document.createElement("li")
-    node.textContent = "Please make a valid selection"
-    messageRef.current?.appendChild(node)
-    continueBtn.current?.classList.add("disable")
-    // clear context for step 4 edit
-    if (currentStep === 4) {
-      setSelectedVariants({
-        ...selectedVariants,
-        ["step4"]: [defaultVariant],
-      })
-      //selectedVariants.step4 =
-    }
-  }
-  // enables the Continue step once a customer selects a new option when selecting an invalid option on the previous
-  // step after editing
-  const enableContinue = () => {
-    continueBtn.current?.classList.remove("disable")
-    removeChildNodes(messageRef.current)
-    setEditHasError(false)
-  }
-
-  // useEffect with steps to filter collection
-  useEffect(() => {
-    // temp array to store blocked selections
-    let blockedSelections: any[] = []
-    switch (currentStep) {
-      case 1:
-        // disabled Progressive and Bifocal for TN's and TN X's
-        const isTnsFrame = handle === "tns" || handle === "tns-x"
-        if (isTnsFrame) {
-          const validationArr = ["Progressive", "Bifocal"]
-          blockedSelections.push(...validationArr)
-          if (
-            validationArr.includes(
-              selectedVariants[`step${currentStep}`].product.title
-            )
-          ) {
-            disableContinue(currentStep)
-          }
-        }
-
-      case 2:
-        if (isReaders) {
-          const validationArr = [
-            "Sunglasses",
-            "Transitions",
-            "Transitions - For Progressive",
-            "Gradient",
-            "Polarized",
-            "XTRActive Polarized",
-          ]
-          blockedSelections.push(...validationArr)
-          if (
-            validationArr.includes(
-              selectedVariants[`step${currentStep}`].product.title
-            )
-          ) {
-            disableContinue(currentStep)
-          }
-        }
-
-        if (selectedVariants.step1.product.title === "Bifocal") {
-          const validationArr = [
-            "Blue Light Blocking",
-            "Polarized-G15",
-            "Polarized - For Non Prescription-G15",
-            "XTRActive Polarized",
-            "Transitions - For Progressive",
-          ]
-          blockedSelections.push(
-            "Blue Light Blocking",
-            "Polarized-G15",
-            "Polarized - For Non Prescription-G15",
-            "XTRActive Polarized",
-            "Transitions - For Progressive"
-          )
-          if (
-            validationArr.includes(
-              selectedVariants[`step${currentStep}`].product.title
-            )
-          ) {
-            disableContinue(currentStep)
-          }
-        }
-        // XTractive Polarized is only disable
-        if (selectedVariants.step1.product.title === "Bifocal") {
-          blockedSelections.push("XTRActive Polarized")
-          if (
-            selectedVariants[`step${currentStep}`].product.title ===
-            "XTRActive Polarized"
-          ) {
-            disableContinue(currentStep)
-          }
-        }
-        break
-      case 3:
-        // if Bifocal and Polarized or Gradient Tint or Transitions, disable Hi-Index
-        if (
-          (selectedVariants.step1.product.title === "Bifocal" &&
-            (selectedVariants.step2.product.title.includes("Polarized") ||
-              selectedVariants.step2.product.title === "Gradient Tint")) ||
-          selectedVariants.step2.product.title === "Transitions"
-        ) {
-          blockedSelections.push("Hi-Index")
-          //
-          if (
-            selectedVariants[`step${currentStep}`].product.title === "Hi-Index"
-          ) {
-            disableContinue(currentStep)
-          }
-        }
-        // if Polarized G15 option, disabled Hi-Index
-        else if (
-          selectedVariants.step2.product.title.includes("Polarized") &&
-          selectedVariants.step2.title === "G15"
-        ) {
-          blockedSelections.push("Hi-Index")
-          if (
-            selectedVariants[`step${currentStep}`].product.title === "Hi-Index"
-          ) {
-            disableContinue(currentStep)
-          }
-        }
-        if (isReaders) {
-          const validationArr = ["Hi-Index"]
-          blockedSelections.push(...validationArr)
-          if (
-            validationArr.includes(
-              selectedVariants[`step${currentStep}`].product.title
-            )
-          ) {
-            disableContinue(currentStep)
-          }
-        }
-        break
-      // if currentStep is 1 or 5, do nothing
-      default:
-        break
-    }
-    setFilteredCollection([...new Set(blockedSelections)])
-  }, [currentStep])
-
-  const findStep4Selections = (id: string) => {
-    const find = selectedVariants.step4.find(el => {
-      return el.storefrontId === id
-    })
-    let found: boolean = false
-    if (find) found = true
-    return found
-  }
-
   return (
     <Component>
       <div className="step-header" ref={topRef}>
-        <p>Choose your {stepMap.get(currentStep)}</p>
+        <p>Choose your {currentCollection.title} option:</p>
       </div>
-      {shopifyCollection.products.map((product: ShopifyProduct, index) => {
-        // fix variant.image is null
-        if (product.variants[0].image === null) {
-          product.variants[0].image = product.media[0].image
-        }
-        return (
-          <React.Fragment key={product.id}>
-            {product.variants.length === 1 &&
-            product.variants[0].title.includes("Default") ? (
-              <div
-                className={`product-option ${
-                  filteredCollection.includes(product.title) ? "inactive" : ""
-                }`}
-              >
-                <GatsbyImage
-                  image={
-                    product.featuredImage && product.featuredImage.localFile
-                      ? product.featuredImage.localFile.childImageSharp
-                          .gatsbyImageData
-                      : product.media[0].image.localFile.childImageSharp
-                          .gatsbyImageData
-                  }
-                  alt={product.media[0].image.altText || product.title}
-                />
-                <div className="product-description">
-                  <h4>
-                    {product.title}{" "}
-                    <span className="price">
-                      {` + $${formatPrice(product.variants[0].price)}`}
-                      {!!product.variants[0].compareAtPrice &&
-                        isDiscounted(
-                          product.variants[0].price,
-                          product.variants[0].compareAtPrice
-                        ) && (
-                          <span>
-                            {" "}
-                            <span className="strikethrough-grey">
-                              ${formatPrice(product.variants[0].compareAtPrice)}
-                            </span>
-                          </span>
-                        )}
-                    </span>
-                  </h4>
-                  <p>{product.description}</p>
-                </div>
-                {currentStep === 4 ? (
-                  <input
-                    type="checkbox"
-                    name={product.title}
-                    id={product.id}
-                    aria-label={product.title}
-                    onChange={evt => handleChange(evt, product.variants[0])}
-                    checked={findStep4Selections(
-                      product.variants[0].storefrontId
-                    )}
+      {currentCollection?.products &&
+        currentCollection.products.map((product: Product) => {
+          // fix variant.image is null
+          if (product.variants[0].image === null && product.media[0]?.image) {
+            product.variants[0].image = {
+              ...product.media[0].image,
+              originalSrc: product.media[0].image.originalSrc || "",
+              altText: product.media[0].image.altText || "",
+            }
+          }
+          return (
+            <React.Fragment key={product.id}>
+              {product.variants.length === 1 &&
+              product.variants[0].title.includes("Default") ? (
+                <div className={`product-option`}>
+                  <GatsbyImage
+                    image={
+                      product.image && product.image.localFile
+                        ? product.image.localFile.childImageSharp
+                            .gatsbyImageData
+                        : product.media[0].image.localFile.childImageSharp
+                            .gatsbyImageData
+                    }
+                    alt={product.media[0].image.altText || product.title}
                   />
-                ) : (
+                  <div className="product-description">
+                    <h4>
+                      {product.title.replace(
+                        `${currentCollection.title} - `,
+                        ""
+                      )}{" "}
+                      <span className="price">
+                        {` + $${formatPrice(product.variants[0].price)}`}
+                        {!!product.variants[0]?.compareAtPrice &&
+                          isDiscounted(
+                            product.variants[0].price,
+                            product.variants[0].compareAtPrice
+                          ) && (
+                            <span>
+                              {" "}
+                              <span className="strikethrough-grey">
+                                $
+                                {formatPrice(
+                                  product.variants[0].compareAtPrice as any
+                                )}
+                              </span>
+                            </span>
+                          )}
+                      </span>
+                    </h4>
+                    <p>{product.description}</p>
+                  </div>
+
                   <input
                     type="radio"
                     name={`step${currentStep}`}
@@ -640,102 +474,108 @@ const Form = ({
                       selectedVariants[`step${currentStep}`].storefrontId
                     }
                   />
-                )}
-                {!filteredCollection.includes(product.title) ? (
                   <div className="checkmark" />
-                ) : (
-                  <div className="checkmark disabled" />
-                )}
-              </div>
-            ) : (
-              <div
-                className={`product-option with-variants ${
-                  filteredCollection.includes(product.title) ? "inactive" : ""
-                }`}
-              >
-                <GatsbyImage
-                  image={
-                    product.featuredImage && product.featuredImage.localFile
-                      ? product.featuredImage.localFile.childImageSharp
-                          .gatsbyImageData
-                      : product.media[0].image.localFile.childImageSharp
-                          .gatsbyImageData
-                  }
-                  alt={product.media[0].image.altText || product.title}
-                />
-                <div className="product-description">
-                  <h4>{product.title}</h4>
-                  <p>{product.description}</p>
                 </div>
-                <ul className="variants">
-                  {product.variants.map((variant: ShopifyVariant) => (
-                    <li
-                      key={variant.storefrontId}
-                      className={`${
-                        filteredCollection.includes(
-                          `${product.title}-${variant.title}`
-                        ) || filteredCollection.includes(product.title)
-                          ? "inactive"
-                          : ""
-                      }`}
-                    >
-                      <GatsbyImage
-                        image={
-                          variant.image.localFile.childImageSharp
+              ) : (
+                <div className={`product-option with-variants`}>
+                  <GatsbyImage
+                    image={
+                      product.image && product.image.localFile
+                        ? product.image.localFile.childImageSharp
                             .gatsbyImageData
-                        }
-                        alt={variant.title}
-                        className="variant-image"
-                      />
-                      <div className="variant-description">
-                        <h6>
-                          {variant.title}
+                        : product.media[0].image.localFile.childImageSharp
+                            .gatsbyImageData
+                    }
+                    alt={product.media[0].image.altText || product.title}
+                  />
+                  <div className="product-description">
+                    <h4>
+                      {product.title.replace(
+                        `${currentCollection.title} - `,
+                        ""
+                      )}{" "}
+                      {
+                        // @ts-expect-error - update type
+                        product.isSamePrice && (
                           <span className="price">
-                            {` + $${variant.price}`}
-                            {isDiscounted(
-                              variant.price,
-                              variant.compareAtPrice
-                            ) && (
-                              <span>
-                                {" "}
-                                <span className="strikethrough-grey">
-                                  ${variant.compareAtPrice}
+                            {` + $${formatPrice(product.variants[0].price)}`}
+                            {!!product.variants[0]?.compareAtPrice &&
+                              isDiscounted(
+                                product.variants[0].price,
+                                product.variants[0].compareAtPrice
+                              ) && (
+                                <span>
+                                  {" "}
+                                  <span className="strikethrough-grey">
+                                    $
+                                    {formatPrice(
+                                      product.variants[0].compareAtPrice as any
+                                    )}
+                                  </span>
                                 </span>
-                              </span>
-                            )}
+                              )}
                           </span>
-                        </h6>
-                      </div>
-                      <input
-                        type="radio"
-                        name={`step${currentStep}`}
-                        id={product.id}
-                        aria-label={product.title}
-                        onChange={evt => handleChange(evt, variant)}
-                        checked={
-                          variant.storefrontId ===
-                          selectedVariants[`step${currentStep}`].storefrontId
-                        }
-                      />
-                      {!filteredCollection.includes(
-                        `${product.title}-${variant.title}`
-                      ) || !filteredCollection.includes(product.title) ? (
+                        )
+                      }
+                    </h4>
+                    <p>{product.description}</p>
+                  </div>
+                  <ul className="variants">
+                    {product.variants.map((variant: Variant) => (
+                      <li key={variant.storefrontId}>
+                        <GatsbyImage
+                          image={
+                            variant.image.localFile.childImageSharp
+                              .gatsbyImageData
+                          }
+                          alt={variant.title}
+                          className="variant-image"
+                        />
+                        <div className="variant-description">
+                          <h6>
+                            {variant.title}
+                            {
+                              // @ts-expect-error - update type
+                              !product.isSamePrice && (
+                                <span className="price">
+                                  {` + $${variant.price}`}
+                                  {isDiscounted(
+                                    variant.price,
+                                    variant.compareAtPrice
+                                  ) && (
+                                    <span>
+                                      {" "}
+                                      <span className="strikethrough-grey">
+                                        ${variant.compareAtPrice}
+                                      </span>
+                                    </span>
+                                  )}
+                                </span>
+                              )
+                            }
+                          </h6>
+                        </div>
+                        <input
+                          type="radio"
+                          name={`step${currentStep}`}
+                          id={product.id}
+                          aria-label={product.title}
+                          onChange={evt => handleChange(evt, variant)}
+                          checked={
+                            variant.storefrontId ===
+                            selectedVariants[`step${currentStep}`].storefrontId
+                          }
+                        />
                         <div className="checkmark" />
-                      ) : (
-                        <div className="checkmark disabled" />
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </React.Fragment>
-        )
-      })}
-      {(currentStep === 1 &&
-        selectedVariants.step1.product.title !== "Non-Prescription Lens" &&
-        selectedVariants.step1.product.title !== "Reader's") ||
-      selectedVariants.step1.product.title === "" ? (
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </React.Fragment>
+          )
+        })}
+      {isRxAble && !isReaders ? (
         <div className="rx-info">
           <div className="rx-box">
             <div className="rx-col">
@@ -810,11 +650,7 @@ const Form = ({
                 </select>
               </div>
               <div
-                className={
-                  selectedVariants.step1.product.title === "Single Vision"
-                    ? "rx-select disable"
-                    : "rx-select"
-                }
+                className={isSingleVision ? "rx-select disable" : "rx-select"}
                 ref={el => {
                   errorRefs.current["select-right-add"] = el
                 }}
@@ -824,9 +660,7 @@ const Form = ({
                   id="right-add"
                   defaultValue={rxInfo.right.add}
                   onChange={evt => handleRx(evt)}
-                  disabled={
-                    selectedVariants.step1.product.title === "Single Vision"
-                  }
+                  disabled={isSingleVision}
                 >
                   <option>{""}</option>
                   {range(0, 3.5, 0.25, "right-add").map(el => {
@@ -907,11 +741,7 @@ const Form = ({
                 </select>
               </div>
               <div
-                className={
-                  selectedVariants.step1.product.title === "Single Vision"
-                    ? "rx-select disable"
-                    : "rx-select"
-                }
+                className={isSingleVision ? "rx-select disable" : "rx-select"}
                 ref={el => {
                   errorRefs.current["select-left-add"] = el
                 }}
@@ -921,9 +751,7 @@ const Form = ({
                   id="left-add"
                   defaultValue={rxInfo.left.add}
                   onChange={evt => handleRx(evt)}
-                  disabled={
-                    selectedVariants.step1.product.title === "Single Vision"
-                  }
+                  disabled={isSingleVision}
                 >
                   <option>{""}</option>
                   {range(0, 3.5, 0.25, "left-add").map(el => (
@@ -1007,19 +835,14 @@ const Form = ({
             </p>
           </div>
         </div>
-      ) : currentStep === 1 && isReaders ? (
+      ) : isReaders ? (
         <ReadersTable clearErrors={clearErrors} isNowValid={isNowValid} />
       ) : null}
       <div className="row button-row">
-        {currentStep === 1 ? (
-          <Link className="button" to={productUrl}>
-            GO BACK
-          </Link>
-        ) : (
-          <button type="button" onClick={() => handleSteps(-1)}>
-            GO BACK
-          </button>
-        )}
+        <button type="button" onClick={() => handleSteps(-1)}>
+          GO BACK
+        </button>
+
         <button type="button" onClick={() => handleSteps(1)} ref={continueBtn}>
           CONTINUE
         </button>

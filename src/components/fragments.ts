@@ -13,7 +13,7 @@ export const shopifyProductsFields = graphql`
           localFile {
             id
             childImageSharp {
-              gatsbyImageData(quality: 50)
+              gatsbyImageData(quality: 50, width: 800, placeholder: BLURRED)
             }
           }
         }
@@ -28,7 +28,7 @@ export const shopifyProductsFields = graphql`
       localFile {
         id
         childImageSharp {
-          gatsbyImageData(quality: 50)
+          gatsbyImageData(quality: 50, width: 800, placeholder: BLURRED)
         }
       }
     }
@@ -44,7 +44,7 @@ export const shopifyProductsFields = graphql`
         altText
         localFile {
           childImageSharp {
-            gatsbyImageData
+            gatsbyImageData(quality: 50, width: 800, placeholder: BLURRED)
           }
         }
       }

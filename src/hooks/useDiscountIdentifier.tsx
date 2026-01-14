@@ -27,8 +27,6 @@ export const useDiscountIdentifier = () => {
     }
   `)
 
-  // TODO: see what happens if no discounts are defined in Contentful
-
   const discounts = data.contentfulHomepage.availableDiscounts.map(
     (discount: ContentfulDiscount) => {
       return {

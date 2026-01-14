@@ -22,9 +22,8 @@ import { VscClose } from "react-icons/vsc"
 import UpsellCart from "../components/upsell-cart"
 import UpsellCartPopUp from "../components/upsell-cart-popup"
 import { SelectedVariantStorage } from "../types/global"
-import { CustomizeContext } from "../contexts/customize"
-import { CustomizeContext as SafetyCustomizeContext } from "../contexts/customize-safety-glasses"
-import { RxInfoContext } from "../contexts/rxInfo"
+import { useCustomizer } from "../contexts/customizer"
+import { RxInfoContext } from "../contexts/rx-info"
 import { isDiscounted } from "../helpers/shopify"
 import EnableShipInsure from "../components/enable-shipinsure"
 
@@ -305,27 +304,16 @@ const Cart = ({
     updateShipInsureAttribute,
   } = useCart()
 
-  const { rxInfo, rxInfoDispatch } = useContext(RxInfoContext)
+  console.log("Rendering Cart with cart data:", cart)
 
-  const { setSelectedVariants, setCurrentStep, setHasSavedCustomized } =
-    useContext(CustomizeContext)
+  const { rxInfoDispatch } = useContext(RxInfoContext)
 
-  const {
-    setSelectedVariants: setSelectedSafetyVariants,
-    setCurrentStep: setCurrentSafetyStep,
-    setHasSavedCustomized: setHasSavedSafetyCustomized,
-  } = useContext(SafetyCustomizeContext)
+  const { setEditData } = useCustomizer()
 
   const stepMap = new Map()
   stepMap.set(1, "RX TYPE")
-  stepMap.set(2, "LENS TYPE")
-  stepMap.set(3, "LENS MATERIAL")
-  stepMap.set(4, "LENS COATING")
-  stepMap.set(5, "CASE")
-
-  const stepMapSafetyGlasses = new Map()
-  stepMapSafetyGlasses.set(1, "RX TYPE")
-  stepMapSafetyGlasses.set(2, "CASE")
+  stepMap.set(2, "LENS COATING")
+  stepMap.set(3, "CASE")
 
   const loadingOverlay = useRef<HTMLDivElement>(null)
   useEffect(() => {
@@ -337,6 +325,7 @@ const Cart = ({
   }, [cart])
 
   const editGlasses = (item: tnItem) => {
+    console.log("Editing glasses item:", item)
     const isBrowser: boolean = typeof window !== "undefined"
     if (isBrowser) {
       const customsResume = localStorage.getItem("customs-resume")
@@ -354,42 +343,45 @@ const Cart = ({
           el => el.key === "Prescription"
         )
         if (rxAttr && rxAttr.value !== "Non-Prescription") {
-          const prescription = JSON.parse(rxAttr.value) as rxType
-          rxInfoDispatch({
-            type: `full`,
-            payload: prescription,
-          })
+          const uploadedFileUrlAttr =
+            item.lineItems[1].shopifyItem.attributes.find(
+              el => el.key === "_file_url"
+            )
+          const uploadedFileIdAttr =
+            item.lineItems[1].shopifyItem.attributes.find(
+              el => el.key === "_file_id"
+            )
+
+          if (uploadedFileIdAttr && uploadedFileUrlAttr) {
+            rxInfoDispatch({
+              type: "uploaded-file",
+              payload: {
+                id: uploadedFileIdAttr.value,
+                url: uploadedFileUrlAttr.value,
+              },
+            })
+          } else {
+            const prescription = JSON.parse(rxAttr.value)
+            rxInfoDispatch({
+              type: `full`,
+              payload: prescription,
+            })
+          }
+        }
+        // prepare context for editing
+        // setting context
+        const step1Title = resumedSelectedVariants.step1.product.title
+        const pathSelected = step1Title.split(" - ")[0]
+        if (pathSelected) {
+          console.log("Path selected for editing:", pathSelected)
+          // setSelectedCollectionPath(pathSelected as AvailablePath)
+          const glassesType = item.lineItems[0].shopifyItem.merchandise.product
+            .productType as "Glasses" | "Safety Glasses"
+          console.log("Glasses type for editing:", glassesType)
+          setEditData(resumedSelectedVariants, glassesType, pathSelected)
         }
 
-        // safety glasses have 3 line items, customized glasses have 6 line items
-        const isSafetyGlasses = item.lineItems.length === 3
-        // glasses summary = 5, safety glasses summary = 2
-        const currentStep = isSafetyGlasses ? 2 : 5
-        if (isSafetyGlasses) {
-          // prepare context for editing
-          // setting context
-          setSelectedSafetyVariants(resumedSelectedVariants)
-          // setting savedCustomized context so radio won't default to top option
-          setHasSavedSafetyCustomized({
-            step1: true,
-            case: true,
-          })
-          setCurrentSafetyStep(currentStep)
-        } else {
-          // prepare context for editing
-          // setting context
-          setSelectedVariants(resumedSelectedVariants)
-          // setting savedCustomized context so radio won't default to top option
-          setHasSavedCustomized({
-            step1: true,
-            step2: true,
-            step3: true,
-            step4: true,
-            case: true,
-          })
-          setCurrentStep(currentStep)
-        }
-        // navigate to step 5 of customize page
+        // navigate to summary
         navigate(
           // @ts-ignore
           `/products/${handle}/customize?variant=${sku}&custom_id=${item.id.toString()}`
@@ -842,10 +834,7 @@ const Cart = ({
   const renderCustomProduct = (item: tnItem) => {
     const hasDiscount = checkForDiscountInBundle(item.lineItems)
     // custom types: customized glasses, customized safety glasses
-    // customized safety glasses have 3 line items
-    // customized glasses have 6 line items
-    const isSafetyGlasses = item.lineItems.length === 3
-    const currentStepMap = isSafetyGlasses ? stepMapSafetyGlasses : stepMap
+    const currentStepMap = stepMap
     return (
       <li key={item.id} className="customized">
         <div className="close-btn">
@@ -1066,7 +1055,10 @@ const Cart = ({
                       )}
                     </div>
                     <div className="btn-container">
-                      <a href={cart.checkoutUrl} className="btn checkout">
+                      <a
+                        href={`${cart.checkoutUrl}&logged_in=true`}
+                        className="btn checkout"
+                      >
                         Check Out
                       </a>
                     </div>

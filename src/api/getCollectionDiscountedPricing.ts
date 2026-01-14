@@ -6,7 +6,6 @@ export default async function getCollectionDiscountedPricing(
   req: GatsbyFunctionRequest,
   res: GatsbyFunctionResponse
 ) {
-  // START HELPER FUNCTIONS
   const formatNumber = (inputNumber: string) =>
     isNaN(parseFloat(inputNumber))
       ? NaN
@@ -51,9 +50,8 @@ export default async function getCollectionDiscountedPricing(
         offer: overwriteLabel ? offer : "Sale",
       }
     }
-    return res
-      .status(400)
-      .json({ error: "Error while fetching from admin api" })
+
+    throw new Error("Error calculating discount")
   }
 
   const roundShopify = (amount: number) => {
@@ -72,7 +70,6 @@ export default async function getCollectionDiscountedPricing(
     }
   }
 
-  // END HELPER FUNCTIONS
   try {
     const API_VERSION = process.env.GATSBY_SHOPIFY_API_VERSION ?? "2025-01"
     const { offer, handle, prices, overwriteLabel } = JSON.parse(req.body) as {
@@ -83,7 +80,7 @@ export default async function getCollectionDiscountedPricing(
     }
 
     const adminToken: string = process.env.GATSBY_STORE_TOKEN ?? ""
-    const storeName = process.env.GATSBY_STORE_MY_SHOPIFY ?? ""
+    const storeName: string = process.env.GATSBY_STORE_MY_SHOPIFY ?? ""
     const url = `https://${storeName}/admin/api/${API_VERSION}/graphql.json`
 
     const variables = {
@@ -250,7 +247,7 @@ export default async function getCollectionDiscountedPricing(
     })
     const responseJson: any = await response.json()
     if (responseJson.errors) {
-      return res.status(400).json({
+      return res.status(500).json({
         error:
           responseJson.errors[0].message ??
           "Error while fetching from admin api",
@@ -270,7 +267,10 @@ export default async function getCollectionDiscountedPricing(
     )
 
     if (!filteredDiscounts.length)
-      return res.status(400).json("Discount found, but not supported")
+      return res.status(200).json({
+        isApplicable: false,
+        reason: "Discount found, but not supported",
+      })
 
     const discountNode = filteredDiscounts[0]
     const applicableDiscount = discountNode.discount as ShopifyDiscount
@@ -282,9 +282,10 @@ export default async function getCollectionDiscountedPricing(
       : true
 
     if (!isApplicableToAllCustomers) {
-      return res
-        .status(400)
-        .json({ error: "Discount not applicable to all customers" })
+      return res.status(200).json({
+        isApplicable: false,
+        reason: "Discount not applicable to all customers",
+      })
     }
     const applicableItems = applicableDiscount.customerGets.items
 
@@ -298,7 +299,7 @@ export default async function getCollectionDiscountedPricing(
         )
         if (!newPrices || !newPrices.length) {
           return res
-            .status(400)
+            .status(500)
             .json({ error: "Error while calculating order discount" })
         }
         return res.status(200).json({
@@ -339,7 +340,7 @@ export default async function getCollectionDiscountedPricing(
           )
           if (!newPrices || newPrices.length === 0) {
             return res
-              .status(400)
+              .status(500)
               .json({ error: "Product price discount unable to be created" })
           }
           return res.status(200).json({
@@ -397,6 +398,15 @@ export default async function getCollectionDiscountedPricing(
               error: "Product price discount unable to be created",
             })
           }
+
+          // define your caching headers
+          const CACHE_CONTROL_BROWSER = "public, max-age=0, must-revalidate"
+          // cache on Netlify CDN for 1 hour (3600s), but serve stale content for an additional 7 days (604800s)
+          const CACHE_CONTROL_NETLIFY =
+            "public, max-age=3600, stale-while-revalidate=3600"
+          res.setHeader("Cache-Control", CACHE_CONTROL_BROWSER)
+          res.setHeader("Netlify-CDN-Cache-Control", CACHE_CONTROL_NETLIFY)
+
           return res.status(200).json({
             prices: newPrices,
             type: applicableDiscountType,
@@ -406,8 +416,8 @@ export default async function getCollectionDiscountedPricing(
     }
 
     return res
-      .status(400)
-      .json({ error: "Error while fetching from admin api" })
+      .status(200)
+      .json({ isApplicable: false, reason: "Discount doesn't apply" })
   } catch (error) {
     console.log("Error on getDiscountedPricing:", error)
   }

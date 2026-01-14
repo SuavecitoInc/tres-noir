@@ -110,7 +110,6 @@ export const Component = styled.form`
     &:hover {
       cursor: pointer;
       background-color: #808080;
-      // box-shadow: none;
       border-color: #808080;
     }
     @media only screen and (max-width: 480px) {
@@ -309,5 +308,12 @@ export const Component = styled.form`
   }
   .rx-prism a {
     text-decoration: none;
+  }
+  .prescription-entry-method {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
   }
 `

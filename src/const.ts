@@ -1,0 +1,1 @@
+export const FALLBACK_SHOPIFY_API_VERSION = "2025-10"

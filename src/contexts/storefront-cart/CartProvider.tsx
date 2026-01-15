@@ -8,6 +8,7 @@ import React, {
 import { graphql, useStaticQuery } from "gatsby"
 import { createStorefrontApiClient } from "@shopify/storefront-api-client"
 import Cookies from "js-cookie"
+import * as Sentry from "@sentry/gatsby"
 
 import {
   CartFragmentFragment as CartFragmentType,
@@ -86,7 +87,7 @@ export function CartProvider({ children }: Props) {
 
   const client = createStorefrontApiClient({
     storeDomain: process.env.GATSBY_STORE_MY_SHOPIFY as string,
-    apiVersion: process.env.GATSBY_SHOPIFY_API_VERSION ?? "2025-01",
+    apiVersion: process.env.GATSBY_SHOPIFY_API_VERSION ?? "2025-10",
     publicAccessToken: process.env.GATSBY_STORE_STOREFRONT_TOKEN as string,
   })
 
@@ -108,6 +109,7 @@ export function CartProvider({ children }: Props) {
         return false
       }
     } catch (e) {
+      Sentry.captureException(e)
       return autoEnableShipInsure ? true : false
     }
   }
@@ -130,6 +132,7 @@ export function CartProvider({ children }: Props) {
       if (!offer || offer === "") return ""
       return offer
     } catch (error) {
+      Sentry.captureException(error)
       return ""
     }
   }
@@ -142,6 +145,7 @@ export function CartProvider({ children }: Props) {
     try {
       return cart.discountCodes.some(discount => discount.code === code)
     } catch (e) {
+      Sentry.captureException(e)
       return false
     }
   }
@@ -150,6 +154,7 @@ export function CartProvider({ children }: Props) {
     try {
       return cart?.lines.edges.length === 0
     } catch (e) {
+      Sentry.captureException(e)
       return false
     }
   }
@@ -234,6 +239,7 @@ export function CartProvider({ children }: Props) {
       return newCart
     } catch (err: any) {
       console.error(err)
+      Sentry.captureException(err)
       renderErrorModal()
     }
   }
@@ -288,6 +294,7 @@ export function CartProvider({ children }: Props) {
         handleDiscountCookie()
       } catch (err: any) {
         console.error(err)
+        Sentry.captureException(err)
         setIsAddingToCart(false)
         renderErrorModal()
       }
@@ -329,6 +336,7 @@ export function CartProvider({ children }: Props) {
         handleDiscountCookie()
       } catch (err: any) {
         console.error(err)
+        Sentry.captureException(err)
         setIsAddingToCart(false)
         renderErrorModal()
       }
@@ -365,6 +373,7 @@ export function CartProvider({ children }: Props) {
         setCart(updatedCart)
       } catch (err: any) {
         console.error(err)
+        Sentry.captureException(err)
         renderErrorModal()
       }
     },
@@ -405,6 +414,7 @@ export function CartProvider({ children }: Props) {
         setCart(updatedCart)
       } catch (err: any) {
         console.error(err)
+        Sentry.captureException(err)
         renderErrorModal()
       }
     },
@@ -434,6 +444,7 @@ export function CartProvider({ children }: Props) {
         await removeProductsFromCart(lineIds, itemToRemove.id, hasDiscount)
       } catch (err: any) {
         console.error(err)
+        Sentry.captureException(err)
         renderErrorModal()
       }
     },
@@ -484,6 +495,7 @@ export function CartProvider({ children }: Props) {
         setCart(updatedCart)
       } catch (err: any) {
         console.error(err)
+        Sentry.captureException(err)
         renderErrorModal()
       }
     },
@@ -545,6 +557,7 @@ export function CartProvider({ children }: Props) {
         setCart(updatedCart)
       } catch (err: any) {
         console.error(err)
+        Sentry.captureException(err)
         renderErrorModal()
       }
     },
@@ -583,6 +596,7 @@ export function CartProvider({ children }: Props) {
       setCart(updatedCart)
     } catch (err: any) {
       console.error(err)
+      Sentry.captureException(err)
       renderErrorModal()
     }
   }, [cart])
@@ -647,6 +661,7 @@ export function CartProvider({ children }: Props) {
         handleDiscountCookie()
       } catch (err: any) {
         console.error(err)
+        Sentry.captureException(err)
         setIsAddingToCart(false)
         renderErrorModal()
       }
@@ -707,6 +722,7 @@ export function CartProvider({ children }: Props) {
         handleDiscountCookie()
       } catch (err: any) {
         console.error(err)
+        Sentry.captureException(err)
         setIsAddingToCart(false)
         renderErrorModal()
       }
@@ -903,6 +919,7 @@ export function CartProvider({ children }: Props) {
       return cart
     } catch (err: any) {
       console.log("error", err)
+      Sentry.captureException(err)
       return cart
     }
   }
@@ -933,6 +950,7 @@ export function CartProvider({ children }: Props) {
       return cart
     } catch (err: any) {
       console.log("error", err)
+      Sentry.captureException(err)
       return cart
     }
   }
@@ -985,8 +1003,9 @@ export function CartProvider({ children }: Props) {
           setCart(updatedCart)
           setIsRemovingFromCart(false)
         }
-      } catch (e) {
-        console.error("error", e)
+      } catch (err) {
+        console.error("error", err)
+        Sentry.captureException(err)
         setIsRemovingFromCart(false)
       }
     },
@@ -1070,6 +1089,7 @@ export function CartProvider({ children }: Props) {
         setCart(rebuiltCart)
       } catch (err: any) {
         console.error("ERROR", err.message)
+        Sentry.captureException(err)
         const cart = (await getNewCart()) as unknown as CartFragmentType
         const rebuiltCart = rebuildBundles(cart)
         setCart(rebuiltCart)

@@ -1,4 +1,4 @@
-// https://shopify.dev/docs/api/storefront/2025-01/mutations/cartcreate
+// https://shopify.dev/docs/api/storefront/2025-10/mutations/cartcreate
 import CART_FRAGMENT from "../fragments/cart"
 
 const mutation = `#graphql

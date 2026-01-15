@@ -9,6 +9,16 @@ import FreeShipping from "../components/free-shipping"
 // import SaleHeroBanner from "../components/sale-hero-banner"
 import HeroCarousel from "../components/hero-carousel"
 
+const DEFAULT_HERO = {
+  label: "SHOP MEN'S",
+  url: "/collections/sunglasses-for-men",
+}
+
+const DEFAULT_HERO2 = {
+  label: "SHOP WOMEN'S",
+  url: "/collections/sunglasses-for-women",
+}
+
 const Page = styled.div`
   margin: auto;
   .h2,
@@ -155,6 +165,9 @@ const Page = styled.div`
     object-fit: cover;
     object-position: center;
   }
+  .uppercase {
+    text-transform: uppercase;
+  }
 `
 
 const IndexPage = ({
@@ -205,8 +218,11 @@ const IndexPage = ({
               alt="Hero"
             />
             <div className="featured-actions">
-              <Link className="button" to="/collections/sunglasses-for-men">
-                SHOP MEN'S
+              <Link
+                className="button uppercase"
+                to={contentfulHomepage.heroButtonLink || DEFAULT_HERO.url}
+              >
+                {contentfulHomepage.heroButtonLabel || DEFAULT_HERO.label}
               </Link>
             </div>
           </div>
@@ -219,8 +235,11 @@ const IndexPage = ({
               alt="Hero"
             />
             <div className="featured-actions">
-              <Link className="button" to="/collections/sunglasses-for-women">
-                SHOP WOMEN'S
+              <Link
+                className="button uppercase"
+                to={contentfulHomepage.hero2ButtonLink || DEFAULT_HERO2.url}
+              >
+                {contentfulHomepage.hero2ButtonLabel || DEFAULT_HERO2.label}
               </Link>
             </div>
           </div>
@@ -311,6 +330,8 @@ interface HomePageQuery {
         }
       }
     }
+    heroButtonLabel: string
+    heroButtonLink: string
     hero2: {
       localFile: {
         childImageSharp: {
@@ -318,6 +339,8 @@ interface HomePageQuery {
         }
       }
     }
+    hero2ButtonLabel: string
+    hero2ButtonLink: string
     tagline: {
       tagline: string
     }
@@ -378,6 +401,8 @@ export const query = graphql`
           }
         }
       }
+      heroButtonLabel
+      heroButtonLink
       hero2 {
         localFile {
           childImageSharp {
@@ -385,6 +410,8 @@ export const query = graphql`
           }
         }
       }
+      hero2ButtonLabel
+      hero2ButtonLink
       tagline {
         tagline
       }

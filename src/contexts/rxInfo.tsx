@@ -1,6 +1,6 @@
 import React, {
   createContext,
-  ReactChild,
+  ReactNode,
   useState,
   useMemo,
   useReducer,
@@ -125,7 +125,7 @@ export const RxInfoContext = createContext(defaultContext)
 export const RxInfoContextProvider = ({
   children,
 }: {
-  children: ReactChild
+  children: ReactNode
 }) => {
   const [isRxAble, setRxAble] = useState(false)
   const [rxInfo, rxInfoDispatch] = useReducer(reducer, rxInit)

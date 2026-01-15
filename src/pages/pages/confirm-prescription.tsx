@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useContext } from "react"
+import React, { useEffect, useState } from "react"
 import styled from "styled-components"
 import Layout from "../../components/layout"
 import SEO from "../../components/seo"
 import PrescriptionTable from "../../components/prescription-table"
 import Loader from "../../components/loader"
-import { ErrorModalContext } from "../../contexts/error"
+import { useErrorModal } from "../../contexts/error-modal"
 
 const Page = styled.div`
   h1 {
@@ -25,7 +25,7 @@ const Page = styled.div`
 const ConfirmPrescription = () => {
   // get URL PARAMS and call hook
 
-  const { renderErrorModal } = useContext(ErrorModalContext)
+  const { renderErrorModal } = useErrorModal()
   const [orderId, setOrderId] = useState("")
   const [orderDetails, setOrderDetails] = useState<any>({})
   const [showContent, setShowContent] = useState(false)

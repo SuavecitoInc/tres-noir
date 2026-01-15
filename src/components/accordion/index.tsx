@@ -1,7 +1,7 @@
 import React, { memo, useState } from "react"
 import { useSpring, a } from "react-spring"
 import { usePrevious, useMeasure } from "./helpers"
-import { Frame, Title, Content, toggle } from "./styles"
+import { Frame, Title, Content } from "./styles"
 
 interface AccordionItem {
   children?: React.ReactNode
@@ -27,11 +27,12 @@ const Accordion = memo(
       <Frame>
         <a
           role="button"
-          style={{ ...toggle, opacity: children ? 1 : 0.3 }}
+          style={{ opacity: children ? 1 : 0.3 }}
           onClick={() => setOpen(!isOpen)}
         >
           <Title>{name}</Title>
         </a>
+        {/* @ts-expect-error: fix this ts error */}
         <Content
           style={{
             opacity,

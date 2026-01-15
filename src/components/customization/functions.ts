@@ -1,13 +1,13 @@
 import { Dispatch, SetStateAction } from "react"
-import { SelectedVariants } from "../../types/global"
 
 export const changeImage = (
   currentStep: number,
-  selectedVariants: SelectedVariants,
+  selectedCollectionPathTitle: string,
+  selectedVariants: any,
   setCurrentImage: Dispatch<SetStateAction<any>>,
   variant: any
 ) => {
-  const { step1, step2 } = selectedVariants
+  const { step1 } = selectedVariants
   const defaultImage =
     variant.contentful.customizations?.clear?.localFile?.childImageSharp
       ?.data ??
@@ -16,21 +16,55 @@ export const changeImage = (
     variant.contentful.customizations?.clear?.title ??
     variant.contentful.featuredImage.title
 
-  const isBifocal = step1.product.title === "Bifocal"
+  const isBifocal = selectedCollectionPathTitle === "Bifocal"
+  const isSafetyGlasses =
+    variant.shopify.product.productType === "Safety Glasses"
 
   try {
     switch (currentStep) {
-      case 1:
-        const property = isBifocal ? "bifocal" : "clear"
-        setCurrentImage({
-          data: variant.contentful.customizations[property].localFile
-            .childImageSharp.data,
-          altText: variant.contentful.customizations[property].title,
-        })
+      case 0:
+        if (isSafetyGlasses) {
+          const step0Property = "clear"
+          setCurrentImage({
+            data: variant.contentful.customizations[step0Property].localFile
+              .childImageSharp.data,
+            altText: variant.contentful.customizations[step0Property].title,
+          })
+          break
+        } else {
+          switch (selectedCollectionPathTitle) {
+            case "Non-Prescription":
+            case "Single Vision":
+            case "Readers":
+            case "Progressive":
+              const step0Property = "clear"
+              setCurrentImage({
+                data: variant.contentful.customizations[step0Property].localFile
+                  .childImageSharp.data,
+                altText: variant.contentful.customizations[step0Property].title,
+              })
+              break
+            case "Bifocal":
+              const step0BifocalProperty = "bifocal"
+              setCurrentImage({
+                data: variant.contentful.customizations[step0BifocalProperty]
+                  .localFile.childImageSharp.data,
+                altText:
+                  variant.contentful.customizations[step0BifocalProperty].title,
+              })
+              break
+          }
+        }
+
         break
-      case 2:
-        const variantTitle = selectedVariants.step2.title
-        switch (step2.product.title) {
+      case 1:
+        const variantTitle = selectedVariants.step1.title
+        // remove prefix
+        let strippedProductTitle = step1.product.title.replace(
+          `${selectedCollectionPathTitle} - `,
+          ""
+        ) // remove prefix
+        switch (strippedProductTitle) {
           // Clear
           case "Clear":
           case "Blue Light Blocking":
@@ -42,7 +76,8 @@ export const changeImage = (
             })
             break
           // Sunglasses
-          case "Sunglasses":
+          case "Sunglasses": // this doesn't exist or rename collection to sunglasses
+          case "Sun":
           case "Transitions":
           case "Transitions - For Progressive":
           case "XTRActive Polarized":

@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useContext } from "react"
+import React, { useEffect, useState } from "react"
 import styled from "styled-components"
 import Loader from "./loader"
-import { ErrorModalContext } from "../contexts/error"
+import { useErrorModal } from "../contexts/error-modal"
 
 const Component = styled.div`
   margin: 20px 0;
@@ -119,7 +119,7 @@ const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
   const [showSuccess, setShowSuccess] = useState<boolean>(false)
   const [showLoader, setShowLoader] = useState<boolean>(false)
 
-  const { renderErrorModal } = useContext(ErrorModalContext)
+  const { renderErrorModal } = useErrorModal()
 
   const customAttr = lineItem.node.customAttributes.filter(
     el => el.key === "Prescription"

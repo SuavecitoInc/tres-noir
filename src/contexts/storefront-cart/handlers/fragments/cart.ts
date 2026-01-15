@@ -41,6 +41,7 @@ export const CART_FRAGMENT = `#graphql
               product {
                 handle
                 title
+                productType
               }
               image {
                 url

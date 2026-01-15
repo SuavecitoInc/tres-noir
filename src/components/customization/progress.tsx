@@ -53,14 +53,14 @@ const CustomizationProgress = ({ step }: { step: number }) => (
     <div className={`path ${step >= 2 && "active"}`} />
     <div className={`marker ${step >= 2 && "active"}`}>
       <div className="circle" />
-      <div className="label">LENS TYPE</div>
+      <div className="label">LENS COATING</div>
     </div>
     <div className={`path ${step >= 3 && "active"}`} />
     <div className={`marker ${step >= 3 && "active"}`}>
       <div className="circle" />
-      <div className="label">LENS MATERIAL</div>
+      <div className="label">REVIEW</div>
     </div>
-    <div className={`path ${step >= 4 && "active"}`} />
+    {/* <div className={`path ${step >= 4 && "active"}`} />
     <div className={`marker ${step >= 4 && "active"}`}>
       <div className="circle" />
       <div className="label">LENS COATING</div>
@@ -69,7 +69,7 @@ const CustomizationProgress = ({ step }: { step: number }) => (
     <div className={`marker ${step >= 5 && "active"}`}>
       <div className="circle" />
       <div className="label">REVIEW</div>
-    </div>
+    </div> */}
   </Component>
 )
 

@@ -56,7 +56,6 @@ const CustomItem = (props: { item: tnItem }) => {
   const totalSum = (lineItems: tnSubItem[]) => {
     let sum = 0
     lineItems.forEach(item => {
-      // new discounts
       const hasDiscount = item.shopifyItem.discountAllocations.length > 0
       let price = item.shopifyItem.merchandise.price.amount
       if (hasDiscount) {
@@ -67,7 +66,6 @@ const CustomItem = (props: { item: tnItem }) => {
           )
         ).toFixed(2)
       }
-      // new discounts
       sum += parseFloat(price)
     })
     return sum.toFixed(2)
@@ -133,7 +131,7 @@ const CustomItem = (props: { item: tnItem }) => {
         <div>
           <div className="product-titles">
             <Link
-              onClick={evt => setIsCartDrawerOpen(false)}
+              onClick={_evt => setIsCartDrawerOpen(false)}
               to={`/products/${item.lineItems[0].shopifyItem.merchandise.product.handle}`}
             >
               <p className="title">

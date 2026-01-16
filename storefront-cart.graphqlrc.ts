@@ -1,9 +1,11 @@
 import { shopifyApiProject, ApiType } from "@shopify/api-codegen-preset"
 import dotenv from "dotenv"
+import { FALLBACK_SHOPIFY_API_VERSION } from "./src/const"
 
 dotenv.config()
 
-const API_VERSION = process.env.GATSBY_SHOPIFY_API_VERSION ?? "2025-01"
+const API_VERSION =
+  process.env.GATSBY_SHOPIFY_API_VERSION ?? FALLBACK_SHOPIFY_API_VERSION
 
 export default {
   // For syntax highlighting / auto-complete when writing operations

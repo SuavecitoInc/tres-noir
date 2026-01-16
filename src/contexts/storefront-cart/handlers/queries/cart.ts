@@ -1,4 +1,4 @@
-// https://shopify.dev/docs/api/storefront/2025-01/queries/cart
+// https://shopify.dev/docs/api/storefront/2025-10/queries/cart
 import CART_FRAGMENT from "../fragments/cart"
 const query = `#graphql
   ${CART_FRAGMENT}

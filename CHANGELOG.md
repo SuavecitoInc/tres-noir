@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## v1.13.1 - 2026-01-15
+
+**Breaking Changes**
+
+- Updated Shopify API version to 2025-10 in the .env file for all environments.
+- Updated Fallback Shopify API Version to 2025-10 in constants file.
+
 ## v1.13.0 - 2025-12-29
 
 **Breaking Changes**

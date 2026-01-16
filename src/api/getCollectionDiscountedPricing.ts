@@ -1,6 +1,7 @@
 import fetch from "node-fetch"
 import type { GatsbyFunctionRequest, GatsbyFunctionResponse } from "gatsby"
 import { flattenConnection } from "../utils/flattenConnection"
+import { FALLBACK_SHOPIFY_API_VERSION } from "../const"
 
 export default async function getCollectionDiscountedPricing(
   req: GatsbyFunctionRequest,
@@ -71,7 +72,8 @@ export default async function getCollectionDiscountedPricing(
   }
 
   try {
-    const API_VERSION = process.env.GATSBY_SHOPIFY_API_VERSION ?? "2025-01"
+    const API_VERSION =
+      process.env.GATSBY_SHOPIFY_API_VERSION ?? FALLBACK_SHOPIFY_API_VERSION
     const { offer, handle, prices, overwriteLabel } = JSON.parse(req.body) as {
       offer: string
       handle: string

@@ -223,13 +223,19 @@ const ProductContentful = ({
           color: "red",
         }
       }
-      // new variant color badge
+      if (shopifyProduct.tags.includes("new_release")) {
+        return {
+          label: "New",
+          color: "#DAA520",
+        }
+      }
       if (variantHasNewColor()) {
         return {
           label: "New Color",
           color: "green",
         }
       }
+      // new variant color badge
       if (data.collection.some(col => col.handle === "new")) {
         return {
           label: "New",

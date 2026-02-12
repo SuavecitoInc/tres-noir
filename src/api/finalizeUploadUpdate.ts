@@ -51,7 +51,7 @@ export default async function handler(
               id: resourceId,
               alt: fileName,
               // contentType: "IMAGE",
-              originalSource: resourceUrl,
+              // originalSource: resourceUrl,
               previewImageSource: resourceUrl,
             },
           ],

@@ -139,13 +139,17 @@ const PrescriptionUploadConfirm = ({
   const frameName = foundFrameKey ? foundFrameKey.value : "Frame"
   const frameIdentifier = `${frameName}- (${customId}): `
 
-  const imgSrc = lineItem.node.customAttributes.find(
+  const fileUrl = lineItem.node.customAttributes.find(
     attr => attr.key === "_file_url"
-  ).value
+  )
 
-  const imgId = lineItem.node.customAttributes.find(
+  const imgSrc = fileUrl ? fileUrl.value : null
+
+  const fileId = lineItem.node.customAttributes.find(
     attr => attr.key === "_file_id"
-  ).value
+  )
+
+  const imgId = fileId ? fileId.value : null
 
   const uploadedFile = {
     url: imgSrc,
@@ -295,6 +299,12 @@ const PrescriptionUploadConfirm = ({
   }
 
   // new
+  const dropVersionFromImageUrl = (url: string) => {
+    const newUrl = new URL(url)
+    newUrl.searchParams.delete("v")
+    return newUrl.toString()
+  }
+
   const handleUploadPrescription = async () => {
     try {
       console.log("Handle Shopify Reupload ->Selected file:", selectedFile)
@@ -332,7 +342,7 @@ const PrescriptionUploadConfirm = ({
       })
 
       // step 3: Finalize the file in Shopify
-      const finalizeResponse = await fetch("/api/finalizeUpload", {
+      const finalizeResponse = await fetch("/api/finalizeUploadUpdate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -368,16 +378,26 @@ const PrescriptionUploadConfirm = ({
         </p>
         <div>
           {!showSuccess && !showLoader && (
-            <img
-              src={imgSrc}
-              alt={`Prescription for ${index}. ${frameName}`}
-              style={{
-                maxWidth: "800px",
-                width: "100%",
-                height: "auto",
-                border: "1px solid #ccc",
-              }}
-            />
+            <>
+              {!imgSrc ? (
+                <p>
+                  Something went wrong with the prescription image. Please
+                  re-upload it below. If you continue to have issues, please
+                  contact us.
+                </p>
+              ) : (
+                <img
+                  src={dropVersionFromImageUrl(imgSrc)}
+                  alt={`Prescription for ${index}. ${frameName}`}
+                  style={{
+                    maxWidth: "800px",
+                    width: "100%",
+                    height: "auto",
+                    border: "1px solid #ccc",
+                  }}
+                />
+              )}
+            </>
           )}
         </div>
         {!showSuccess && !showLoader ? (

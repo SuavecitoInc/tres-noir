@@ -358,6 +358,7 @@ const PrescriptionUploadConfirm = ({
       console.log("File uploaded to Shopify:", fileUrl)
       if (fileUrl) {
         setShowLoader(false)
+        setShowSuccess(true)
         const r = await updateOrderNote(fileUrl)
         const x = await markMetafieldAsTrue()
         // isNowValid()

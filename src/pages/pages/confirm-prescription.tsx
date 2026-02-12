@@ -3,6 +3,7 @@ import styled from "styled-components"
 import Layout from "../../components/layout"
 import SEO from "../../components/seo"
 import PrescriptionTable from "../../components/prescription-table"
+import PrescriptionUploadConfirm from "../../components/prescription-upload-confirm"
 import Loader from "../../components/loader"
 import { useErrorModal } from "../../contexts/error-modal"
 
@@ -67,8 +68,23 @@ const ConfirmPrescription = () => {
                   return lineItem
                 }
               })
+
+              // update filtered
+              const updatedFiltered = filtered.map(el => {
+                const customAttributes = el.node.customAttributes
+                const prescriptionAttr = customAttributes.find(
+                  attr => attr.key === "Prescription"
+                )
+                const displayType =
+                  prescriptionAttr.value === "Uploaded File" ? "file" : "table"
+                return {
+                  ...el,
+                  displayType,
+                }
+              })
               parsedPrescriptions = {
-                prescriptions: filtered,
+                prescriptions: updatedFiltered,
+                // prescriptions: filtered,
                 note: orderNote,
                 name: orderName,
               }
@@ -107,15 +123,29 @@ const ConfirmPrescription = () => {
                 {orderDetails &&
                   orderDetails.prescriptions &&
                   orderDetails.prescriptions.length > 0 &&
-                  orderDetails.prescriptions.map((el, index) => (
-                    <PrescriptionTable
-                      index={index + 1}
-                      lineItem={el}
-                      key={`pt-${index}`}
-                      orderId={orderId}
-                      orderDetails={orderDetails}
-                    />
-                  ))}
+                  orderDetails.prescriptions.map((el, index) => {
+                    if (el.displayType === "table") {
+                      return (
+                        <PrescriptionTable
+                          index={index + 1}
+                          lineItem={el}
+                          key={`pt-${index}`}
+                          orderId={orderId}
+                          orderDetails={orderDetails}
+                        />
+                      )
+                    } else if (el.displayType === "file") {
+                      return (
+                        <PrescriptionUploadConfirm
+                          index={index + 1}
+                          lineItem={el}
+                          key={`puc-${index}`}
+                          orderId={orderId}
+                          orderDetails={orderDetails}
+                        />
+                      )
+                    }
+                  })}
               </div>
             </div>
           </>

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect } from "react"
 import styled from "styled-components"
 import Loader from "./loader"
-import { useErrorModal } from "../contexts/error-modal"
+import { useConfirmPrescription } from "../hooks/useConfirmPrescription"
 
 const Component = styled.div`
   margin: 20px 0;
@@ -115,12 +115,6 @@ interface rxType {
 }
 
 const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [showSuccess, setShowSuccess] = useState<boolean>(false)
-  const [showLoader, setShowLoader] = useState<boolean>(false)
-
-  const { renderErrorModal } = useErrorModal()
-
   const customAttr = lineItem.node.customAttributes.filter(
     el => el.key === "Prescription"
   )
@@ -137,6 +131,16 @@ const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
   const prescription = JSON.parse(customAttr[0].value) as rxType
 
   const orderNote = orderDetails.note
+
+  const {
+    setSelectedFile,
+    showSuccess,
+    setShowSuccess,
+    showLoader,
+    handleUploadPrescription,
+    updateOrderNote,
+    markMetafieldAsTrue,
+  } = useConfirmPrescription(orderId, frameIdentifier)
 
   const hasUploadedImage = async () => {
     if (!orderNote) return
@@ -164,75 +168,6 @@ const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
     })
   }
 
-  // fetches order note in realtime so multiple frames dont overlap each other when it comes to adding order note
-  const fetchMostCurrentOrderNote = async () => {
-    try {
-      const endpoint = "/api/getCurrentOrderNote"
-      const res = await fetch(endpoint, {
-        method: "POST",
-        body: JSON.stringify({
-          id: orderId,
-        }),
-      })
-      const resJson = await res.json()
-      return resJson.order.note
-    } catch (error) {
-      console.error("Error while fetching most current order note", error)
-      renderErrorModal()
-    }
-  }
-
-  const markMetafieldAsTrue = async () => {
-    try {
-      const endpoint = "/api/updateReminderMetafield"
-      const res = await fetch(endpoint, {
-        method: "POST",
-        body: JSON.stringify({
-          id: orderId,
-        }),
-      })
-      const resJson = await res.json()
-      return resJson
-    } catch (error) {
-      console.error("Error while fetching most current order note", error)
-      renderErrorModal()
-    }
-  }
-
-  const uploadPrescriptionImage = async () => {
-    try {
-      if (!selectedFile) {
-        return
-      }
-      setShowLoader(true)
-      const endpoint = "/api/uploadPrescription"
-      const results = await getBase64Image(selectedFile)
-      const formData = new FormData()
-      //@ts-ignore results holds the base64 encoded file
-      formData.append("file", results)
-      formData.append("name", `${frameName}-${index}-${orderId}`)
-
-      const res = await fetch(endpoint, {
-        method: "POST",
-        body: formData,
-      })
-      if (res.ok) {
-        const resJson = await res.json()
-        const url = resJson.url
-        const r = await updateOrderNote(url)
-        const x = await markMetafieldAsTrue()
-      }
-      setShowLoader(false)
-    } catch (error) {
-      console.error("Error while calling uploadPrescriptionImage", error)
-      renderErrorModal()
-    }
-  }
-
-  const handleUpload = async () => {
-    const res = await uploadPrescriptionImage()
-  }
-
   const formatMeasurement = (msmt: string) => {
     if (msmt === "0.00" || msmt === "00.00" || msmt === "0") {
       return ""
@@ -244,42 +179,6 @@ const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
     updateOrderNote("")
     markMetafieldAsTrue()
     // add frame to order note and mark as confirmed
-  }
-
-  const updateOrderNote = async (url: string) => {
-    let newNote: string = ""
-    const currentNote = await fetchMostCurrentOrderNote()
-    if (currentNote === "" || !currentNote) {
-      newNote = ""
-    } else if (!currentNote.endsWith("\n")) {
-      newNote = currentNote + "\n"
-    } else {
-      newNote = currentNote
-    }
-    if (url !== "") {
-      newNote += frameIdentifier + url + "\n"
-    } else {
-      newNote += frameIdentifier + "confirmed" + "\n"
-    }
-    try {
-      const endpoint = "/api/addOrderNote"
-      const res = await fetch(endpoint, {
-        method: "POST",
-        body: JSON.stringify({
-          note: newNote,
-          id: orderId,
-        }),
-      })
-      if (res.ok) {
-        setShowSuccess(true)
-      } else {
-        // must've been an error
-        renderErrorModal()
-      }
-    } catch (error) {
-      console.error("Error while calling uploadOrderNote", error)
-      renderErrorModal()
-    }
   }
 
   return (
@@ -342,7 +241,10 @@ const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
                     evt => setSelectedFile(evt.target.files[0])
                   }
                 />
-                <button className="btn" onClick={evt => handleUpload()}>
+                <button
+                  className="btn"
+                  onClick={evt => handleUploadPrescription()}
+                >
                   Upload
                 </button>
               </div>

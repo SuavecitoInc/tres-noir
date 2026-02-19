@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect } from "react"
 import styled from "styled-components"
 import Loader from "./loader"
-import { useErrorModal } from "../contexts/error-modal"
+import { useConfirmPrescription } from "../hooks/useConfirmPrescription"
 
 const Component = styled.div`
   margin: 20px 0;
@@ -120,12 +120,6 @@ const PrescriptionUploadConfirm = ({
   orderId,
   orderDetails,
 }) => {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [showSuccess, setShowSuccess] = useState<boolean>(false)
-  const [showLoader, setShowLoader] = useState<boolean>(false)
-
-  const { renderErrorModal } = useErrorModal()
-
   const customAttr = lineItem.node.customAttributes.filter(
     el => el.key === "Prescription"
   )
@@ -156,7 +150,15 @@ const PrescriptionUploadConfirm = ({
     id: imgId,
   }
 
-  // const prescription = JSON.parse(customAttr[0].value) as rxType
+  const {
+    setSelectedFile,
+    showSuccess,
+    setShowSuccess,
+    showLoader,
+    handleUpdateUploadPrescription,
+    updateOrderNote,
+    markMetafieldAsTrue,
+  } = useConfirmPrescription(orderId, frameIdentifier)
 
   const orderNote = orderDetails.note
 
@@ -174,87 +176,6 @@ const PrescriptionUploadConfirm = ({
     hasUploadedImage()
   }, [])
 
-  // returnd data ur given a file
-  const getBase64Image = async file => {
-    return new Promise(resolve => {
-      const reader = new FileReader()
-      reader.readAsDataURL(file)
-      reader.onloadend = () => {
-        const base64data = reader.result
-        resolve(base64data)
-      }
-    })
-  }
-
-  // fetches order note in realtime so multiple frames dont overlap each other when it comes to adding order note
-  const fetchMostCurrentOrderNote = async () => {
-    try {
-      const endpoint = "/api/getCurrentOrderNote"
-      const res = await fetch(endpoint, {
-        method: "POST",
-        body: JSON.stringify({
-          id: orderId,
-        }),
-      })
-      const resJson = await res.json()
-      return resJson.order.note
-    } catch (error) {
-      console.error("Error while fetching most current order note", error)
-      renderErrorModal()
-    }
-  }
-
-  const markMetafieldAsTrue = async () => {
-    try {
-      const endpoint = "/api/updateReminderMetafield"
-      const res = await fetch(endpoint, {
-        method: "POST",
-        body: JSON.stringify({
-          id: orderId,
-        }),
-      })
-      const resJson = await res.json()
-      return resJson
-    } catch (error) {
-      console.error("Error while fetching most current order note", error)
-      renderErrorModal()
-    }
-  }
-
-  // const uploadPrescriptionImage = async () => {
-  //   try {
-  //     if (!selectedFile) {
-  //       return
-  //     }
-  //     setShowLoader(true)
-  //     const endpoint = "/api/uploadPrescription"
-  //     const results = await getBase64Image(selectedFile)
-  //     const formData = new FormData()
-  //     //@ts-ignore results holds the base64 encoded file
-  //     formData.append("file", results)
-  //     formData.append("name", `${frameName}-${index}-${orderId}`)
-
-  //     const res = await fetch(endpoint, {
-  //       method: "POST",
-  //       body: formData,
-  //     })
-  //     if (res.ok) {
-  //       const resJson = await res.json()
-  //       const url = resJson.url
-  //       const r = await updateOrderNote(url)
-  //       const x = await markMetafieldAsTrue()
-  //     }
-  //     setShowLoader(false)
-  //   } catch (error) {
-  //     console.error("Error while calling uploadPrescriptionImage", error)
-  //     renderErrorModal()
-  //   }
-  // }
-
-  // const handleUpload = async () => {
-  //   const res = await uploadPrescriptionImage()
-  // }
-
   const confirmClicked = () => {
     setShowSuccess(true)
     updateOrderNote("")
@@ -262,113 +183,10 @@ const PrescriptionUploadConfirm = ({
     // add frame to order note and mark as confirmed
   }
 
-  const updateOrderNote = async (url: string) => {
-    let newNote: string = ""
-    const currentNote = await fetchMostCurrentOrderNote()
-    if (currentNote === "" || !currentNote) {
-      newNote = ""
-    } else if (!currentNote.endsWith("\n")) {
-      newNote = currentNote + "\n"
-    } else {
-      newNote = currentNote
-    }
-    if (url !== "") {
-      newNote += frameIdentifier + url + "\n"
-    } else {
-      newNote += frameIdentifier + "confirmed" + "\n"
-    }
-    try {
-      const endpoint = "/api/addOrderNote"
-      const res = await fetch(endpoint, {
-        method: "POST",
-        body: JSON.stringify({
-          note: newNote,
-          id: orderId,
-        }),
-      })
-      if (res.ok) {
-        setShowSuccess(true)
-      } else {
-        // must've been an error
-        renderErrorModal()
-      }
-    } catch (error) {
-      console.error("Error while calling uploadOrderNote", error)
-      renderErrorModal()
-    }
-  }
-
-  // new
   const dropVersionFromImageUrl = (url: string) => {
     const newUrl = new URL(url)
     newUrl.searchParams.delete("v")
     return newUrl.toString()
-  }
-
-  const handleUploadPrescription = async () => {
-    try {
-      console.log("Handle Shopify Reupload ->Selected file:", selectedFile)
-      if (!selectedFile) {
-        return
-      }
-      setShowLoader(true)
-      // step 1: Get staged upload URL from your backend
-      const stageResponse = await fetch("/api/createStagedUpload", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          fileName: selectedFile.name,
-          mimeType: selectedFile.type,
-          fileSize: selectedFile.size,
-        }),
-      })
-
-      const { uploadUrl, resourceUrl, parameters } = await stageResponse.json()
-
-      // step 2: Upload file DIRECTLY to Shopify (no size limit!)
-      const formData = new FormData()
-
-      // add Shopify's parameters first
-      parameters.forEach(param => {
-        formData.append(param.name, param.value)
-      })
-
-      // add the actual file
-      formData.append("file", selectedFile)
-
-      await fetch(uploadUrl, {
-        method: "POST",
-        body: formData,
-      })
-
-      // step 3: Finalize the file in Shopify
-      const finalizeResponse = await fetch("/api/finalizeUploadUpdate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          resourceId: uploadedFile ? uploadedFile.id : null,
-          resourceUrl,
-          fileName: selectedFile.name,
-        }),
-      })
-
-      // fileUrl, fileId, fileName
-      const { fileUrl, fileId } = await finalizeResponse.json()
-
-      console.log("File uploaded to Shopify:", fileUrl)
-      if (fileUrl) {
-        setShowLoader(false)
-        setShowSuccess(true)
-        const r = await updateOrderNote(fileUrl)
-        const x = await markMetafieldAsTrue()
-        // isNowValid()
-      } else {
-        throw new Error("File URL not returned from finalize upload.")
-      }
-    } catch (error: any) {
-      console.error("Upload failed:", error)
-      setShowLoader(false)
-    }
   }
 
   return (
@@ -427,7 +245,7 @@ const PrescriptionUploadConfirm = ({
                 />
                 <button
                   className="btn"
-                  onClick={evt => handleUploadPrescription()}
+                  onClick={evt => handleUpdateUploadPrescription(uploadedFile)}
                 >
                   Upload
                 </button>

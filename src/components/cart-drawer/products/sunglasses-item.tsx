@@ -62,7 +62,11 @@ const SunglassesItem = (props: { item: tnItem }) => {
       const { contentfulVariantCollection } = data
       const { variants } = contentfulVariantCollection
       const handles = Array.from(variants.map(variant => variant.sku))
-      return handles as string[]
+      // patch polarized
+      const patchedHandles = handles
+        .map(handle => `${handle}P`)
+        .concat(handles as string[])
+      return patchedHandles as string[]
     } catch (e) {
       console.log(e)
       return []

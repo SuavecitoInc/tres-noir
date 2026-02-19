@@ -83,6 +83,9 @@ enum LENS_COLORS {
   GOLD_MIRRORED = "gold mirrored",
   SILVER_MIRRORED = "silver mirrored",
   BLUE_MIRRORED = "blue mirrored",
+  ROSE = "rose",
+  PURPLE = "purple",
+  BOTTLE_GREEN = "bottle green",
 }
 
 const ProductDetails: React.FC<Props> = ({
@@ -139,6 +142,15 @@ const ProductDetails: React.FC<Props> = ({
           break
         case LENS_COLORS.BLUE_MIRRORED:
           imageData = lensColors.blue_mirrored
+          break
+        case LENS_COLORS.ROSE:
+          imageData = lensColors.rose
+          break
+        case LENS_COLORS.PURPLE:
+          imageData = lensColors.purple
+          break
+        case LENS_COLORS.BOTTLE_GREEN:
+          imageData = lensColors.bottle_green
           break
         default:
           imageData = lensColors.clear

@@ -729,16 +729,31 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
     if (lensType !== LensType.GLASSES) {
       const today = new Date()
       const matchingKey: string = today.valueOf().toString()
+      const frameAttributes = {
+        variantId: selectedVariant.shopify.storefrontId,
+        quantity: 1,
+        attributes: [
+          { key: "customizationId", value: matchingKey },
+          { key: "customizationStep", value: "1" },
+        ],
+      }
+      if (clearanceSKUs.includes(selectedVariant.shopify.sku)) {
+        frameAttributes.attributes.push({
+          key: "FINAL SALE",
+          value: "NO RETURNS, REFUNDS OR EXCHANGES",
+        })
+      }
       addSunglassesToCart(
         [
-          {
-            variantId: selectedVariant.shopify.storefrontId,
-            quantity: 1,
-            attributes: [
-              { key: "customizationId", value: matchingKey },
-              { key: "customizationStep", value: "1" },
-            ],
-          },
+          // {
+          //   variantId: selectedVariant.shopify.storefrontId,
+          //   quantity: 1,
+          //   attributes: [
+          //     { key: "customizationId", value: matchingKey },
+          //     { key: "customizationStep", value: "1" },
+          //   ],
+          // },
+          frameAttributes,
           {
             variantId: selectedCase.storefrontId,
             quantity: 1,

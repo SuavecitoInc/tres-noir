@@ -683,8 +683,7 @@ const Cart = ({
 
     const createClearanceSKUs = (data): string[] => {
       try {
-        const { contentfulVariantCollection } = data
-        const { variants } = contentfulVariantCollection
+        const { variants } = data
         const handles = Array.from(variants.map(variant => variant.sku))
         // patch polarized
         const patchedHandles = handles

@@ -7,7 +7,10 @@
     {
       "type": "description",
       "title": "Need Prescription Lenses?",
-      "description": "Primo S is RX-friendly and can be fitted with prescription lenses, so you don't have to choose between clear vision and certified protection."
+      "description": {
+        "primo": "Primo S is RX-friendly and can be fitted with prescription lenses, so you don't have to choose between clear vision and certified protection.",
+        "range": "Range S is RX-friendly and can be fitted with prescription lenses, so you don't have to choose between clear vision and certified protection."
+      }
     },
     {
       "type": "list",
@@ -32,8 +35,8 @@
     },
     {
       "type": "description",
-      "title": "Photocromic Lens",
-      "description": "Photocromic lenses darken in sunlight, seamlessly adapting from indoors to outdoors while still meeting ANSI Z87+ standards."
+      "title": "Photochromic Lens",
+      "description": "Photochromic lenses darken in sunlight, seamlessly adapting from indoors to outdoors while still meeting ANSI Z87+ standards."
     }
   ],
   "lensesInfoAlt": "More about our lenses. Impact-resistant Polycarbonate material. Lenses meet ANSI Z87+ Mass Impact Standards for maximum protection. 100% UVA & UVB Protection. Single Vision prescription lenses are available.",

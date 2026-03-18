@@ -439,7 +439,9 @@ const LearnMore = ({ data: { contentfulProduct } }: any) => {
               <p className="h2">{text.fitHeading}</p>
               <p className="h3">{text.fitInfo}</p>
               <GatsbyImage
-                image={contentfulProduct.fitDiagram.data}
+                image={
+                  contentfulProduct.fitDiagram?.localFile?.childImageSharp?.data
+                }
                 alt={text.fitDiagramAlt}
               />
             </div>

@@ -1,6 +1,1 @@
-export type SafetyLensColor =
-  | "smoke"
-  | "photocromic"
-  | "photochromic"
-  | "yellow"
-  | "mirror"
+export type SafetyLensColor = "smoke" | "photochromic" | "yellow" | "mirror"

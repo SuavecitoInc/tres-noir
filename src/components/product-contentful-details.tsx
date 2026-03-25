@@ -79,7 +79,6 @@ enum LENS_COLORS {
   CLEAR = "clear",
   YELLOW = "yellow",
   BURNT_ORANGE = "burnt orange",
-  PHOTOCROMIC = "photocromic",
   PHOTOCHROMIC = "photochromic",
   GOLD_MIRRORED = "gold mirrored",
   SILVER_MIRRORED = "silver mirrored",
@@ -131,9 +130,6 @@ const ProductDetails: React.FC<Props> = ({
           break
         case LENS_COLORS.BURNT_ORANGE:
           imageData = lensColors.burnt_orange
-          break
-        case LENS_COLORS.PHOTOCROMIC:
-          imageData = lensColors.clear
           break
         case LENS_COLORS.PHOTOCHROMIC:
           imageData = lensColors.clear

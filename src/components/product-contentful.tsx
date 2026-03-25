@@ -250,22 +250,18 @@ const ProductContentful = ({
 
   const badge = getBadge()
 
+  const featuredImageData =
+    !isSunglasses &&
+    lensType !== "safety" &&
+    selectedVariant.featuredImageClear?.localFile?.childImageSharp?.data
+      ? selectedVariant.featuredImageClear?.localFile?.childImageSharp?.data
+      : selectedVariant.featuredImage?.localFile?.childImageSharp?.data
+
   return (
     <Component>
       <article className="product-container">
         <Link to={`${productLink}&variant=${selectedVariant.sku}`}>
-          <Img
-            image={
-              !isSunglasses &&
-              selectedVariant.featuredImageClear?.localFile?.childImageSharp
-                ?.data
-                ? selectedVariant.featuredImageClear?.localFile?.childImageSharp
-                    ?.data
-                : selectedVariant.featuredImage?.localFile?.childImageSharp
-                    ?.data
-            }
-            alt={data.title}
-          />
+          <Img image={featuredImageData} alt={data.title} />
           {badge && <Badge label={badge.label} color={badge.color} />}
         </Link>
         <ProductAction>

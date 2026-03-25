@@ -333,6 +333,11 @@ const LearnMore = ({ data: { contentfulProduct } }: any) => {
     productTitle = productTitle.split("-")[0]
   }
 
+  // used to determine which safety glasses type to show in the lens customizations description
+  const safetyType = contentfulProduct.title.toLowerCase().includes("primo")
+    ? "primo"
+    : "range"
+
   useEffect(() => {
     if (typeof window !== `undefined`) {
       const observer = new IntersectionObserver(
@@ -439,7 +444,9 @@ const LearnMore = ({ data: { contentfulProduct } }: any) => {
               <p className="h2">{text.fitHeading}</p>
               <p className="h3">{text.fitInfo}</p>
               <GatsbyImage
-                image={contentfulProduct.fitDiagram.data}
+                image={
+                  contentfulProduct.fitDiagram?.localFile?.childImageSharp?.data
+                }
                 alt={text.fitDiagramAlt}
               />
             </div>
@@ -493,7 +500,7 @@ const LearnMore = ({ data: { contentfulProduct } }: any) => {
                             ))}
                           {list.type === "description" && (
                             <div className="description">
-                              {list.description}
+                              {list.description[safetyType]}
                             </div>
                           )}
                         </div>

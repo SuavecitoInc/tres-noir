@@ -7,6 +7,7 @@ import Orders from "../../../components/account/orders"
 import Loader from "../../../components/loader"
 import { useCustomer } from "../../../contexts/customer"
 import { ENABLE_NEW_CUSTOMER_ACCOUNTS } from "../../../flags"
+import { SHOPIFY_STORE_URL } from "../../../const"
 
 const Page = styled.div`
   .logout-button {
@@ -30,7 +31,7 @@ const OrdersPage = ({ location }) => {
 
   useEffect(() => {
     if (!ENABLE_NEW_CUSTOMER_ACCOUNTS) {
-      window.location.href = "https://account.tresnoir.com/account/"
+      window.location.href = `${SHOPIFY_STORE_URL}/account/`
     }
   }, [])
 

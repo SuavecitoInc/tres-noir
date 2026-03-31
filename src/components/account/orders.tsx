@@ -31,13 +31,23 @@ const GridItem = styled.div`
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     gap: 5px;
-    background-color: #fff;
+    background-color: transparent;
     margin-top: 10px;
     margin-bottom: 10px;
   }
   .image-grid-item {
     width: 100%;
-    height: auto;
+    height: 100px;
+    min-height: 100px;
+    max-height: 100px;
+    background-color: #fff;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
   }
   .image-grid-item.more-items {
     background-color: #f0f0f0;

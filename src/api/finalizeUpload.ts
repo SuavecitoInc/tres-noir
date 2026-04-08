@@ -5,6 +5,8 @@ import type { GatsbyFunctionRequest, GatsbyFunctionResponse } from "gatsby"
 // Helper to wait
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
+type MimeType = "application/pdf" | "image/jpeg" | "image/png" | string
+
 export default async function handler(
   req: GatsbyFunctionRequest,
   res: GatsbyFunctionResponse
@@ -14,9 +16,10 @@ export default async function handler(
   }
 
   try {
-    const { resourceUrl, fileName } = req.body as {
+    const { resourceUrl, fileName, mimeType } = req.body as {
       resourceUrl: string
       fileName: string
+      mimeType: MimeType
     }
 
     const endpoint = `https://${process.env.GATSBY_STORE_MY_SHOPIFY}/admin/api/${process.env.GATSBY_SHOPIFY_API_VERSION}/graphql.json`
@@ -36,6 +39,9 @@ export default async function handler(
                 ... on MediaImage {
                   id
                 }
+                ... on GenericFile {
+                  id
+                }
               }
               userErrors {
                 field
@@ -48,7 +54,7 @@ export default async function handler(
           files: [
             {
               alt: fileName,
-              contentType: "IMAGE",
+              contentType: mimeType === "application/pdf" ? "FILE" : "IMAGE",
               originalSource: resourceUrl,
             },
           ],
@@ -67,7 +73,7 @@ export default async function handler(
 
     // Poll until the file is ready (with timeout)
     let fileUrl = null
-    const maxAttempts = 10
+    const maxAttempts = 20
     const delayMs = 1000
 
     for (let i = 0; i < maxAttempts; i++) {
@@ -89,6 +95,10 @@ export default async function handler(
                     url
                   }
                 }
+                ... on GenericFile {
+                  id
+                  url
+                }
               }
             }
           `,
@@ -102,7 +112,7 @@ export default async function handler(
 
       console.log(`Poll attempt ${i + 1}:`, JSON.stringify(queryData, null, 2))
 
-      fileUrl = queryData.data.node?.image?.url
+      fileUrl = queryData.data.node?.image?.url || queryData.data.node?.url
 
       if (fileUrl) {
         console.log("File is ready! URL:", fileUrl)

@@ -134,6 +134,7 @@ export const useConfirmPrescription = (
         body: JSON.stringify({
           resourceUrl,
           fileName: selectedFile.name,
+          mimeType: selectedFile.type,
         }),
       })
 
@@ -206,6 +207,7 @@ export const useConfirmPrescription = (
           resourceId: uploadedFile ? uploadedFile.id : null,
           resourceUrl,
           fileName: selectedFile.name,
+          mimeType: selectedFile.type,
         }),
       })
 

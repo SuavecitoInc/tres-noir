@@ -156,6 +156,7 @@ const PrescriptionUploadConfirm = ({
     setShowSuccess,
     showLoader,
     handleUpdateUploadPrescription,
+    handleUploadPrescription,
     updateOrderNote,
     markMetafieldAsTrue,
   } = useConfirmPrescription(orderId, frameIdentifier)
@@ -189,6 +190,11 @@ const PrescriptionUploadConfirm = ({
     return newUrl.toString()
   }
 
+  const fileSrc = dropVersionFromImageUrl(imgSrc)
+  const isPDF = fileSrc.endsWith(".pdf")
+
+  console.log("IS PDF?", isPDF, imgSrc)
+
   return (
     <Component>
       <>
@@ -198,23 +204,39 @@ const PrescriptionUploadConfirm = ({
         <div>
           {!showSuccess && !showLoader && (
             <>
-              {!imgSrc ? (
+              {!fileSrc ? (
                 <p>
                   Something went wrong with the prescription image. Please
                   re-upload it below. If you continue to have issues, please
                   contact us.
                 </p>
               ) : (
-                <img
-                  src={dropVersionFromImageUrl(imgSrc)}
-                  alt={`Prescription for ${index}. ${frameName}`}
-                  style={{
-                    maxWidth: "800px",
-                    width: "100%",
-                    height: "auto",
-                    border: "1px solid #ccc",
-                  }}
-                />
+                <>
+                  {isPDF ? (
+                    <object
+                      data={fileSrc}
+                      type="application/pdf"
+                      width="100%"
+                      height="500px"
+                    >
+                      <p>
+                        Unable to display PDF file.{" "}
+                        <a href="your-document.pdf">Download instead</a>.
+                      </p>
+                    </object>
+                  ) : (
+                    <img
+                      src={fileSrc}
+                      alt={`Prescription for ${index}. ${frameName}`}
+                      style={{
+                        maxWidth: "800px",
+                        width: "100%",
+                        height: "auto",
+                        border: "1px solid #ccc",
+                      }}
+                    />
+                  )}
+                </>
               )}
             </>
           )}
@@ -237,7 +259,7 @@ const PrescriptionUploadConfirm = ({
                   type="file"
                   name="prescriptionImage"
                   id="prescriptionImage"
-                  accept="image/*,application/pdf"
+                  accept={isPDF ? "application/pdf" : "image/*"}
                   onChange={
                     /* @ts-ignore */
                     evt => setSelectedFile(evt.target.files[0])
@@ -245,7 +267,11 @@ const PrescriptionUploadConfirm = ({
                 />
                 <button
                   className="btn"
-                  onClick={evt => handleUpdateUploadPrescription(uploadedFile)}
+                  onClick={evt =>
+                    isPDF
+                      ? handleUploadPrescription()
+                      : handleUpdateUploadPrescription(uploadedFile)
+                  }
                 >
                   Upload
                 </button>

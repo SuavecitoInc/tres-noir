@@ -80,6 +80,7 @@ const PrescriptionUpload = ({ uploadedFile, isNowValid }: Props) => {
         body: JSON.stringify({
           resourceUrl,
           fileName: file.name,
+          mimeType: file.type,
         }),
       })
 
@@ -145,7 +146,8 @@ const PrescriptionUpload = ({ uploadedFile, isNowValid }: Props) => {
       <input
         ref={fileInput}
         type="file"
-        accept=".jpg,.jpeg,.png"
+        // accept=".jpg,.jpeg,.png"
+        accept="image/*,application/pdf"
         onChange={handleFileChange}
       />
       {uploadedFile ? (

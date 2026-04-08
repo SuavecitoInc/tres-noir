@@ -5,6 +5,8 @@ import type { GatsbyFunctionRequest, GatsbyFunctionResponse } from "gatsby"
 // Helper to wait
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
+type MimeType = "application/pdf" | "image/jpeg" | "image/png" | string
+
 export default async function handler(
   req: GatsbyFunctionRequest,
   res: GatsbyFunctionResponse
@@ -14,10 +16,11 @@ export default async function handler(
   }
 
   try {
-    const { resourceId, resourceUrl, fileName } = req.body as {
+    const { resourceId, resourceUrl, fileName, mimeType } = req.body as {
       resourceId: string
       resourceUrl: string
       fileName: string
+      mimeType: MimeType
     }
 
     const endpoint = `https://${process.env.GATSBY_STORE_MY_SHOPIFY}/admin/api/${process.env.GATSBY_SHOPIFY_API_VERSION}/graphql.json`
@@ -37,6 +40,10 @@ export default async function handler(
                 ... on MediaImage {
                   id
                 }
+                ... on GenericFile {
+                  id
+                }
+
               }
               userErrors {
                 field
@@ -50,8 +57,6 @@ export default async function handler(
             {
               id: resourceId,
               alt: fileName,
-              // contentType: "IMAGE",
-              // originalSource: resourceUrl,
               previewImageSource: resourceUrl,
             },
           ],
@@ -66,7 +71,7 @@ export default async function handler(
       throw new Error(data.data.fileUpdate.userErrors[0].message)
     }
 
-    const fileId = data.data.fileUpdate.files[0].id
+    const fileId = data.data.fileUpdate.files[0].id || resourceId
 
     // Poll until the file is ready (with timeout)
     let fileUrl = null
@@ -92,6 +97,10 @@ export default async function handler(
                     url
                   }
                 }
+                ... on GenericFile {
+                  id
+                  url
+                }
               }
             }
           `,
@@ -105,7 +114,7 @@ export default async function handler(
 
       console.log(`Poll attempt ${i + 1}:`, JSON.stringify(queryData, null, 2))
 
-      fileUrl = queryData.data.node?.image?.url
+      fileUrl = queryData.data.node?.image?.url || queryData.data.node?.url
 
       if (fileUrl) {
         console.log("File is ready! URL:", fileUrl)

@@ -81,6 +81,11 @@ export const useLensColors = () => {
             gatsbyImageData(quality: 40, height: 55)
           }
         }
+        light_blue: file(relativePath: { eq: "light-blue-lens.png" }) {
+          childImageSharp {
+            gatsbyImageData(quality: 40, height: 55)
+          }
+        }
       }
     `
   )

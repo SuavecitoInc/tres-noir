@@ -86,6 +86,7 @@ enum LENS_COLORS {
   ROSE = "rose",
   PURPLE = "purple",
   BOTTLE_GREEN = "bottle green",
+  LIGHT_BLUE = "light blue",
 }
 
 const ProductDetails: React.FC<Props> = ({
@@ -151,6 +152,9 @@ const ProductDetails: React.FC<Props> = ({
           break
         case LENS_COLORS.BOTTLE_GREEN:
           imageData = lensColors.bottle_green
+          break
+        case LENS_COLORS.LIGHT_BLUE:
+          imageData = lensColors.light_blue
           break
         default:
           imageData = lensColors.clear

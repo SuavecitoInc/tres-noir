@@ -154,7 +154,12 @@ export const rebuildBundles = (cart: Cart) => {
       if (item.merchandise.product.handle === "gift-card") {
         itemsMap.set(item.merchandise.id, [{ shopifyItem: item }])
       } else {
-        itemsMap.set(item.merchandise.sku, [{ shopifyItem: item }])
+        // if the item has a discount applied, we want to treat it as a separate item in the cart to avoid issues with the bundle logic
+        const isDiscounted = item.discountAllocations.length > 0
+        const key = isDiscounted
+          ? item.merchandise.sku + "-discounted"
+          : item.merchandise.sku
+        itemsMap.set(key, [{ shopifyItem: item }])
       }
     } else {
       // custom item
@@ -187,10 +192,14 @@ export const rebuildBundles = (cart: Cart) => {
   itemsMap.forEach((value, key) => {
     // normal item
     if (value.length === 1) {
+      // clean up image storage key if item is discounted
+      const imageKey = key.includes("-discounted")
+        ? key.replace("-discounted", "")
+        : key
       itemsToAdd.push({
         id: key,
         lineItems: value,
-        image: getImageFromLocalStorage(key),
+        image: getImageFromLocalStorage(imageKey),
         isCustom: false,
       })
     }

@@ -304,8 +304,6 @@ const Cart = ({
     updateShipInsureAttribute,
   } = useCart()
 
-  console.log("Rendering Cart with cart data:", cart)
-
   const { rxInfoDispatch } = useContext(RxInfoContext)
 
   const { setEditData } = useCustomizer()
@@ -325,7 +323,6 @@ const Cart = ({
   }, [cart])
 
   const editGlasses = (item: tnItem) => {
-    console.log("Editing glasses item:", item)
     const isBrowser: boolean = typeof window !== "undefined"
     if (isBrowser) {
       const customsResume = localStorage.getItem("customs-resume")
@@ -373,11 +370,9 @@ const Cart = ({
         const step1Title = resumedSelectedVariants.step1.product.title
         const pathSelected = step1Title.split(" - ")[0]
         if (pathSelected) {
-          console.log("Path selected for editing:", pathSelected)
           // setSelectedCollectionPath(pathSelected as AvailablePath)
           const glassesType = item.lineItems[0].shopifyItem.merchandise.product
             .productType as "Glasses" | "Safety Glasses"
-          console.log("Glasses type for editing:", glassesType)
           setEditData(resumedSelectedVariants, glassesType, pathSelected)
         }
 

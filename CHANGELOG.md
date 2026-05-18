@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## v1.13.2 - 2026-05-15
+
+**Breaking Changes**
+
+- Updated the Cart Context to update the Buyer Identity. This is now required due to B2B features being enabled in the Shopify Admin.
+- Updated bundle logic to account for discounted items. Previously, if a discounted item was added to the cart, it would be treated as the same item as the non-discounted version, which caused issues with the bundle logic. Now, discounted items are treated as separate items in the cart to avoid these issues. This change may require updates to any custom logic that relies on the cart structure or item identification.
+
 ## v1.13.1 - 2026-01-15
 
 **Breaking Changes**

@@ -12,7 +12,8 @@ import {
   getCustomerInfo,
   getCustomerOrders,
 } from "../../api/customerAccountClient"
-import type { CustomerInfo } from "../../types/customer"
+// import type { CustomerInfo } from "../../types/customer"
+import type { CustomerData } from "./types"
 import type { Order } from "../../types/customer-orders"
 
 const DEBUG = false
@@ -32,7 +33,7 @@ export const CustomerProvider = ({ children }: { children: ReactNode }) => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
-  const [customerData, setCustomerData] = useState<CustomerInfo | null>(null)
+  const [customerData, setCustomerData] = useState<CustomerData | null>(null)
   const [ordersData, setOrdersData] = useState<{ node: Order }[] | null>(null)
 
   const loadData = useCallback(async () => {
@@ -43,6 +44,8 @@ export const CustomerProvider = ({ children }: { children: ReactNode }) => {
       if (isAuthenticated && accessToken) {
         setIsLoading(true)
         const customerInfo = await getCustomerInfo(accessToken)
+
+        customerInfo.data.accessToken = accessToken // Add accessToken to customerInfo
 
         setCustomerData(customerInfo)
 

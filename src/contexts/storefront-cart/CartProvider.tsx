@@ -27,6 +27,7 @@ import {
   cartLinesRemove,
   cartLinesUpdate,
   cartAttributesUpdate,
+  cartBuyerIdentityUpdate,
 } from "./handlers"
 import {
   addCustomToLocalStorage,
@@ -38,6 +39,7 @@ import {
 } from "./helpers"
 import { IGatsbyImageData } from "gatsby-plugin-image"
 import { SelectedVariants } from "../../contexts/customizer/types"
+import { useCustomer } from "../customer"
 
 type Props = {
   children: React.ReactNode | React.ReactNode[]
@@ -46,6 +48,7 @@ type Props = {
 const isBrowser = typeof window !== "undefined"
 
 export function CartProvider({ children }: Props) {
+  const { customerData } = useCustomer()
   const { renderErrorModal } = useContext(ErrorModalContext)
   // State
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
@@ -273,6 +276,8 @@ export function CartProvider({ children }: Props) {
             lines: lineItems,
           },
         })
+        // delete
+        console.log("addProductToCart response", preShipInsure)
 
         if (!preShipInsure.data?.cartLinesAdd?.cart) {
           throw new Error("Failed to add item to cart")
@@ -318,6 +323,9 @@ export function CartProvider({ children }: Props) {
             lines,
           },
         })
+
+        // delete
+        console.log("addProductsToCart response", preShipInsure)
 
         if (!preShipInsure.data?.cartLinesAdd?.cart) {
           throw new Error("Failed to add item to cart")
@@ -627,6 +635,9 @@ export function CartProvider({ children }: Props) {
           },
         })
 
+        // delete
+        console.log("addProductCustomToCart response", preShipInsure)
+
         if (!preShipInsure.data?.cartLinesAdd?.cart) {
           console.error("No cart returned", preShipInsure, lineItems)
           throw new Error("Failed to add item to cart")
@@ -690,6 +701,9 @@ export function CartProvider({ children }: Props) {
             })),
           },
         })
+
+        // delete
+        console.log("addSunglassesToCart response", preShipInsure)
 
         if (!preShipInsure.data?.cartLinesAdd?.cart) {
           throw new Error("Failed to add item to cart")
@@ -1011,6 +1025,58 @@ export function CartProvider({ children }: Props) {
     },
     [cart]
   )
+
+  const updateCartBuyerIdentity = useCallback(
+    async (buyerIdentity: { email: string; customerAccessToken: string }) => {
+      try {
+        if (!cart) return
+
+        setIsRemovingFromCart(true)
+
+        const response = await client.request(cartBuyerIdentityUpdate, {
+          variables: {
+            cartId: cart.id,
+            buyerIdentity,
+          },
+        })
+
+        if (!response.data?.cartBuyerIdentityUpdate?.cart) {
+          throw new Error("Failed to update cart buyer identity")
+        }
+
+        const updatedCart = response.data?.cartBuyerIdentityUpdate?.cart
+
+        setCart(updatedCart)
+        setIsRemovingFromCart(false)
+      } catch (err) {
+        console.error("error", err)
+        Sentry.captureException(err)
+        setIsRemovingFromCart(false)
+      }
+    },
+    [cart, customerData]
+  )
+
+  useEffect(() => {
+    console.log(
+      "customer data changed, updating cart buyer identity",
+      customerData
+    )
+    if (customerData) {
+      const data = {
+        email: customerData?.data?.customer?.emailAddress?.emailAddress,
+        customerAccessToken: customerData?.data?.accessToken,
+      }
+      updateCartBuyerIdentity(data)
+    } else {
+      console.log("customer data is null, removing cart buyer identity")
+      updateCartBuyerIdentity({
+        email: "",
+        customerAccessToken: "",
+      })
+      // if customer logs out, we want to remove buyer identity from cart so that it doesn't interfere with new customer creating a cart
+    }
+  }, [customerData])
 
   interface LocalCart {
     value: any

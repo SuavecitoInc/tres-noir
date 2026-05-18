@@ -4,6 +4,7 @@ import cartLinesAdd from "./cart-lines-add"
 import cartLinesRemove from "./cart-lines-remove"
 import cartLinesUpdate from "./cart-lines-update"
 import cartAttributesUpdate from "./cart-attributes-update"
+import cartBuyerIdentityUpdate from "./cart-buyer-identity-update"
 
 export {
   cartCreateMutation,
@@ -12,4 +13,5 @@ export {
   cartLinesRemove,
   cartLinesUpdate,
   cartAttributesUpdate,
+  cartBuyerIdentityUpdate,
 }

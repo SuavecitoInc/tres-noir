@@ -3,6 +3,12 @@ export const CART_FRAGMENT = `#graphql
     id
     checkoutUrl
     createdAt
+    buyerIdentity {
+      email
+      customer {
+        id
+      }
+    }
     attributes {
       key
       value

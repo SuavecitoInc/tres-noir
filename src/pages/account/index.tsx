@@ -117,7 +117,7 @@ const AccountPage = () => {
           <div className="content">
             <h1>Account</h1>
             <button className="login-button" onClick={login}>
-              Login with Shopify
+              Login
             </button>
           </div>
         </LoginView>

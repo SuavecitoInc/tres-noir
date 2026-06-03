@@ -37,17 +37,47 @@ interface FormData {
 // }
 
 // create a function to create an hmac sha256 hash
-function createHmacSha256Hash(data: string): string {
-  // const secret = process.env.SECRET_KEY as string
-  const secret = process.env.SUPER_SECRET as string
+function createHmacSha256Hash(secret: string, data: string): string {
   if (!secret) {
-    throw new Error("SUPER_SECRET is not defined")
+    throw new Error("Secret key is not defined")
   }
   const hmac = crypto.createHmac("sha256", secret).update(data).digest("base64")
   return hmac
 }
 
+async function createDealerApplicationPDF(data: FormData) {
+  const secret = process.env.SECRET_KEY as string
+  const endpoint = process.env.TN_DEALER_APPLICATION_ENDPOINT as string
+
+  const patchedData = {
+    ...data,
+    // pdf generator expects these fields to be called "owners" and "authorizedBuyer"
+    owners: `${data.ownerFirstName} ${data.ownerLastName}`,
+    authorizedBuyerContact: `${data.authorizedBuyerFirstName} ${data.authorizedBuyerLastName}`,
+  }
+
+  const body = JSON.stringify(patchedData)
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Tres-Noir-Hmac-Sha256": createHmacSha256Hash(secret, body),
+    },
+    body: body,
+  })
+
+  const responseJson: any = await response.json()
+  console.log("Response from endpoint:", responseJson)
+  if (responseJson.error) {
+    console.log("Error from endpoint:", responseJson.error)
+    return { success: false, error: responseJson.error }
+  }
+
+  return { success: true, data: responseJson }
+}
+
 async function createNetSuiteLead(data: FormData) {
+  const secret = process.env.SUPER_SECRET as string
   const endpoint = process.env.API_ENDPOINT as string
 
   // patch data with subsidiary
@@ -57,7 +87,10 @@ async function createNetSuiteLead(data: FormData) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "X-Suavecito-Hmac-Sha256": createHmacSha256Hash(JSON.stringify(data)),
+      "X-Suavecito-Hmac-Sha256": createHmacSha256Hash(
+        secret,
+        JSON.stringify(data)
+      ),
     },
     body: JSON.stringify(data),
   })
@@ -78,6 +111,10 @@ export default async function newDealerApplication(
     if (!body) {
       throw new Error("No body found")
     }
+
+    // uncomment to re-enable PDF generation, but be aware that it will slow down the response time significantly
+    // (this can be moved to the queue to run as a background service)
+    // await createDealerApplicationPDF(body as FormData)
 
     const response = await createNetSuiteLead(body as FormData)
 

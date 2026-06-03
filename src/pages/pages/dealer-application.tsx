@@ -9,7 +9,7 @@ import styled from "styled-components"
 import Layout from "../../components/layout"
 import SEO from "../../components/seo"
 import Spinner from "../../components/spinner"
-// import { countries } from "../../data/countries"
+import { countries } from "../../data/countries-with-provinces"
 
 const Page = styled.div`
   h3 {
@@ -143,12 +143,15 @@ interface InitialValue {
   storeTel: string
   email: string
   address: string
+  address2?: string
   city: string
   stateProvince: string
   postalCode: string
   country: string
-  owners: string
-  authorizedBuyerContact: string
+  ownerFirstName: string
+  ownerLastName: string
+  authorizedBuyerFirstName: string
+  authorizedBuyerLastName: string
   businessType: string
   question1: string
   averageRetailPrice: string
@@ -169,8 +172,10 @@ const initialValue: InitialValue = {
   stateProvince: "",
   postalCode: "",
   country: "",
-  owners: "",
-  authorizedBuyerContact: "",
+  ownerFirstName: "",
+  ownerLastName: "",
+  authorizedBuyerFirstName: "",
+  authorizedBuyerLastName: "",
   businessType: "",
   question1: "",
   averageRetailPrice: "",
@@ -184,27 +189,32 @@ const initialValue: InitialValue = {
 
 // uncomment this to use test data
 // const initialValue: InitialValue = {
-//   storeName: "Demo Store",
-//   storeTel: "1234567890",
+//   storeName: "Demo Store 2",
+//   storeTel: "7143886920",
 //   email: "jriv@suavecito.com",
-//   address: "123 Test St",
-//   city: "Test City",
-//   stateProvince: "Test State",
-//   postalCode: "12345",
-//   country: "Test Country",
-//   owners: "Test Owner",
-//   authorizedBuyerContact: "Test Contact",
+//   address: "2831 W 1st Street",
+//   address2: "",
+//   city: "Santa Ana",
+//   stateProvince: "California",
+//   postalCode: "92703",
+//   country: "United States",
+//   ownerFirstName: "Jose",
+//   ownerLastName: "Rivera",
+//   authorizedBuyerFirstName: "Jose",
+//   authorizedBuyerLastName: "Rivera",
 //   businessType: "Proprietorship",
-//   question1: "Test Question 1",
-//   averageRetailPrice: "Less than $25",
-//   brand1: "Test Brand 1",
-//   brand2: "Test Brand 2",
-//   brand3: "Test Brand 3",
-//   question4: "Test Question 4",
-//   question5: "Test Question 5",
-//   question6: "Test Question 6",
+//   question1: "Oakley, Ray-Ban, Costa Del Mar",
+//   averageRetailPrice: "$75 - $150",
+//   brand1: "Oakley",
+//   brand2: "Ray-Ban",
+//   brand3: "Costa Del Mar",
+//   question4: "Middle Aged Men with Disposable Income",
+//   question5:
+//     "The worlds premier specialty retailer for premium sunglasses and eyewear accessories.",
+//   question6: "N/A",
 // }
 
+const DEFAULT_COUNTRY = "United States"
 const todaysDate = new Date()
 const formattedDate = `${(todaysDate.getMonth() + 1)
   .toString()
@@ -228,14 +238,19 @@ const Contact = () => {
       .required("Email is required")
       .email("Email is not valid"),
     address: yup.string().required("Address is required"),
+    address2: yup.string(),
     city: yup.string().required("City is required"),
     stateProvince: yup.string().required("State / Province is required"),
     postalCode: yup.string().required("Postal Code is required"),
     country: yup.string().required("Country is required"),
-    owners: yup.string().required("Owner(s) is required"),
-    authorizedBuyerContact: yup
+    ownerFirstName: yup.string().required("Owner first name is required"),
+    ownerLastName: yup.string().required("Owner last name is required"),
+    authorizedBuyerFirstName: yup
       .string()
-      .required("Authorized Buyer / Contact is required"),
+      .required("Authorized Buyer first name is required"),
+    authorizedBuyerLastName: yup
+      .string()
+      .required("Authorized Buyer last name is required"),
     businessType: yup.string().required("Business Type is required"),
     question1: yup.string().required("Question 1 is required"),
     averageRetailPrice: yup
@@ -260,7 +275,36 @@ const Contact = () => {
   const [isSuccess, setIsSuccess] = useState(false)
   const [isError, setIsError] = useState(false)
 
+  const [selectedCountry, setSelectedCountry] = useState(DEFAULT_COUNTRY)
+  const [selectedProvince, setSelectedProvince] = useState("California")
+  const [currentProvinces, setCurrentProvinces] = useState<string[]>(
+    countries[DEFAULT_COUNTRY].provinces
+      ? Object.keys(countries[DEFAULT_COUNTRY].provinces)
+      : []
+  )
+
   const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null)
+
+  const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedCountry = e?.currentTarget.value as any
+    const country = countries[selectedCountry]
+    const provinces = country?.provinces ? Object.keys(country.provinces) : []
+
+    setSelectedCountry(selectedCountry)
+    setCurrentProvinces(provinces)
+    if (provinces.length > 0) {
+      setSelectedProvince(provinces[0])
+    } else {
+      setSelectedProvince("")
+    }
+  }
+
+  const handleStateProvinceChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const selectedProvince = e?.currentTarget.value as any
+    setSelectedProvince(selectedProvince)
+  }
 
   const resetState = () => {
     setIsError(false)
@@ -276,6 +320,24 @@ const Contact = () => {
       resetState()
       setIsSubmitting(true)
       console.log("Form submitted with data:", data)
+
+      // patch country and province codes before submission
+      const countryData = countries[data.country]
+      const countryCode = countryData?.code || ""
+      let provinceCode = ""
+      if (countryData?.provinces) {
+        provinceCode = countryData.provinces[data.stateProvince].code || ""
+      }
+
+      if (countryCode) {
+        data.country = countryCode
+      }
+
+      if (provinceCode) {
+        data.stateProvince = provinceCode
+      }
+
+      console.log("Form data with country and province codes:", data)
 
       const response = await fetch("/api/newDealerApplication", {
         method: "POST",
@@ -371,43 +433,87 @@ const Contact = () => {
             </section>
             <section className="store-address">
               <h3>Store Address</h3>
-              <div className="form-row address-row-1">
+              <div className="form-row">
                 <div className="form-column">
                   <div className="form-row-item">
-                    <label htmlFor="address">Address</label>
-                    <input
-                      {...form.register("address")}
-                      id="address"
+                    <label htmlFor="country">Country</label>
+                    <select
+                      {...form.register("country", {
+                        onChange: handleCountryChange,
+                      })}
+                      id="country"
                       required
-                    />
+                      defaultValue={DEFAULT_COUNTRY}
+                    >
+                      {Object.keys(countries).map(country => (
+                        <option key={countries[country].code} value={country}>
+                          {country}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div className="error-message">
-                    {form.formState.errors.address?.message && (
-                      <p>{form.formState.errors.address?.message}</p>
-                    )}
-                  </div>
-                </div>
-                <div className="form-column">
-                  <div className="form-row-item">
-                    <label htmlFor="city">City</label>
-                    <input {...form.register("city")} id="city" required />
-                  </div>
-                  <div className="error-message">
-                    {form.formState.errors.city?.message && (
-                      <p>{form.formState.errors.city?.message}</p>
+                    {form.formState.errors.country?.message && (
+                      <p>{form.formState.errors.country?.message}</p>
                     )}
                   </div>
                 </div>
               </div>
-              <div className="form-row address-row-2">
+              <div className="form-row">
+                <div className="form-row-item">
+                  <label htmlFor="address">Address</label>
+                  <input {...form.register("address")} id="address" required />
+                </div>
+                <div className="error-message">
+                  {form.formState.errors.address?.message && (
+                    <p>{form.formState.errors.address?.message}</p>
+                  )}
+                </div>
+              </div>
+              <div className="form-row">
+                <div className="form-row-item">
+                  <label htmlFor="address2">Address 2</label>
+                  <input {...form.register("address2")} id="address2" />
+                </div>
+                <div className="error-message">
+                  {form.formState.errors.address2?.message && (
+                    <p>{form.formState.errors.address2?.message}</p>
+                  )}
+                </div>
+              </div>
+              <div className="form-row">
+                <div className="form-row-item">
+                  <label htmlFor="city">City</label>
+                  <input {...form.register("city")} id="city" required />
+                </div>
+                <div className="error-message">
+                  {form.formState.errors.city?.message && (
+                    <p>{form.formState.errors.city?.message}</p>
+                  )}
+                </div>
+              </div>
+              <div className="form-row">
                 <div className="form-column">
                   <div className="form-row-item">
                     <label htmlFor="state-province">State / Province</label>
-                    <input
-                      {...form.register("stateProvince")}
+
+                    <select
+                      {...form.register("stateProvince", {
+                        onChange: handleStateProvinceChange,
+                      })}
                       id="state-province"
+                      value={selectedProvince}
                       required
-                    />
+                    >
+                      <option value="">Select State / Province</option>
+                      {selectedCountry &&
+                        currentProvinces &&
+                        currentProvinces.map(province => (
+                          <option key={province} value={province}>
+                            {province}
+                          </option>
+                        ))}
+                    </select>
                   </div>
                   <div className="error-message">
                     {form.formState.errors.stateProvince?.message && (
@@ -427,37 +533,6 @@ const Contact = () => {
                   <div className="error-message">
                     {form.formState.errors.postalCode?.message && (
                       <p>{form.formState.errors.postalCode?.message}</p>
-                    )}
-                  </div>
-                </div>
-                <div className="form-column">
-                  <div className="form-row-item">
-                    <label htmlFor="country">Country</label>
-                    <input
-                      {...form.register("country")}
-                      id="country"
-                      required
-                    />
-                    {/* <select
-                      {...form.register("country")}
-                      id="country"
-                      required
-                      defaultValue="US"
-                    >
-                      {countries.map(country => (
-                        <option
-                          key={country.code}
-                          value={country.code}
-                          selected={country.code === "US"}
-                        >
-                          {country.name}
-                        </option>
-                      ))}
-                    </select> */}
-                  </div>
-                  <div className="error-message">
-                    {form.formState.errors.country?.message && (
-                      <p>{form.formState.errors.country?.message}</p>
                     )}
                   </div>
                 </div>
@@ -499,12 +574,26 @@ const Contact = () => {
               <div className="form-row">
                 <div className="form-column">
                   <div className="form-row-item">
-                    <label htmlFor="owners">Owner(s)</label>
-                    <input {...form.register("owners")} id="owners" required />
+                    <label htmlFor="owners">Owner</label>
+                    <input
+                      {...form.register("ownerFirstName")}
+                      id="owner-first-name"
+                      placeholder="First Name"
+                      required
+                    />
+                    <input
+                      {...form.register("ownerLastName")}
+                      id="owner-last-name"
+                      placeholder="Last Name"
+                      required
+                    />
                   </div>
                   <div className="error-message">
-                    {form.formState.errors.owners?.message && (
-                      <p>{form.formState.errors.owners?.message}</p>
+                    {form.formState.errors.ownerFirstName?.message && (
+                      <p>{form.formState.errors.ownerFirstName?.message}</p>
+                    )}
+                    {form.formState.errors.ownerLastName?.message && (
+                      <p>{form.formState.errors.ownerLastName?.message}</p>
                     )}
                   </div>
                 </div>
@@ -516,15 +605,31 @@ const Contact = () => {
                       Authorized Buyer / Contact
                     </label>
                     <input
-                      {...form.register("authorizedBuyerContact")}
-                      id="authorized-buyer-contact"
+                      {...form.register("authorizedBuyerFirstName")}
+                      id="authorized-buyer-first-name"
+                      placeholder="First Name"
+                      required
+                    />
+                    <input
+                      {...form.register("authorizedBuyerLastName")}
+                      id="authorized-buyer-last-name"
+                      placeholder="Last Name"
                       required
                     />
                   </div>
                   <div className="error-message">
-                    {form.formState.errors.authorizedBuyerContact?.message && (
+                    {form.formState.errors.authorizedBuyerFirstName
+                      ?.message && (
                       <p>
-                        {form.formState.errors.authorizedBuyerContact?.message}
+                        {
+                          form.formState.errors.authorizedBuyerFirstName
+                            ?.message
+                        }
+                      </p>
+                    )}
+                    {form.formState.errors.authorizedBuyerLastName?.message && (
+                      <p>
+                        {form.formState.errors.authorizedBuyerLastName?.message}
                       </p>
                     )}
                   </div>

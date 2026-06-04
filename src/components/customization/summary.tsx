@@ -219,23 +219,28 @@ const Step5 = (props: {
     const isReaders = step1.product.title.includes("Reader's")
     if (isRxAble) {
       if (isReaders) {
-        step1Item.attributes.push({
+        // step1Item.attributes.push({
+        //   key: "Prescription",
+        //   value: JSON.stringify({ lensPower: rxInfo.lensPower }),
+        // })
+        // update frame item with prescription attributes for NetSuite integration
+        frameVariant.attributes.push({
           key: "Prescription",
           value: JSON.stringify({ lensPower: rxInfo.lensPower }),
         })
       } else if (rxInfo?.uploadedFile) {
-        step1Item.attributes.push({
-          key: "Prescription",
-          value: "Uploaded File",
-        })
-        step1Item.attributes.push({
-          key: "_file_id",
-          value: rxInfo.uploadedFile.id,
-        })
-        step1Item.attributes.push({
-          key: "_file_url",
-          value: rxInfo.uploadedFile.url,
-        })
+        // step1Item.attributes.push({
+        //   key: "Prescription",
+        //   value: "Uploaded File",
+        // })
+        // step1Item.attributes.push({
+        //   key: "_file_id",
+        //   value: rxInfo.uploadedFile.id,
+        // })
+        // step1Item.attributes.push({
+        //   key: "_file_url",
+        //   value: rxInfo.uploadedFile.url,
+        // })
         // update frame item with prescription attributes for NetSuite integration
         frameVariant.attributes.push({
           key: "Prescription",
@@ -250,13 +255,13 @@ const Step5 = (props: {
           value: rxInfo.uploadedFile.url,
         })
       } else {
-        step1Item.attributes.push({
-          key: "Prescription",
-          value: JSON.stringify({
-            right: rxInfo.right,
-            left: rxInfo.left,
-          }),
-        })
+        // step1Item.attributes.push({
+        //   key: "Prescription",
+        //   value: JSON.stringify({
+        //     right: rxInfo.right,
+        //     left: rxInfo.left,
+        //   }),
+        // })
         // update frame item with prescription attributes for NetSuite integration
         frameVariant.attributes.push({
           key: "Prescription",
@@ -267,10 +272,10 @@ const Step5 = (props: {
         })
       }
     } else {
-      step1Item.attributes.push({
-        key: "Prescription",
-        value: "Non-Prescription",
-      })
+      // step1Item.attributes.push({
+      //   key: "Prescription",
+      //   value: "Non-Prescription",
+      // })
       // update frame item with prescription attributes for NetSuite integration
       frameVariant.attributes.push({
         key: "Prescription",

@@ -216,7 +216,9 @@ const Step5 = (props: {
     // add custom attributes
     const step1Item = stepItems[0]
     const isRxAble = !step1.product.title.includes("Non-Prescription")
-    const isReaders = step1.product.title.includes("Reader's")
+    const isReaders =
+      step1.product.title.includes("Readers") ||
+      step1.product.title.includes("Reader's")
     if (isRxAble) {
       if (isReaders) {
         // step1Item.attributes.push({

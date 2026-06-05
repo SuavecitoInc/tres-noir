@@ -221,68 +221,68 @@ const Step5 = (props: {
       step1.product.title.includes("Reader's")
     if (isRxAble) {
       if (isReaders) {
-        // step1Item.attributes.push({
-        //   key: "Prescription",
-        //   value: JSON.stringify({ lensPower: rxInfo.lensPower }),
-        // })
-        // update frame item with prescription attributes for NetSuite integration
-        frameVariant.attributes.push({
+        step1Item.attributes.push({
           key: "Prescription",
           value: JSON.stringify({ lensPower: rxInfo.lensPower }),
         })
-      } else if (rxInfo?.uploadedFile) {
-        // step1Item.attributes.push({
-        //   key: "Prescription",
-        //   value: "Uploaded File",
-        // })
-        // step1Item.attributes.push({
-        //   key: "_file_id",
-        //   value: rxInfo.uploadedFile.id,
-        // })
-        // step1Item.attributes.push({
-        //   key: "_file_url",
-        //   value: rxInfo.uploadedFile.url,
-        // })
         // update frame item with prescription attributes for NetSuite integration
-        frameVariant.attributes.push({
+        // frameVariant.attributes.push({
+        //   key: "Prescription",
+        //   value: JSON.stringify({ lensPower: rxInfo.lensPower }),
+        // })
+      } else if (rxInfo?.uploadedFile) {
+        step1Item.attributes.push({
           key: "Prescription",
           value: "Uploaded File",
         })
-        frameVariant.attributes.push({
+        step1Item.attributes.push({
           key: "_file_id",
           value: rxInfo.uploadedFile.id,
         })
-        frameVariant.attributes.push({
+        step1Item.attributes.push({
           key: "_file_url",
           value: rxInfo.uploadedFile.url,
         })
-      } else {
-        // step1Item.attributes.push({
-        //   key: "Prescription",
-        //   value: JSON.stringify({
-        //     right: rxInfo.right,
-        //     left: rxInfo.left,
-        //   }),
-        // })
         // update frame item with prescription attributes for NetSuite integration
-        frameVariant.attributes.push({
+        // frameVariant.attributes.push({
+        //   key: "Prescription",
+        //   value: "Uploaded File",
+        // })
+        // frameVariant.attributes.push({
+        //   key: "_file_id",
+        //   value: rxInfo.uploadedFile.id,
+        // })
+        // frameVariant.attributes.push({
+        //   key: "_file_url",
+        //   value: rxInfo.uploadedFile.url,
+        // })
+      } else {
+        step1Item.attributes.push({
           key: "Prescription",
           value: JSON.stringify({
             right: rxInfo.right,
             left: rxInfo.left,
           }),
         })
+        // update frame item with prescription attributes for NetSuite integration
+        // frameVariant.attributes.push({
+        //   key: "Prescription",
+        //   value: JSON.stringify({
+        //     right: rxInfo.right,
+        //     left: rxInfo.left,
+        //   }),
+        // })
       }
     } else {
-      // step1Item.attributes.push({
-      //   key: "Prescription",
-      //   value: "Non-Prescription",
-      // })
-      // update frame item with prescription attributes for NetSuite integration
-      frameVariant.attributes.push({
+      step1Item.attributes.push({
         key: "Prescription",
         value: "Non-Prescription",
       })
+      // update frame item with prescription attributes for NetSuite integration
+      // frameVariant.attributes.push({
+      //   key: "Prescription",
+      //   value: "Non-Prescription",
+      // })
     }
 
     // if step2 item selected add it

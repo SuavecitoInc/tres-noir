@@ -502,12 +502,28 @@ const LearnMore = ({ data: { contentfulProduct } }: any) => {
           <p className="h2">WHAT YOU GET</p>
           <p>{text.whatYouGet}</p>
           <div className="wrapper">
-            <StaticImage
+            {contentfulProduct.whatYouGetImage ? (
+              <GatsbyImage
+                image={
+                  contentfulProduct.whatYouGetImage?.localFile?.childImageSharp
+                    ?.data
+                }
+                alt="Glasses case and cleaning cloth"
+              />
+            ) : (
+              <StaticImage
+                src="../../images/CaseCloth.jpg"
+                alt="Glasses case and cleaning cloth"
+                layout="constrained"
+                placeholder="blurred"
+              />
+            )}
+            {/* <StaticImage
               src="../../images/CaseCloth.jpg"
               alt="Glasses case and cleaning cloth"
               layout="constrained"
               placeholder="blurred"
-            />
+            /> */}
           </div>
         </section>
         <section className="call-to-action">
@@ -583,6 +599,13 @@ export const query = graphql`
         }
         description
         # url
+      }
+      whatYouGetImage {
+        localFile {
+          childImageSharp {
+            data: gatsbyImageData(placeholder: DOMINANT_COLOR, quality: 40)
+          }
+        }
       }
     }
   }

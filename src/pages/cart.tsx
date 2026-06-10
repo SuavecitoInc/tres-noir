@@ -335,7 +335,7 @@ const Cart = ({
         const handle = parsedCustoms[item.id].handle
         const sku = parsedCustoms[item.id].sku
 
-        // grab prescription and set context
+        // grab prescription and set context, previusly from step 2 / index 1
         const rxAttr = item.lineItems[1].shopifyItem.attributes.find(
           el => el.key === "Prescription"
         )

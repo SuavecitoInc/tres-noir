@@ -11,6 +11,18 @@ if (
       type ShopifyProduct {
         onlineStoreUrl: String
       }
+      type ContentfulProduct implements Node {
+        whatYouGetImage: ContentfulAsset @link(from: "whatYouGetImage___NODE")
+      }
+    `)
+  }
+} else {
+  exports.createSchemaCustomization = ({ actions }) => {
+    const { createTypes } = actions
+    createTypes(`
+      type ContentfulProduct implements Node {
+        whatYouGetImage: ContentfulAsset @link(from: "whatYouGetImage___NODE")
+      }
     `)
   }
 }

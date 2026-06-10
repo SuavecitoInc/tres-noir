@@ -194,16 +194,42 @@ const Step5 = (props: {
       },
     ]
 
+    const frameVariant = {
+      variantId: variant.storefrontId,
+      quantity: 1,
+      attributes: [
+        {
+          key: "customizationId",
+          value: matchingKey,
+        },
+        {
+          key: "customizationStep",
+          value: "0",
+        },
+        {
+          key: "_frameName",
+          value: `${variant.product.title} - ${colorName}`,
+        },
+      ],
+    }
+
     // add custom attributes
     const step1Item = stepItems[0]
     const isRxAble = !step1.product.title.includes("Non-Prescription")
-    const isReaders = step1.product.title.includes("Reader's")
+    const isReaders =
+      step1.product.title.includes("Readers") ||
+      step1.product.title.includes("Reader's")
     if (isRxAble) {
       if (isReaders) {
         step1Item.attributes.push({
           key: "Prescription",
           value: JSON.stringify({ lensPower: rxInfo.lensPower }),
         })
+        // update frame item with prescription attributes for NetSuite integration
+        // frameVariant.attributes.push({
+        //   key: "Prescription",
+        //   value: JSON.stringify({ lensPower: rxInfo.lensPower }),
+        // })
       } else if (rxInfo?.uploadedFile) {
         step1Item.attributes.push({
           key: "Prescription",
@@ -217,6 +243,19 @@ const Step5 = (props: {
           key: "_file_url",
           value: rxInfo.uploadedFile.url,
         })
+        // update frame item with prescription attributes for NetSuite integration
+        // frameVariant.attributes.push({
+        //   key: "Prescription",
+        //   value: "Uploaded File",
+        // })
+        // frameVariant.attributes.push({
+        //   key: "_file_id",
+        //   value: rxInfo.uploadedFile.id,
+        // })
+        // frameVariant.attributes.push({
+        //   key: "_file_url",
+        //   value: rxInfo.uploadedFile.url,
+        // })
       } else {
         step1Item.attributes.push({
           key: "Prescription",
@@ -225,12 +264,25 @@ const Step5 = (props: {
             left: rxInfo.left,
           }),
         })
+        // update frame item with prescription attributes for NetSuite integration
+        // frameVariant.attributes.push({
+        //   key: "Prescription",
+        //   value: JSON.stringify({
+        //     right: rxInfo.right,
+        //     left: rxInfo.left,
+        //   }),
+        // })
       }
     } else {
       step1Item.attributes.push({
         key: "Prescription",
         value: "Non-Prescription",
       })
+      // update frame item with prescription attributes for NetSuite integration
+      // frameVariant.attributes.push({
+      //   key: "Prescription",
+      //   value: "Non-Prescription",
+      // })
     }
 
     // if step2 item selected add it
@@ -275,24 +327,24 @@ const Step5 = (props: {
       ],
     })
 
-    const frameVariant = {
-      variantId: variant.storefrontId,
-      quantity: 1,
-      attributes: [
-        {
-          key: "customizationId",
-          value: matchingKey,
-        },
-        {
-          key: "customizationStep",
-          value: "0",
-        },
-        {
-          key: "_frameName",
-          value: `${variant.product.title} - ${colorName}`,
-        },
-      ],
-    }
+    // const frameVariant = {
+    //   variantId: variant.storefrontId,
+    //   quantity: 1,
+    //   attributes: [
+    //     {
+    //       key: "customizationId",
+    //       value: matchingKey,
+    //     },
+    //     {
+    //       key: "customizationStep",
+    //       value: "0",
+    //     },
+    //     {
+    //       key: "_frameName",
+    //       value: `${variant.product.title} - ${colorName}`,
+    //     },
+    //   ],
+    // }
 
     stepItems.unshift(frameVariant)
     if (resumedItem) {

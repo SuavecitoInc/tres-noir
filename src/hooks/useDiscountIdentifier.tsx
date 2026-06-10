@@ -29,13 +29,18 @@ export const useDiscountIdentifier = () => {
 
   const discounts = data.contentfulHomepage.availableDiscounts.map(
     (discount: ContentfulDiscount) => {
+      // return {
+      //   discountIdentifier:
+      //     discount.identifier.toUpperCase() === "NONE"
+      //       ? ""
+      //       : discount.identifier,
+      //   enableDiscountIdentifier: discount.enable,
+      //   overwriteLabel: discount.overwriteLabel,
+      // }
       return {
-        discountIdentifier:
-          discount.identifier.toUpperCase() === "NONE"
-            ? ""
-            : discount.identifier,
-        enableDiscountIdentifier: discount.enable,
-        overwriteLabel: discount.overwriteLabel,
+        discountIdentifier: "FATHERS DAY 26",
+        enableDiscountIdentifier: true,
+        overwriteLabel: true,
       }
     }
   )

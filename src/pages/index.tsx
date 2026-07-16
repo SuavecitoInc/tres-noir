@@ -252,12 +252,12 @@ const IndexPage = ({
           </div>
         </div>
 
-        <HeroCarousel
+        {/* <HeroCarousel
           imageSet={contentfulHomepage && contentfulHomepage.heroCarousel}
           imageLinks={
             contentfulHomepage && contentfulHomepage.heroCarouselLinks
           }
-        />
+        /> */}
 
         <h2 className="sub-title home-text">
           {contentfulHomepage.tagline.tagline}

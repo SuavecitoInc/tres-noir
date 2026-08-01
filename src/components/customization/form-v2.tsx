@@ -102,6 +102,8 @@ const FormV2 = ({ handle }: Props) => {
     variant: Variant,
     isSetFromEvent: boolean = true
   ) => {
+    // delete
+    console.log("handleChange called with variant:", variant)
     // set isRxAble via the path selection
     // check if product title does not contain Non-Prescription Lens
     setRxAble(variant.product?.title.includes("Non-Prescription") === false)

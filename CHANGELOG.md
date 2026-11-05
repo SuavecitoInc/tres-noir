@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## v1.13.3 - 2026-11-03
+
+**Breaking Changes**
+
+- Updated storefront api version to 2026-10 as 2025-10 is deprecated.
+- Default cases are now no longer added to the cart when buying any glasses. The default case (pouch) will now be part of the assembly in NetSuite. Changes have been commented with `FIX:CASE`.
+  - TESTED:
+    - Verified that adding sunglasses to cart works as expected, it adds the single glasseses item.
+    - Verified that using the customizer to customize glasses works as expected, and the correct items are added to the cart.
+
 ## v1.13.2 - 2026-05-15
 
 **Breaking Changes**

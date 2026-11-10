@@ -36,6 +36,7 @@ import Divider from "../components/divider"
 import Badge from "../components/badge"
 import ProductBottomline from "../components/product-bottomline"
 import { CUSTOMIZATION_EXCLUSIONS } from "../data/exclusions"
+import { DEFAULT_CASE_SKUS } from "../const"
 
 const Page = styled.div`
   .flex {
@@ -747,26 +748,25 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
           value: "NO RETURNS, REFUNDS OR EXCHANGES",
         })
       }
+
+      // FIX:CASE - Only add the case to the cart if it is not a default case SKU
       addSunglassesToCart(
         [
-          // {
-          //   variantId: selectedVariant.shopify.storefrontId,
-          //   quantity: 1,
-          //   attributes: [
-          //     { key: "customizationId", value: matchingKey },
-          //     { key: "customizationStep", value: "1" },
-          //   ],
-          // },
           frameAttributes,
-          {
-            variantId: selectedCase.storefrontId,
-            quantity: 1,
-            attributes: [
-              { key: "customizationId", value: matchingKey },
-              { key: "customizationStep", value: "2" },
-            ],
-          },
+          ...(!DEFAULT_CASE_SKUS.includes(selectedCase.sku)
+            ? [
+                {
+                  variantId: selectedCase.storefrontId,
+                  quantity: 1,
+                  attributes: [
+                    { key: "customizationId", value: matchingKey },
+                    { key: "customizationStep", value: "2" },
+                  ],
+                },
+              ]
+            : []),
         ],
+
         // sets cart image to be correct polarized image if its a mismatch from non-polarized variant
         polarizedImage.length !== 0
           ? polarizedImage[0]?.localFile?.childImageSharp?.data
@@ -794,22 +794,26 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
           ),
           quantity: 1,
         },
-        addOns: [
-          {
-            title: selectedCase.title,
-            legacyResourceId: selectedCase.legacyResourceId,
-            sku: selectedCase.sku,
-            productType: selectedCase.product.productType,
-            image: selectedCase?.image?.originalSrc
-              ? selectedCase.image?.originalSrc
-              : "",
-            url: selectedCase.product.onlineStoreUrl,
-            vendor: selectedCase.product.vendor,
-            price: selectedCase.price,
-            compareAtPrice: "",
-          },
-        ],
+        // FIX:CASE - Only include the case add-on if it is not a default case SKU
+        addOns: !DEFAULT_CASE_SKUS.includes(selectedCase.sku)
+          ? [
+              {
+                title: selectedCase.title,
+                legacyResourceId: selectedCase.legacyResourceId,
+                sku: selectedCase.sku,
+                productType: selectedCase.product.productType,
+                image: selectedCase?.image?.originalSrc
+                  ? selectedCase.image?.originalSrc
+                  : "",
+                url: selectedCase.product.onlineStoreUrl,
+                vendor: selectedCase.product.vendor,
+                price: selectedCase.price,
+                compareAtPrice: "",
+              },
+            ]
+          : [],
       }
+
       addedCustomizedToCartGTMEvent(productData)
 
       return

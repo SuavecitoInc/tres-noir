@@ -1,4 +1,4 @@
-const API_VERSION = "2025-10"
+const API_VERSION = "2026-10"
 const SHOP_ID = process.env.GATSBY_CUSTOMER_ACCOUNTS_SHOP_ID!
 const CUSTOMER_ACCOUNT_API_URL = `https://shopify.com/${SHOP_ID}/account/customer/api/${API_VERSION}/graphql`
 

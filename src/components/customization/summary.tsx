@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import styled from "styled-components"
 import { GatsbyImage, StaticImage, IGatsbyImageData } from "gatsby-plugin-image"
 import { useCustomizer } from "../../contexts/customizer"
@@ -10,6 +10,7 @@ import CaseGridCustomize from "../case-grid-customize"
 import Spinner from "../spinner"
 import { navigate } from "gatsby"
 import { isDiscounted, formatPrice } from "../../helpers/shopify"
+import { DEFAULT_CASE_SKUS } from "../../const"
 
 const Component = styled.div`
   padding: 10px;
@@ -308,43 +309,27 @@ const Step5 = (props: {
     }
 
     // add the case
-    stepItems.push({
-      variantId: selectedVariants.case.storefrontId,
-      quantity: 1,
-      attributes: [
-        {
-          key: "customizationId",
-          value: matchingKey,
-        },
-        {
-          key: "customizationStep",
-          value: "3",
-        },
-        {
-          key: "_frameName",
-          value: `${variant.product.title} - ${colorName}`,
-        },
-      ],
-    })
-
-    // const frameVariant = {
-    //   variantId: variant.storefrontId,
-    //   quantity: 1,
-    //   attributes: [
-    //     {
-    //       key: "customizationId",
-    //       value: matchingKey,
-    //     },
-    //     {
-    //       key: "customizationStep",
-    //       value: "0",
-    //     },
-    //     {
-    //       key: "_frameName",
-    //       value: `${variant.product.title} - ${colorName}`,
-    //     },
-    //   ],
-    // }
+    // FIX:CASE - Only add the case to the cart if it is not a default case SKU
+    if (!DEFAULT_CASE_SKUS.includes(selectedVariants.case.sku)) {
+      stepItems.push({
+        variantId: selectedVariants.case.storefrontId,
+        quantity: 1,
+        attributes: [
+          {
+            key: "customizationId",
+            value: matchingKey,
+          },
+          {
+            key: "customizationStep",
+            value: "3",
+          },
+          {
+            key: "_frameName",
+            value: `${variant.product.title} - ${colorName}`,
+          },
+        ],
+      })
+    }
 
     stepItems.unshift(frameVariant)
     if (resumedItem) {
@@ -424,19 +409,23 @@ const Step5 = (props: {
       })
     }
     // add cases
-    productData.addOns.push({
-      title: selectedVariants.case.title,
-      legacyResourceId: selectedVariants.case.legacyResourceId,
-      sku: selectedVariants.case.sku,
-      productType: selectedVariants.case.product.productType,
-      image: selectedVariants.case?.image?.originalSrc
-        ? selectedVariants.case.image?.originalSrc
-        : "",
-      url: selectedVariants.case.product.onlineStoreUrl,
-      vendor: selectedVariants.case.product.vendor,
-      price: selectedVariants.case.price,
-      compareAtPrice: "",
-    })
+    // FIX:CASE - Only add the case to the cart if it is not a default case SKU
+    if (!DEFAULT_CASE_SKUS.includes(selectedVariants.case.sku)) {
+      productData.addOns.push({
+        title: selectedVariants.case.title,
+        legacyResourceId: selectedVariants.case.legacyResourceId,
+        sku: selectedVariants.case.sku,
+        productType: selectedVariants.case.product.productType,
+        image: selectedVariants.case?.image?.originalSrc
+          ? selectedVariants.case.image?.originalSrc
+          : "",
+        url: selectedVariants.case.product.onlineStoreUrl,
+        vendor: selectedVariants.case.product.vendor,
+        price: selectedVariants.case.price,
+        compareAtPrice: "",
+      })
+    }
+
     addedCustomizedToCartGTMEvent(productData)
     setIsAddingToCart(false)
     // todo: fix this type issue

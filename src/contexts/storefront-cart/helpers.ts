@@ -142,6 +142,22 @@ export const getImageFromLocalStorage = (id: string) => {
   }
 }
 
+// FIX:CASE - check if is sunglasses
+// this is used to check if the cart contains both glasses and case add-ons to display the proper cart component (isCustom)
+const isGlassesWithCaseAddOns = (value: any[]) => {
+  // check if at least one item has a productType is 'Glasses" or 'Safety Glasses' and
+  // check if at least one item has a productType of 'Case Add Ons'
+  const hasGlasses = value.some(
+    item =>
+      item.shopifyItem.merchandise.product.productType === "Glasses" ||
+      item.shopifyItem.merchandise.product.productType === "Safety Glasses"
+  )
+  const hasCaseAddOns = value.some(
+    item => item.shopifyItem.merchandise.product.productType === "Case Add-Ons"
+  )
+  return hasGlasses && hasCaseAddOns
+}
+
 // rebuild tnLineItems
 export const rebuildBundles = (cart: Cart) => {
   let itemsToAdd: tnItem[] = []
@@ -190,6 +206,10 @@ export const rebuildBundles = (cart: Cart) => {
     }
   })
   itemsMap.forEach((value, key) => {
+    // delete
+    console.log("Processing key:", key, "with value:", value)
+    const isGlasses = isGlassesWithCaseAddOns(value)
+    console.log("isGlasses:", isGlasses)
     // normal item
     if (value.length === 1) {
       // clean up image storage key if item is discounted
@@ -204,7 +224,8 @@ export const rebuildBundles = (cart: Cart) => {
       })
     }
     // sunglasses + case
-    else if (value.length === 2) {
+    // FIX:CASE - Check to see if the item is a combination of sunglasses and case add-ons
+    else if (value.length === 2 && isGlassesWithCaseAddOns(value)) {
       itemsToAdd.push({
         id: key,
         lineItems: value.sort((a, b) => {

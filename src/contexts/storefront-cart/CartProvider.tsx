@@ -90,7 +90,7 @@ export function CartProvider({ children }: Props) {
 
   const client = createStorefrontApiClient({
     storeDomain: process.env.GATSBY_STORE_MY_SHOPIFY as string,
-    apiVersion: process.env.GATSBY_SHOPIFY_API_VERSION ?? "2025-10",
+    apiVersion: process.env.GATSBY_SHOPIFY_API_VERSION ?? "2026-10",
     publicAccessToken: process.env.GATSBY_STORE_STOREFRONT_TOKEN as string,
   })
 

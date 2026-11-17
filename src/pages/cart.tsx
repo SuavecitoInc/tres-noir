@@ -516,8 +516,9 @@ const Cart = ({
       : (
           Number(line.merchandise.compareAtPrice.amount) * line.quantity
         ).toFixed(2)
+
     return (
-      <li key={line.id}>
+      <li key={line.id} className="standard">
         <div className="close-btn">
           <a
             className="remove-item"
@@ -1033,7 +1034,11 @@ const Cart = ({
                           if (item) {
                             if (item.isCustom) {
                               return renderCustomProduct(item)
-                            } else if (item.lineItems.length === 2) {
+                            } else if (
+                              item.lineItems.length === 2 &&
+                              !item.isCustom
+                            ) {
+                              // FIX:CASE - This is a combination of sunglasses and case add-ons
                               return renderSunglasses(item)
                             }
                             return renderStandardProduct(item)

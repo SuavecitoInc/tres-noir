@@ -15,19 +15,28 @@ type Props = {
   color: string
   label: string
   top?: number
+  bottom?: number
   left?: number
+  right?: number
   position?: "absolute" | "relative" | "static"
 }
 
 const Badge = ({
   color,
   label,
-  top = 13,
-  left = 0,
+  top,
+  bottom,
+  left,
+  right,
   position = "absolute",
 }: Props) => {
+  const vertical = bottom !== undefined ? { bottom, top } : { top: top ?? 13 }
+  const horizontal = right !== undefined ? { right, left } : { left: left ?? 0 }
+
   return (
-    <Component style={{ backgroundColor: color, top, left, position }}>
+    <Component
+      style={{ backgroundColor: color, position, ...vertical, ...horizontal }}
+    >
       {label}
     </Component>
   )

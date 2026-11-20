@@ -76,6 +76,8 @@ If applicable, add a `new_color:Color Name` tag. The tagging convention goes as 
 
 These tags are needed to display the `New` and/or `New Color` badges you see on the site.
 
+To add an `XL Fit` badge, tag the product with `xl_fit`.
+
 Make the product active, but _do not include it in any sales channels_. You will do that on the day of the release.
 
 ### Step 3. Create Product and/or Variant in Contentful

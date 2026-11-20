@@ -248,7 +248,23 @@ const ProductContentful = ({
     }
   }
 
+  const getXlBadge = (): { label: string; color: string } | null => {
+    try {
+      // return xl badge if product is tagged with "xl_fit"
+      if (shopifyProduct.tags.includes("xl_fit")) {
+        return {
+          label: "XL Fit",
+          color: "#DC143C",
+        }
+      }
+      return null
+    } catch (error) {
+      return null
+    }
+  }
+
   const badge = getBadge()
+  const xlBadge = getXlBadge()
 
   const featuredImageData =
     !isSunglasses &&
@@ -263,6 +279,14 @@ const ProductContentful = ({
         <Link to={`${productLink}&variant=${selectedVariant.sku}`}>
           <Img image={featuredImageData} alt={data.title} />
           {badge && <Badge label={badge.label} color={badge.color} />}
+          {xlBadge && (
+            <Badge
+              label={xlBadge.label}
+              color={xlBadge.color}
+              bottom={13}
+              right={0}
+            />
+          )}
         </Link>
         <ProductAction>
           <Link to={`${productLink}&variant=${selectedVariant.sku}`}>

@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## v1.13.4 - 2026-11-19
+
+**Features**
+
+- Added support for `XL Fit` badge on product pages.
+  - Products tagged with `xl_fit` will now display the `XL Fit` badge.
+  - The badge component now supports positioning using `top`, `bottom`, `left`, and `right` props.
+  - The default position for the badge is `top: 13px` and `left: 0`, but it can be customized using the positioning props.
+  - The XL Fit badge will be set to bottom right by default (`bottom: 13px` and `right: 0`).
+    ```
+    <Badge label="XL Fit" color="primary" bottom={13} right={0} />
+    ```
+
 ## v1.13.3 - 2026-11-03
 
 **Breaking Changes**

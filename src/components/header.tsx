@@ -18,7 +18,7 @@ import {
 import { useClickAway } from "react-use"
 
 import DesktopNavigation from "./desktopNavigation"
-// import BannerMessage from "./banner-message"
+import BannerMessage from "./banner-message"
 import CartIcon from "./cart-drawer/cart-icon"
 import { useCustomerAuth } from "../hooks/useCustomerAuth"
 import {
@@ -191,7 +191,7 @@ const Header = ({
 
   return (
     <Component>
-      {/* <BannerMessage /> */}
+      <BannerMessage />
       <div className="top-wrapper">
         {isIndex ? (
           <h1 className="h1">
